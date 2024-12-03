@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "DevDash"
 include(":app")
+include(":domain")
+include(":data")
