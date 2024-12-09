@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.elfeky.data"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 28

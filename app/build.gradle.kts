@@ -64,9 +64,8 @@ dependencies {
     // viewmodel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
-    // Compose Nav Destinations
-    implementation( "io.github.raamcosta.compose-destinations:core:1.1.2-beta")
-    ksp ("io.github.raamcosta.compose-destinations:ksp:1.1.2-beta")
+    // navigation
+    implementation("androidx.navigation:navigation-compose:2.8.4")
 
     // icons
     implementation ("androidx.compose.material:material-icons-extended")
@@ -87,4 +86,6 @@ dependencies {
 
     // coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+    project(path= ":domain")
+    project(path= ":data")
 }
