@@ -9,20 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -37,9 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,13 +35,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.ui.common.EmailTextField
+import com.elfeky.devdash.ui.common.PasswordTextField
 
 @Composable
 fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisibility by remember { mutableStateOf(false) }
 
 
     Column(
@@ -64,8 +52,9 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
                 brush = Brush.linearGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.primary),
-                    start = Offset(0f,0f),
+                        MaterialTheme.colorScheme.primary
+                    ),
+                    start = Offset(0f, 0f),
                     end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
                 )
             )
@@ -92,73 +81,11 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(Modifier.height(64.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = {
-                email = it
-
-            },
-            label = {
-                Text(
-                    text = "Enter your email address",
-                )
-            },
-            maxLines = 1,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                //unfocusedBorderColor = ,
-                unfocusedContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedLabelColor = Color.Black
-            ),
-            shape = RoundedCornerShape(7.dp),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "email icon",
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.Gray
-                )
-            }
-
-
-        )
+        EmailTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { email = it })
 
         Spacer(Modifier.height(24.dp))
 
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = password,
-            onValueChange = { password = it },
-            label = {
-                Text(
-                    "Enter your password",
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            },
-            singleLine = true,
-            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    val icon =
-                        if (passwordVisibility) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-                    Icon(imageVector = icon, contentDescription = "password visibility")
-                }
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-//                focusedBorderColor = MaterialTheme.colorScheme.primary,
-//                //unfocusedBorderColor = ,
-//                unfocusedContainerColor = Color.White,
-//                focusedContainerColor = Color.White,
-//                focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-//                unfocusedLabelColor = Color.White,
-//                disabledLabelColor = Color.White
-            )
-        )
+        PasswordTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { password = it })
 
         Spacer(Modifier.height(8.dp))
 
@@ -182,8 +109,8 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier
                 .align(Alignment.Start)
                 .clickable(onClick = {
-                navController.navigate(Screen.SignUpScreen.route)
-            })
+                    navController.navigate(Screen.SignUpScreen.route)
+                })
         )
 
         Spacer(Modifier.height(32.dp))
@@ -192,15 +119,17 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
-            onClick = { },
+            onClick = {
+                //TODO Sign In Button
+            },
             colors = ButtonColors(
                 contentColor = Color.White,
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 disabledContentColor = Color.White,
-                disabledContainerColor = Color.Gray
+                disabledContainerColor = Color.Gray,
             ),
             // Condition to make Button enabled
-            enabled = (email.isNotEmpty() and password.isNotEmpty()),
+            enabled = (email.isNotBlank() and password.isNotBlank()),
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(
