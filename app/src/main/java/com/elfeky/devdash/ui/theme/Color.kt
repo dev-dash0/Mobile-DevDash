@@ -13,3 +13,5 @@ val Pink40 = Color(0xFF7D5260)
 val Black = Color(0xFF000000)
 val NavyBlue = Color(0xFF102A56)
 val LightNavyBlue = Color(0xFF292F65)
+
+val Lavender = Color(0xFFEBDBFF)

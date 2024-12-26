@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -36,7 +36,7 @@ fun SplashScreen(navController: NavController) {
             OvershootInterpolator(4f).getInterpolation(it)
         }))
         delay(2000L)
-        navController.navigate(Screen.SignInScreen.route) { popUpTo("SplashScreen") { inclusive = true } }
+        navController.navigate(AppScreen.SignInScreen.route) { popUpTo("SplashScreen") { inclusive = true } }
     }
 
     Column(

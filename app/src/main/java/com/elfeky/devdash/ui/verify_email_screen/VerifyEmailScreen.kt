@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.verify_email_screen.components.OtpTextField
 
 @Composable
@@ -132,7 +131,7 @@ fun VerifyEmailScreen(
 private fun VerifyEmailScreenPreview() {
     VerifyEmailScreen(
         navController = rememberNavController(),
-        destination = Screen.ResetPasswordScreen.route,
+        destination = AppScreen.ResetPasswordScreen.route,
         email = ""
     )
 }

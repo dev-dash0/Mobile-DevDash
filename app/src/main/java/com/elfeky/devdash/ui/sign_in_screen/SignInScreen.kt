@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.EmailTextField
 import com.elfeky.devdash.ui.common.PasswordTextField
 
@@ -92,7 +92,7 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier
                 .clickable(onClick = {
                     if (email.isNotBlank()) {
-                        navController.navigate(Screen.VerifyEmailScreen.route +"/${Screen.ResetPasswordScreen.route}/$email")
+                        navController.navigate(AppScreen.VerifyEmailScreen.route +"/${AppScreen.ResetPasswordScreen.route}/$email")
                     }
 
                 })
@@ -121,7 +121,7 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier
                 .align(Alignment.Start)
                 .clickable(onClick = {
-                    navController.navigate(Screen.SignUpScreen.route)
+                    navController.navigate(AppScreen.SignUpScreen.route)
                 })
         )
 

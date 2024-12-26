@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 
 @Composable
 fun DoneScreen(
@@ -85,7 +85,7 @@ fun DoneScreen(
                 .fillMaxWidth()
                 .height(64.dp),
             onClick = {
-                navController.navigate(Screen.SignInScreen.route)
+                navController.navigate(AppScreen.SignInScreen.route)
             },
             colors = ButtonColors(
                 contentColor = Color.White,

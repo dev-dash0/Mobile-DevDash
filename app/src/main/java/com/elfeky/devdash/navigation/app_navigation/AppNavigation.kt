@@ -1,4 +1,4 @@
-package com.elfeky.devdash.navigation
+package com.elfeky.devdash.navigation.app_navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,23 +21,23 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.SplashScreen.route
+        startDestination = AppScreen.SplashScreen.route
     ) {
 
-        composable(Screen.SplashScreen.route) {
+        composable(AppScreen.SplashScreen.route) {
             SplashScreen(navController = navController)
         }
 
-        composable(Screen.SignInScreen.route) {
+        composable(AppScreen.SignInScreen.route) {
             SignInScreen(navController = navController)
         }
 
-        composable(Screen.SignUpScreen.route) {
+        composable(AppScreen.SignUpScreen.route) {
             SignUpScreen(navController = navController)
         }
 
         composable(
-            "${Screen.VerifyEmailScreen.route}/{destination}/{email}",
+            "${AppScreen.VerifyEmailScreen.route}/{destination}/{email}",
             arguments = listOf(
                 navArgument("destination") { type = NavType.StringType },
                 navArgument("email") { type = NavType.StringType }
@@ -53,16 +53,16 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             )
         }
 
-        composable(Screen.ResetPasswordScreen.route) {
+        composable(AppScreen.ResetPasswordScreen.route) {
             ResetPasswordScreen(navController = navController)
         }
 
-        composable(Screen.DoneScreen.route) {
+        composable(AppScreen.DoneScreen.route) {
             DoneScreen(navController = navController)
         }
 
-        composable(Screen.MainScreen.route) {
-            MainScreen(navController = navController)
+        composable(AppScreen.MainScreen.route) {
+            MainScreen(appNavController = navController)
         }
 
     }

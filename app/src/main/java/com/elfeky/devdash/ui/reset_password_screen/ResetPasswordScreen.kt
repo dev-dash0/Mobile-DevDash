@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.PasswordTextField
 
 @Composable
@@ -97,7 +97,7 @@ fun ResetPasswordScreen(
                 .height(64.dp),
             onClick = {
                 // TODO Reset Password Button
-                navController.navigate(Screen.DoneScreen.route)
+                navController.navigate(AppScreen.DoneScreen.route)
             },
             colors = ButtonColors(
                 contentColor = Color.White,

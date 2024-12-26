@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.Screen
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.EmailTextField
 import com.elfeky.devdash.ui.common.NormalTextField
 import com.elfeky.devdash.ui.common.PasswordTextField
@@ -130,7 +130,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
                 .height(64.dp),
             onClick = {
                 // TODO Sign Up Button
-                navController.navigate(Screen.VerifyEmailScreen.route+"/${Screen.MainScreen.route}/$email")
+                navController.navigate(AppScreen.VerifyEmailScreen.route+"/${AppScreen.MainScreen.route}/$email")
             },
             colors = ButtonColors(
                 contentColor = Color.White,
