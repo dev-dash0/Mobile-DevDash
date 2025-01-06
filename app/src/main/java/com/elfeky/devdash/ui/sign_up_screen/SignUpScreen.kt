@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,9 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,9 +29,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.ui.common.EmailTextField
-import com.elfeky.devdash.ui.common.NormalTextField
-import com.elfeky.devdash.ui.common.PasswordTextField
+import com.elfeky.devdash.ui.common.CustomButton
+import com.elfeky.devdash.ui.common.CustomTextField
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.theme.Gray
+import com.elfeky.devdash.ui.utils.defaultButtonColor
+import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
@@ -46,20 +46,11 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
     var lastName by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
 
-
-
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.primary
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
+                brush = gradientBackground
             )
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
@@ -80,7 +71,20 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
         Spacer(Modifier.height(32.dp))
 
-        EmailTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { email = it })
+        CustomTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = "Email",
+            modifier = Modifier.fillMaxWidth(),
+            isEmail = true,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "Email",
+                    tint = Gray
+                )
+            }
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -89,56 +93,64 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            NormalTextField(
-                modifier = Modifier.weight(1f),
+            CustomTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
                 label = "First name",
-                onValueChange = { firstName = it }
+                modifier = Modifier.weight(1f)
             )
+
             Spacer(modifier = Modifier.width(4.dp))
-            NormalTextField(
-                modifier = Modifier.weight(1f),
-                label = "Last ame",
-                onValueChange = { lastName = it }
+
+            CustomTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = "Last name",
+                modifier = Modifier.weight(1f)
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        NormalTextField(
-            modifier = Modifier.fillMaxWidth(),
+        CustomTextField(
+            value = userName,
+            onValueChange = { userName = it },
             label = "User name",
-            onValueChange = { userName = it }
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        PasswordTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { password = it })
+        CustomTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = "Password",
+            modifier = Modifier.fillMaxWidth(),
+            isPassword = true
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        PasswordTextField(
+        CustomTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = "Confirm Password",
             modifier = Modifier.fillMaxWidth(),
-            label = "Confirm password",
-            onValueChange = { confirmPassword = it }
+            isPassword = true
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
+        CustomButton(
+            text = "Sign Up",
+            onClick = {
+                // TODO Sign Up Button
+                navController.navigate(AppScreen.VerifyEmailScreen.route + "/${AppScreen.MainScreen.route}/$email")
+            },
+            buttonColor = defaultButtonColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
-            onClick = {
-                // TODO Sign Up Button
-                navController.navigate(AppScreen.VerifyEmailScreen.route+"/${AppScreen.MainScreen.route}/$email")
-            },
-            colors = ButtonColors(
-                contentColor = Color.White,
-                containerColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-            ),
-            // Condition to make Button enabled
             enabled = (
                     email.isNotBlank()
                             and password.isNotBlank()
@@ -147,18 +159,15 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
                             and userName.isNotBlank()
                             and confirmPassword.isNotBlank()
                             and (password == confirmPassword)
-                    ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                text = "Sign Up"
-            )
-        }
+                    )
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignUpScreenPreview() {
-    SignUpScreen(navController = rememberNavController())
+    DevDashTheme {
+        SignUpScreen(navController = rememberNavController())
+    }
 }

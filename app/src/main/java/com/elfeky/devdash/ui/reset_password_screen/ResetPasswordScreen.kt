@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,9 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +30,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.ui.common.PasswordTextField
+import com.elfeky.devdash.ui.common.CustomButton
+import com.elfeky.devdash.ui.common.CustomTextField
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.defaultButtonColor
+import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun ResetPasswordScreen(
@@ -47,16 +45,10 @@ fun ResetPasswordScreen(
     var confirmPassword by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.primary
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
+                brush = gradientBackground
             )
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
@@ -79,47 +71,46 @@ fun ResetPasswordScreen(
         )
         Spacer(Modifier.height(32.dp))
 
-        PasswordTextField(modifier = Modifier.fillMaxWidth(), onValueChange = { password = it })
+        CustomTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = "Password",
+            modifier = Modifier.fillMaxWidth(),
+            isPassword = true
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        PasswordTextField(
+
+        CustomTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = "Confirm Password",
             modifier = Modifier.fillMaxWidth(),
-            label = "Confirm password",
-            onValueChange = { confirmPassword = it }
+            isPassword = true
         )
 
         Spacer(Modifier.height(32.dp))
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp),
+        CustomButton(
+            text = "Change Password",
             onClick = {
                 // TODO Reset Password Button
                 navController.navigate(AppScreen.DoneScreen.route)
             },
-            colors = ButtonColors(
-                contentColor = Color.White,
-                containerColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-            ),
-            // Condition to make Button enabled
-            enabled = (
-
-                    password.isNotBlank() and confirmPassword.isNotBlank() and (password == confirmPassword)),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                text = "Change Password"
-            )
-        }
+            buttonColor = defaultButtonColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp),
+            enabled = (password.isNotBlank() and confirmPassword.isNotBlank() and (password == confirmPassword))
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ResetPasswordScreenPreview() {
-    ResetPasswordScreen(navController = rememberNavController())
+    DevDashTheme {
+        ResetPasswordScreen(navController = rememberNavController())
+    }
 }

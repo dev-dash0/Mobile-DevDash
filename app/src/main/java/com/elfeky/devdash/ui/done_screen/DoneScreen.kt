@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,9 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +32,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.defaultButtonColor
+import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun DoneScreen(
@@ -43,17 +42,10 @@ fun DoneScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.primary
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
+                brush = gradientBackground
             )
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
@@ -87,12 +79,7 @@ fun DoneScreen(
             onClick = {
                 navController.navigate(AppScreen.SignInScreen.route)
             },
-            colors = ButtonColors(
-                contentColor = Color.White,
-                containerColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = Color.White,
-                disabledContainerColor = Color.Gray,
-            ),
+            colors = defaultButtonColor,
             shape = RoundedCornerShape(8.dp)
         ) {
             Icon(
@@ -110,5 +97,7 @@ fun DoneScreen(
 @Preview(showBackground = true)
 @Composable
 private fun DoneScreenPreview() {
-    DoneScreen(navController = rememberNavController())
+    DevDashTheme {
+        DoneScreen(navController = rememberNavController())
+    }
 }
