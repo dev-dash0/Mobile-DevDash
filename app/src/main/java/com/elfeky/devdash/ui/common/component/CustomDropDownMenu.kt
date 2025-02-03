@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.model.DropDownMenuDataModel
 import com.elfeky.devdash.ui.common.dialogs.model.statusList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.White
+import com.elfeky.devdash.ui.theme.LightBlueGray
 
 @Composable
 fun CustomDropdownMenu(
@@ -26,7 +26,7 @@ fun CustomDropdownMenu(
     selectedItem: DropDownMenuDataModel,
     onItemSelected: (DropDownMenuDataModel) -> Unit,
     modifier: Modifier = Modifier,
-    menuTextColor: Color = White
+    menuTextColor: Color = LightBlueGray
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -45,6 +45,7 @@ fun CustomDropdownMenu(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            containerColor = menuTextColor
         ) {
             items.forEach { item ->
                 DropdownMenuItem(
