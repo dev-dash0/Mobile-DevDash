@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common
+package com.elfeky.devdash.ui.common.component
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.elfeky.devdash.ui.theme.White
 import com.elfeky.devdash.ui.utils.secondaryButtonColor
 
 @Composable
@@ -18,7 +19,7 @@ fun CustomButton(
     onClick: () -> Unit,
     buttonColor: ButtonColors,
     shape: Shape = MaterialTheme.shapes.small,
-    textColor: Color = Color.White,
+    textColor: Color = White,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
