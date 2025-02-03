@@ -9,7 +9,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -51,12 +51,12 @@ fun MainNavigationBar(navController: NavController, modifier: Modifier = Modifie
     )
 
     var selectedItemIndex by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
     NavigationBar(
         containerColor = Lavender,
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp))
     ) {
         navigationItems.forEachIndexed { index, item ->
