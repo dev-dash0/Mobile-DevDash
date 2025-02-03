@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.ui.common.CustomButton
-import com.elfeky.devdash.ui.common.CustomTextField
+import com.elfeky.devdash.ui.common.component.CustomButton
+import com.elfeky.devdash.ui.common.component.CustomOutlinedTextField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.Gray
 import com.elfeky.devdash.ui.utils.defaultButtonColor
@@ -71,7 +71,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
         Spacer(Modifier.height(32.dp))
 
-        CustomTextField(
+        CustomOutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = "Email",
@@ -93,7 +93,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CustomTextField(
+            CustomOutlinedTextField(
                 value = firstName,
                 onValueChange = { firstName = it },
                 label = "First name",
@@ -102,7 +102,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            CustomTextField(
+            CustomOutlinedTextField(
                 value = lastName,
                 onValueChange = { lastName = it },
                 label = "Last name",
@@ -112,7 +112,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        CustomTextField(
+        CustomOutlinedTextField(
             value = userName,
             onValueChange = { userName = it },
             label = "User name",
@@ -121,7 +121,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        CustomTextField(
+        CustomOutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = "Password",
@@ -131,7 +131,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        CustomTextField(
+        CustomOutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = "Confirm Password",

@@ -30,8 +30,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.ui.common.CustomButton
-import com.elfeky.devdash.ui.common.CustomTextField
+import com.elfeky.devdash.ui.common.component.CustomButton
+import com.elfeky.devdash.ui.common.component.CustomOutlinedTextField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
@@ -71,7 +71,7 @@ fun ResetPasswordScreen(
         )
         Spacer(Modifier.height(32.dp))
 
-        CustomTextField(
+        CustomOutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = "Password",
@@ -82,7 +82,7 @@ fun ResetPasswordScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
 
-        CustomTextField(
+        CustomOutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = "Confirm Password",
