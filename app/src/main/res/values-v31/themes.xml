@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.DevDash.SplashScreen" parent="Theme.SplashScreen">
+        <item name="android:windowBackground">@drawable/splash_bg_gradient</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/dev_dash_logo_anim</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.DevDash</item>
+    </style>
+</resources>
