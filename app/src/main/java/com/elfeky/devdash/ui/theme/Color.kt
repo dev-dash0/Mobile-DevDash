@@ -2,8 +2,6 @@ package com.elfeky.devdash.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Pink80 = Color(0xFFEFB8C8)
-
 val White = Color(0XFFFFFFFF)
 val OffWhite = Color(0xFFF6F6F6)
 val Black = Color(0xFF000000)
