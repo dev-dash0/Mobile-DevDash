@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,9 +35,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
-import com.elfeky.devdash.ui.common.component.CustomOutlinedTextField
+import com.elfeky.devdash.ui.common.component.InputField
+import com.elfeky.devdash.ui.theme.Blue
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.Gray
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
@@ -71,29 +72,29 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
         Spacer(modifier = Modifier.height(64.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = email,
             onValueChange = { email = it },
-            label = "Email",
+            placeholderText = "Email",
             modifier = Modifier.fillMaxWidth(),
             isEmail = true,
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = "Email",
-                    tint = Gray
+                    contentDescription = "Email"
                 )
             }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            placeholderText = "Password",
             modifier = Modifier.fillMaxWidth(),
-            isPassword = true
+            isPassword = true,
+            imeAction = ImeAction.Done
         )
 
         Text(
@@ -117,7 +118,7 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
             withStyle(
                 style = SpanStyle(
-                    color = Color.Blue,
+                    color = Blue,
                     textDecoration = TextDecoration.Underline
                 )
             ) {

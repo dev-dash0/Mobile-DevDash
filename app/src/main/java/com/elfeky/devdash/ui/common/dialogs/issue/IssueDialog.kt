@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,23 +17,22 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.component.CustomAlertDialog
 import com.elfeky.devdash.ui.common.component.CustomDivider
 import com.elfeky.devdash.ui.common.component.CustomDropdownMenu
-import com.elfeky.devdash.ui.common.component.CustomTextField
+import com.elfeky.devdash.ui.common.component.InputField
+import com.elfeky.devdash.ui.common.component.OutlinedInputField
 import com.elfeky.devdash.ui.common.dialogs.model.DropDownMenuDataModel
 import com.elfeky.devdash.ui.common.dialogs.model.assigneeList
 import com.elfeky.devdash.ui.common.dialogs.model.labelList
 import com.elfeky.devdash.ui.common.dialogs.model.priorityList
 import com.elfeky.devdash.ui.common.dialogs.model.statusList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.Gray
 import com.elfeky.devdash.ui.theme.LightGray
-import com.elfeky.devdash.ui.theme.OffWhite
 import com.elfeky.devdash.ui.theme.White
 
 @Composable
@@ -57,26 +57,34 @@ fun IssueDialogContent(
     availableAssignees: SnapshotStateList<Pair<String, String>>,
     selectedAssignees: SnapshotStateList<Pair<String, String>>
 ) {
-    CustomAlertDialog(onCancel = onCancel, onConfirm = onConfirm) {
+//    CustomAlertDialog(onCancel = onCancel, onConfirm = onConfirm) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            CustomTextField(
+            InputField(
                 value = title,
                 placeholderText = "Untitled Issue",
-                onTextChange = onTitleChange,
-                textColor = White,
-                placeholderColor = OffWhite
+                onValueChange = onTitleChange,
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedPlaceholderColor = White,
+                    focusedPlaceholderColor = White,
+                    unfocusedTextColor = White,
+                    focusedTextColor = White
+
+                )
             )
 
-            CustomTextField(
+            OutlinedInputField(
                 value = description,
                 placeholderText = "Description.......",
-                onTextChange = onDescriptionChange,
-                textColor = LightGray,
-                placeholderColor = Gray,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                imeAction = ImeAction.Done
+                onValueChanged = onDescriptionChange,
+                modifier = Modifier.fillMaxWidth()
             )
 
             AssigneeRow(availableAssignees, selectedAssignees)
@@ -108,7 +116,7 @@ fun IssueDialogContent(
                 }
             }
         }
-    }
+//    }
 }
 
 @Preview

@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,9 +31,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
-import com.elfeky.devdash.ui.common.component.CustomOutlinedTextField
+import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.Gray
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
@@ -71,17 +71,16 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
         Spacer(Modifier.height(32.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = email,
             onValueChange = { email = it },
-            label = "Email",
+            placeholderText = "Email",
             modifier = Modifier.fillMaxWidth(),
             isEmail = true,
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = "Email",
-                    tint = Gray
+                    contentDescription = "Email"
                 )
             }
         )
@@ -93,50 +92,51 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CustomOutlinedTextField(
+            InputField(
                 value = firstName,
                 onValueChange = { firstName = it },
-                label = "First name",
+                placeholderText = "First name",
                 modifier = Modifier.weight(1f)
             )
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            CustomOutlinedTextField(
+            InputField(
                 value = lastName,
                 onValueChange = { lastName = it },
-                label = "Last name",
+                placeholderText = "Last name",
                 modifier = Modifier.weight(1f)
             )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = userName,
             onValueChange = { userName = it },
-            label = "User name",
+            placeholderText = "User name",
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            placeholderText = "Password",
             modifier = Modifier.fillMaxWidth(),
             isPassword = true
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = "Confirm Password",
+            placeholderText = "Confirm Password",
             modifier = Modifier.fillMaxWidth(),
-            isPassword = true
+            isPassword = true,
+            imeAction = ImeAction.Done
         )
 
         Spacer(modifier = Modifier.height(32.dp))

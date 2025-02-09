@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
-import com.elfeky.devdash.ui.common.component.CustomOutlinedTextField
+import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
@@ -71,10 +72,10 @@ fun ResetPasswordScreen(
         )
         Spacer(Modifier.height(32.dp))
 
-        CustomOutlinedTextField(
+        InputField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            placeholderText = "Password",
             modifier = Modifier.fillMaxWidth(),
             isPassword = true
         )
@@ -82,12 +83,13 @@ fun ResetPasswordScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
 
-        CustomOutlinedTextField(
+        InputField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = "Confirm Password",
+            placeholderText = "Confirm Password",
             modifier = Modifier.fillMaxWidth(),
-            isPassword = true
+            isPassword = true,
+            imeAction = ImeAction.Done
         )
 
         Spacer(Modifier.height(32.dp))

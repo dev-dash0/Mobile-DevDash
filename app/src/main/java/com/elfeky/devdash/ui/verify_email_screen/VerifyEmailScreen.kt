@@ -22,9 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -38,6 +35,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
+import com.elfeky.devdash.ui.theme.Blue
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.gradientBackground
 import com.elfeky.devdash.ui.verify_email_screen.components.OtpTextField
 
 @Composable
@@ -56,16 +56,7 @@ fun VerifyEmailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.secondary,
-                        MaterialTheme.colorScheme.primary
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
-            )
+            .background(gradientBackground)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -110,7 +101,7 @@ fun VerifyEmailScreen(
 
                 withStyle(
                     style = SpanStyle(
-                        color = Color.Blue,
+                        color = Blue,
                         textDecoration = TextDecoration.Underline
                     )
                 ) {
@@ -129,9 +120,11 @@ fun VerifyEmailScreen(
 @Preview(showBackground = true)
 @Composable
 private fun VerifyEmailScreenPreview() {
-    VerifyEmailScreen(
-        navController = rememberNavController(),
-        destination = AppScreen.ResetPasswordScreen.route,
-        email = ""
-    )
+    DevDashTheme {
+        VerifyEmailScreen(
+            navController = rememberNavController(),
+            destination = AppScreen.ResetPasswordScreen.route,
+            email = ""
+        )
+    }
 }
