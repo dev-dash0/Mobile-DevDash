@@ -62,7 +62,7 @@ fun IssueDialogContent(
         InputField(
             value = title,
             placeholderText = "Untitled Issue",
-            onValueChange = { onTitleChange(it) },
+            onValueChange = onTitleChange,
             modifier = Modifier.fillMaxWidth(),
             textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
             colors = TextFieldDefaults.colors(

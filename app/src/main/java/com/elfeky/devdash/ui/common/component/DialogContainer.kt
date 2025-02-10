@@ -47,12 +47,13 @@ fun DialogContainer(
                 .imePadding()
                 .background(color = DarkBlue, shape = MaterialTheme.shapes.medium)
                 .padding(vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (title != null) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = Pink
                 )
             }
