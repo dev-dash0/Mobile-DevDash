@@ -17,34 +17,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.elfeky.devdash.ui.theme.BlueGray
+import com.elfeky.devdash.ui.theme.DarkBlue
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.IceBlue
+import com.elfeky.devdash.ui.theme.Pink
 import com.elfeky.devdash.ui.utils.cancelButtonColor
 import com.elfeky.devdash.ui.utils.secondaryButtonColor
 
 @Composable
-fun CustomAlertDialog(
+fun DialogContainer(
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
     title: String? = null,
     modifier: Modifier = Modifier,
+    properties: DialogProperties = DialogProperties(
+        dismissOnBackPress = true,
+        dismissOnClickOutside = true,
+        usePlatformDefaultWidth = false,
+    ),
     confirmEnable: Boolean = true,
     content: @Composable (ColumnScope.() -> Unit),
 ) {
     Dialog(
         onDismissRequest = onCancel,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = true,
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
-        )
+        properties = properties
     ) {
         Column(
             modifier = modifier
-                .imePadding()
                 .fillMaxWidth()
-                .background(color = BlueGray, shape = MaterialTheme.shapes.medium)
+                .imePadding()
+                .background(color = DarkBlue, shape = MaterialTheme.shapes.medium)
                 .padding(vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -52,7 +53,7 @@ fun CustomAlertDialog(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = IceBlue
+                    color = Pink
                 )
             }
 
@@ -87,7 +88,7 @@ fun CustomAlertDialog(
 @Composable
 private fun DialogPreview() {
     DevDashTheme {
-        CustomAlertDialog(
+        DialogContainer(
             title = "Title",
             onCancel = {},
             onConfirm = {},

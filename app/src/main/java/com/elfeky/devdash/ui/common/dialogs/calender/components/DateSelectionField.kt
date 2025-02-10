@@ -1,15 +1,13 @@
-package com.elfeky.devdash.ui.common.dialogs.calender
+package com.elfeky.devdash.ui.common.dialogs.calender.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -29,20 +27,20 @@ import com.elfeky.devdash.ui.theme.Black
 import com.elfeky.devdash.ui.theme.IceBlue
 import com.elfeky.devdash.ui.theme.LightGray
 import com.elfeky.devdash.ui.theme.Pink
-import com.elfeky.devdash.ui.utils.localDateToString
+import com.elfeky.devdash.ui.utils.toStringDate
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun DateSelectionField(
     label: String,
-    date: LocalDate?,
+    date: Long?,
     isSelected: Boolean,
-    onClick: () -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
@@ -57,20 +55,19 @@ fun DateSelectionField(
                 .clip(RoundedCornerShape(8.dp))
                 .background(IceBlue)
                 .border(2.dp, if (isSelected) Pink else LightGray, RoundedCornerShape(8.dp))
-                .clickable { onClick() }
                 .fillMaxWidth()
-                .wrapContentHeight()
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = date?.let { localDateToString(it) } ?: "Set date",
-                color = Black
+                text = date?.toStringDate() ?: "Set date",
+                color = Black,
+                style = MaterialTheme.typography.bodyMedium
             )
 
             IconButton(
-                onClick = if (date != null) onClear else onClick,
+                onClick = date?.let { onClear } ?: {},
                 modifier = Modifier.size(24.dp)
             ) {
                 Icon(
@@ -89,8 +86,8 @@ fun DateSelectionField(
 private fun DateSelectionFieldPreview() {
     DateSelectionField(
         label = "Start Date",
-        date = LocalDate.now(),
+        date = LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
         isSelected = true,
-        onClick = {},
+//        onClick = {},
         onClear = {})
 }

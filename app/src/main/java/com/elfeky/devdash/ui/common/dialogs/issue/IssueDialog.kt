@@ -1,157 +1,98 @@
 package com.elfeky.devdash.ui.common.dialogs.issue
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.component.CustomDivider
-import com.elfeky.devdash.ui.common.component.CustomDropdownMenu
-import com.elfeky.devdash.ui.common.component.InputField
-import com.elfeky.devdash.ui.common.component.OutlinedInputField
-import com.elfeky.devdash.ui.common.dialogs.model.DropDownMenuDataModel
-import com.elfeky.devdash.ui.common.dialogs.model.assigneeList
-import com.elfeky.devdash.ui.common.dialogs.model.labelList
-import com.elfeky.devdash.ui.common.dialogs.model.priorityList
-import com.elfeky.devdash.ui.common.dialogs.model.statusList
+import com.elfeky.devdash.ui.common.component.FullScreenDialog
+import com.elfeky.devdash.ui.common.dialogs.assigneeList
+import com.elfeky.devdash.ui.common.dialogs.issue.components.IssueDialogContent
+import com.elfeky.devdash.ui.common.dialogs.labelList
+import com.elfeky.devdash.ui.common.dialogs.model.IssueDataModel
+import com.elfeky.devdash.ui.common.dialogs.model.User
+import com.elfeky.devdash.ui.common.dialogs.model.ValidRangeSelectableDates
+import com.elfeky.devdash.ui.common.dialogs.priorityList
+import com.elfeky.devdash.ui.common.dialogs.statusList
+import com.elfeky.devdash.ui.common.dialogs.typeList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.LightGray
-import com.elfeky.devdash.ui.theme.White
+import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IssueDialogContent(
-    title: String,
-    description: String,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit,
-    onTitleChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
-    statusList: List<DropDownMenuDataModel>,
-    selectedStatus: DropDownMenuDataModel,
-    onStatusSelected: (DropDownMenuDataModel) -> Unit,
-    priorityList: List<DropDownMenuDataModel>,
-    selectedPriority: DropDownMenuDataModel,
-    onPrioritySelected: (DropDownMenuDataModel) -> Unit,
-    onDateClick: (Pair<Long?, Long?>) -> Unit,
+fun IssueDialog(
+    onDismiss: () -> Unit,
+    onSubmit: (IssueDataModel) -> Unit,
+    assigneeList: List<User>,
     labelList: List<String>,
-    onLabelSelected: (String) -> Unit,
-    onAddLabelClick: () -> Unit,
-    selectedLabels: SnapshotStateList<String>,
-    availableAssignees: SnapshotStateList<Pair<String, String>>,
-    selectedAssignees: SnapshotStateList<Pair<String, String>>
+    modifier: Modifier = Modifier
 ) {
-//    CustomAlertDialog(onCancel = onCancel, onConfirm = onConfirm) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            InputField(
-                value = title,
-                placeholderText = "Untitled Issue",
-                onValueChange = onTitleChange,
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedPlaceholderColor = White,
-                    focusedPlaceholderColor = White,
-                    unfocusedTextColor = White,
-                    focusedTextColor = White
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    val selectedLabels = remember { mutableStateListOf<String>() }
+    val assignees = remember { mutableStateListOf<User>() }
+    val currentYear = LocalDate.now().year
 
+    val dateRangeState = rememberDateRangePickerState(
+        yearRange = currentYear..(currentYear + 5),
+        selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
+    )
+
+    var selectedType by remember { mutableStateOf(typeList[0]) }
+    var selectedPriority by remember { mutableStateOf(priorityList[0]) }
+    var selectedStatus by remember { mutableStateOf(statusList[0]) }
+
+    FullScreenDialog(
+        title = "Create New Issue",
+        onDismiss = onDismiss,
+        onSubmit = {
+            onSubmit(
+                IssueDataModel(
+                    title,
+                    description,
+                    selectedLabels,
+                    dateRangeState.selectedStartDateMillis,
+                    dateRangeState.selectedEndDateMillis,
+                    selectedType.text,
+                    selectedPriority,
+                    selectedStatus.text
                 )
             )
-
-            OutlinedInputField(
-                value = description,
-                placeholderText = "Description.......",
-                onValueChanged = onDescriptionChange,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            AssigneeRow(availableAssignees, selectedAssignees)
-            CustomDivider()
-            DatePickerRow({ date -> onDateClick(date) })
-            CustomDivider()
-            LabelRow(labelList, onLabelSelected, selectedLabels, onAddLabelClick)
-            CustomDivider()
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                CustomDropdownMenu(
-                    items = statusList,
-                    selectedItem = selectedStatus,
-                    onItemSelected = onStatusSelected
-                )
-                CustomDropdownMenu(
-                    items = priorityList,
-                    selectedItem = selectedPriority,
-                    onItemSelected = onPrioritySelected
-                )
-                IconButton(
-                    onClick = {/*TODO: Handle attachments}*/ }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_pin),
-                        contentDescription = "Add attachments",
-                        tint = LightGray
-                    )
-                }
-            }
-        }
-//    }
+        },
+        modifier = modifier
+    ) { paddingValues ->
+        IssueDialogContent(
+            title,
+            description,
+            assignees,
+            dateRangeState,
+            selectedPriority,
+            selectedType,
+            selectedStatus,
+            assigneeList,
+            labelList,
+            onTitleChange = { title = it },
+            onDescriptionChange = { description = it },
+            onPriorityChange = { selectedPriority = it },
+            onTypeChange = { selectedType = it },
+            onStatusChange = { selectedStatus = it },
+            onLabelToggle = { if (!selectedLabels.remove(it)) selectedLabels.add(it) },
+            onAssigneeToggle = { if (!assignees.remove(it)) assignees.add(it) },
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
 }
 
 @Preview
 @Composable
-private fun IssuePreview() {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var selectedStatus by remember { mutableStateOf(statusList[0]) }
-    var selectedPriority by remember { mutableStateOf(priorityList[0]) }
-    val selectedLabels = remember { emptyList<String>().toMutableStateList() }
-    val selectedAssignees = remember { emptyList<Pair<String, String>>().toMutableStateList() }
-
+private fun IssueScreenPreview() {
     DevDashTheme {
-        Column(modifier = Modifier.fillMaxSize()) {
-            IssueDialogContent(
-                onCancel = {},
-                onConfirm = {},
-                title = title,
-                onTitleChange = { title = it },
-                description = description,
-                onDescriptionChange = { description = it },
-                statusList = statusList,
-                selectedStatus = selectedStatus,
-                onStatusSelected = { selectedStatus = it },
-                priorityList = priorityList,
-                selectedPriority = selectedPriority,
-                onPrioritySelected = { selectedPriority = it },
-                onDateClick = { Pair(null, null) },
-                labelList = labelList,
-                selectedLabels = selectedLabels,
-                onLabelSelected = { selectedLabels.apply { if (!remove(it)) add(it) } },
-                onAddLabelClick = { /*TODO: Handle add label*/ },
-                availableAssignees = assigneeList.toMutableStateList(),
-                selectedAssignees = selectedAssignees
-            )
-        }
+        IssueDialog({}, {}, assigneeList, labelList)
     }
 }

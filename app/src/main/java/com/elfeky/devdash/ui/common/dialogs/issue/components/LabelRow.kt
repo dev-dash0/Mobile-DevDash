@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.dialogs.issue
+package com.elfeky.devdash.ui.common.dialogs.issue.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,13 +16,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.dialogs.model.labelList
+import com.elfeky.devdash.ui.common.dialogs.labelList
+import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.Lavender
 import com.elfeky.devdash.ui.theme.White
 
@@ -31,17 +34,21 @@ import com.elfeky.devdash.ui.theme.White
 fun LabelRow(
     labelList: List<String>,
     onLabelSelected: (String) -> Unit,
-    selectedLabels: SnapshotStateList<String>,
     onAddLabelClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
+        maxItemsInEachRow = 4
     ) {
         labelList.forEach { label ->
+            var selected by remember { mutableStateOf(false) }
             FilterChip(
-                onClick = { onLabelSelected(label) },
+                onClick = {
+                    selected = !selected
+                    onLabelSelected(label)
+                },
                 label = {
                     Text(
                         text = label,
@@ -49,8 +56,8 @@ fun LabelRow(
                         style = MaterialTheme.typography.labelMedium
                     )
                 },
-                selected = selectedLabels.contains(label),
-                leadingIcon = if (selectedLabels.contains(label)) {
+                selected = selected,
+                leadingIcon = if (selected) {
                     {
                         Icon(
                             imageVector = Icons.Filled.Done,
@@ -90,10 +97,5 @@ fun LabelRow(
 @Preview
 @Composable
 private fun LabelRowPreview() {
-    LabelRow(
-        labelList = labelList,
-        onLabelSelected = {},
-        selectedLabels = emptyList<String>().toMutableStateList(),
-        onAddLabelClick = {}
-    )
+    DevDashTheme { LabelRow(labelList, {}, {}) }
 }
