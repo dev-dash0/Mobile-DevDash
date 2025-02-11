@@ -18,7 +18,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.OffWhite
 
 @Composable
 fun OutlinedInputField(
@@ -31,8 +30,8 @@ fun OutlinedInputField(
     shape: Shape = MaterialTheme.shapes.medium,
     textStyle: TextStyle = MaterialTheme.typography.titleSmall,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedTextColor = OffWhite,
-        unfocusedTextColor = OffWhite,
+        focusedTextColor = MaterialTheme.colorScheme.outlineVariant,
+        unfocusedTextColor = MaterialTheme.colorScheme.outlineVariant,
     )
 ) {
     OutlinedTextField(

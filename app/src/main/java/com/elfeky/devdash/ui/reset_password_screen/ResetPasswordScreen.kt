@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
@@ -48,9 +47,7 @@ fun ResetPasswordScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                brush = gradientBackground
-            )
+            .background(brush = gradientBackground)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -67,8 +64,8 @@ fun ResetPasswordScreen(
         Text(
             text = "Reset your password",
             color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
         )
         Spacer(Modifier.height(32.dp))
 

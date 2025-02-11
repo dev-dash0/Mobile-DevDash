@@ -36,8 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.component.AssigneeAvatar
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
 import com.elfeky.devdash.ui.common.dialogs.model.User
-import com.elfeky.devdash.ui.theme.BlueGray
-import com.elfeky.devdash.ui.theme.White
+import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.dashBorder
 
 @Composable
@@ -46,7 +45,7 @@ fun AssigneePicker(
     selectedAssignees: MutableList<User>,
     onAssigneeSelected: (User) -> Unit,
     modifier: Modifier = Modifier,
-    menuTextColor: Color = Color(0xFF404363)
+    menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
     var expanded by remember { mutableStateOf(false) }
     var itemHeight by remember { mutableStateOf(48.dp) }
@@ -61,17 +60,19 @@ fun AssigneePicker(
             selectedAssignees.forEach { assignee ->
                 AssigneeAvatar(assignee)
             }
-            IconButton(onClick = { expanded = !expanded }) {
+            IconButton(
+                onClick = { expanded = !expanded },
+                modifier = Modifier
+                    .dashBorder(2.dp, 7.dp, 4.dp)
+                    .padding(2.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.background)
+                    .size(32.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Add Assignee",
-                    modifier = Modifier
-                        .dashBorder(2.dp, 7.dp, 4.dp)
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .background(BlueGray)
-                        .size(33.dp),
-                    tint = White
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -88,7 +89,12 @@ fun AssigneePicker(
             availableAssignees.forEachIndexed { index, assignee ->
                 var selected by remember { mutableStateOf(false) }
                 DropdownMenuItem(
-                    text = { Text(assignee.name, color = White) },
+                    text = {
+                        Text(
+                            assignee.name,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
                     onClick = {
                         selected = !selected
                         onAssigneeSelected(assignee)
@@ -101,7 +107,7 @@ fun AssigneePicker(
                             Icon(
                                 imageVector = Icons.Default.Done,
                                 contentDescription = "Selected Assignee",
-                                tint = White
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     },
@@ -119,13 +125,15 @@ fun AssigneePicker(
 @Composable
 private fun AssigneeRowPreview() {
     val selectedAssignees = mutableListOf<User>()
-    AssigneePicker(
-        availableAssignees = assigneeList,
-        selectedAssignees = selectedAssignees,
-        onAssigneeSelected = {
-            if (!selectedAssignees.remove(it)) {
-                selectedAssignees.add(it)
+    DevDashTheme {
+        AssigneePicker(
+            availableAssignees = assigneeList,
+            selectedAssignees = selectedAssignees,
+            onAssigneeSelected = {
+                if (!selectedAssignees.remove(it)) {
+                    selectedAssignees.add(it)
+                }
             }
-        }
-    )
+        )
+    }
 }

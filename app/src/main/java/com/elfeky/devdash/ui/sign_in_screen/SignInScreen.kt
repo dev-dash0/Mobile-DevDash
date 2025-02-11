@@ -36,7 +36,6 @@ import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
-import com.elfeky.devdash.ui.theme.Blue
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
@@ -60,15 +59,15 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
         Text(
             text = "DevDash",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(56.dp))
         Text(
-            text = "SignIn",
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            text = "Sign In",
+            color = MaterialTheme.colorScheme.onSecondary,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Medium
         )
         Spacer(modifier = Modifier.height(64.dp))
 
@@ -118,7 +117,7 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
             withStyle(
                 style = SpanStyle(
-                    color = Blue,
+                    color = MaterialTheme.colorScheme.tertiary,
                     textDecoration = TextDecoration.Underline
                 )
             ) {

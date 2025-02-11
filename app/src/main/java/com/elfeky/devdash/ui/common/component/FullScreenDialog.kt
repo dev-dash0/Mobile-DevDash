@@ -2,20 +2,21 @@ package com.elfeky.devdash.ui.common.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.elfeky.devdash.ui.common.dialogs.issue.components.DialogTopBar
-import com.elfeky.devdash.ui.theme.DarkBlue
-import com.elfeky.devdash.ui.theme.White
+import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun FullScreenDialog(
+    title: String,
     onDismiss: () -> Unit,
     onSubmit: () -> Unit,
-    title: String,
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -35,9 +36,15 @@ fun FullScreenDialog(
                     onSubmit = onSubmit
                 )
             },
-            containerColor = DarkBlue,
-            contentColor = White,
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
             content = content
         )
     }
+}
+
+@Preview
+@Composable
+private fun FullScreenDialogPreview() {
+    DevDashTheme { FullScreenDialog("Title", {}, {}) { } }
 }

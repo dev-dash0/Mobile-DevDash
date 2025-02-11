@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.theme.Lavender
-import com.elfeky.devdash.ui.theme.LightNavyBlue
+import com.elfeky.devdash.ui.theme.NavyBlue
 import com.elfeky.devdash.ui.theme.White
 import com.elfeky.domain.model.BottomNavigationItem
 
@@ -76,7 +76,7 @@ fun MainNavigationBar(navController: NavController, modifier: Modifier = Modifie
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = LightNavyBlue,
+                    indicatorColor = NavyBlue,
                     selectedIconColor = White,
                     unselectedIconColor = Color.Black,
                     selectedTextColor = Color.Black,

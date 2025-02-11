@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.dialogs.model.MenuDataModel
 import com.elfeky.devdash.ui.common.dialogs.typeList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.White
 
 @Composable
 fun MenuSelector(
@@ -37,9 +36,12 @@ fun MenuSelector(
     onItemSelected: (MenuDataModel) -> Unit,
     modifier: Modifier = Modifier,
     showIcon: Boolean = true,
-    menuTextColor: Color = Color(0xFF404363)
+    menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
-    val textColor = if (selectedItem.color.luminance() > 0.5f) Color.Black else Color.White
+    val textColor =
+        if (selectedItem.color.luminance() > 0.5f)
+            MaterialTheme.colorScheme.surfaceContainer
+        else MaterialTheme.colorScheme.onBackground
     var expanded by remember { mutableStateOf(false) }
     var itemHeight by remember { mutableStateOf(48.dp) }
     val local = LocalDensity.current
@@ -49,7 +51,7 @@ fun MenuSelector(
             onClick = { expanded = !expanded },
             colors = ButtonDefaults.textButtonColors(
                 containerColor = if (showIcon) Color.Transparent else selectedItem.color,
-                contentColor = if (showIcon) White else textColor
+                contentColor = if (showIcon) MaterialTheme.colorScheme.onBackground else textColor
             )
         ) {
             Row(
@@ -83,7 +85,12 @@ fun MenuSelector(
                             tint = item.color
                         )
                     },
-                    text = { Text(text = item.text, color = White) },
+                    text = {
+                        Text(
+                            text = item.text,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
                     onClick = { onItemSelected(item); expanded = false },
                     modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
                         if (index == 0) itemHeight =

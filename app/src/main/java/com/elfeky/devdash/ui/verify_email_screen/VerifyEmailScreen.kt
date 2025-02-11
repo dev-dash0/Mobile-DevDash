@@ -35,7 +35,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.ui.theme.Blue
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 import com.elfeky.devdash.ui.verify_email_screen.components.OtpTextField
@@ -54,7 +53,7 @@ fun VerifyEmailScreen(
 
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(gradientBackground)
             .padding(horizontal = 24.dp),
@@ -96,12 +95,12 @@ fun VerifyEmailScreen(
             text = buildAnnotatedString {
 
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                    append("Didn't get an email?")
+                    append("Didn't get an email? ")
                 }
 
                 withStyle(
                     style = SpanStyle(
-                        color = Blue,
+                        color = MaterialTheme.colorScheme.tertiary,
                         textDecoration = TextDecoration.Underline
                     )
                 ) {

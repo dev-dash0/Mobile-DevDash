@@ -26,8 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.dialogs.labelList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.Lavender
-import com.elfeky.devdash.ui.theme.White
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -52,7 +50,7 @@ fun LabelRow(
                 label = {
                     Text(
                         text = label,
-                        color = White,
+                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelMedium
                     )
                 },
@@ -69,7 +67,7 @@ fun LabelRow(
                     null
                 },
                 colors = FilterChipDefaults.filterChipColors(
-                    containerColor = Lavender.copy(alpha = .6f)
+                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = .6f)
                 ),
                 border = null
             )
@@ -81,14 +79,14 @@ fun LabelRow(
                 .align(Alignment.CenterVertically)
                 .background(
                     shape = MaterialTheme.shapes.small,
-                    color = Lavender.copy(alpha = .8f)
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = .8f)
                 )
                 .size(32.dp),
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Add Label",
-                tint = White
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }

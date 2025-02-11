@@ -28,7 +28,6 @@ import com.elfeky.devdash.ui.common.dialogs.model.User
 import com.elfeky.devdash.ui.common.dialogs.priorityList
 import com.elfeky.devdash.ui.common.dialogs.statusList
 import com.elfeky.devdash.ui.common.dialogs.typeList
-import com.elfeky.devdash.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,10 +69,10 @@ fun IssueDialogContent(
                 focusedContainerColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedPlaceholderColor = White,
-                focusedPlaceholderColor = White,
-                unfocusedTextColor = White,
-                focusedTextColor = White
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
+                focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                focusedTextColor = MaterialTheme.colorScheme.onBackground
 
             )
         )

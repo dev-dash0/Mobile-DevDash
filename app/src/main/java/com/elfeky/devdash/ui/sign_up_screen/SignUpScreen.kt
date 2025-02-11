@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
@@ -49,25 +48,23 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                brush = gradientBackground
-            )
+            .background(brush = gradientBackground)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "SignUp",
+            text = "Sign Up",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(16.dp))
         Text(
             text = "Let’s create an account ",
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            color = MaterialTheme.colorScheme.onSecondary,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Medium
         )
         Spacer(Modifier.height(32.dp))
 
