@@ -11,13 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.elfeky.devdash.ui.common.component.FullScreenDialog
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
+import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
+import com.elfeky.devdash.ui.common.dialogs.component.FullScreenDialog
 import com.elfeky.devdash.ui.common.dialogs.issue.components.IssueDialogContent
+import com.elfeky.devdash.ui.common.dialogs.issue.model.IssueUiModel
+import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
 import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.model.IssueDataModel
-import com.elfeky.devdash.ui.common.dialogs.model.User
-import com.elfeky.devdash.ui.common.dialogs.model.ValidRangeSelectableDates
 import com.elfeky.devdash.ui.common.dialogs.priorityList
 import com.elfeky.devdash.ui.common.dialogs.statusList
 import com.elfeky.devdash.ui.common.dialogs.typeList
@@ -28,15 +28,15 @@ import java.time.LocalDate
 @Composable
 fun IssueDialog(
     onDismiss: () -> Unit,
-    onSubmit: (IssueDataModel) -> Unit,
-    assigneeList: List<User>,
+    onSubmit: (IssueUiModel) -> Unit,
+    assigneeList: List<UserUiModel>,
     labelList: List<String>,
     modifier: Modifier = Modifier
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     val selectedLabels = remember { mutableStateListOf<String>() }
-    val assignees = remember { mutableStateListOf<User>() }
+    val assignees = remember { mutableStateListOf<UserUiModel>() }
     val currentYear = LocalDate.now().year
 
     val dateRangeState = rememberDateRangePickerState(
@@ -53,7 +53,7 @@ fun IssueDialog(
         onDismiss = onDismiss,
         onSubmit = {
             onSubmit(
-                IssueDataModel(
+                IssueUiModel(
                     title,
                     description,
                     selectedLabels,
@@ -65,6 +65,12 @@ fun IssueDialog(
                 )
             )
         },
+        submitEnable = (
+                title.isNotEmpty()
+                        && description.isNotEmpty()
+                        && assignees.isNotEmpty()
+                        && dateRangeState.selectedEndDateMillis != null
+                ),
         modifier = modifier
     ) { paddingValues ->
         IssueDialogContent(

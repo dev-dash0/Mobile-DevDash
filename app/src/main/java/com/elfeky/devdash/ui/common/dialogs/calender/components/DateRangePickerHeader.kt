@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.dialogs.model.SelectedField
+import com.elfeky.devdash.ui.common.dialogs.calender.model.SelectedField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

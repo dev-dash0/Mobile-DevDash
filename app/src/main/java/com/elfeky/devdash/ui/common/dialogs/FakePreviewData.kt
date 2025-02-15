@@ -8,50 +8,55 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Yellow
-import com.elfeky.devdash.ui.common.dialogs.model.MenuDataModel
-import com.elfeky.devdash.ui.common.dialogs.model.User
+import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
+import com.elfeky.devdash.ui.common.dialogs.project.model.CompanyUiModel
+import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuUiModel
 import com.elfeky.devdash.ui.theme.Blue
 import com.elfeky.devdash.ui.theme.Gray
+import com.elfeky.devdash.ui.theme.Orange
 import com.elfeky.devdash.ui.theme.Red
 import com.elfeky.devdash.ui.theme.White
 
-// Status List
 val statusList = listOf(
-    MenuDataModel(Icons.Default.Circle, Color(0xFFC2BFBF), "Backlog"),
-    MenuDataModel(Icons.Default.Circle, Color(0xFF8E8E8E), "To Do"),
-    MenuDataModel(Icons.Default.Circle, Color(0xFF4854F1), "In Progress"),
-    MenuDataModel(Icons.Default.Circle, Color(0xFFFFA500), "Reviewing"),
-    MenuDataModel(Icons.Default.Circle, Color(0xFF1E8024), "Completed"),
-    MenuDataModel(Icons.Default.Circle, Color(0xFFD32F2F), "Canceled"),
-    MenuDataModel(Icons.Default.Circle, Color(0xFFFFC107), "Postponed")
+    MenuUiModel(Icons.Default.Circle, Color(0xFFC2BFBF), "Backlog"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFF8E8E8E), "To Do"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFF4854F1), "In Progress"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFFFFA500), "Reviewing"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFF1E8024), "Completed"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFFD32F2F), "Canceled"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFFFFC107), "Postponed")
 )
 
-// Priority List
 val priorityList = listOf(
-    MenuDataModel(Icons.Default.Flag, Gray, "Low"),
-    MenuDataModel(Icons.Default.Flag, Blue, "Medium"),
-    MenuDataModel(Icons.Default.Flag, Color(0xFFFFA500), "High"),
-    MenuDataModel(Icons.Default.Flag, Red, "Urgent")
+    MenuUiModel(Icons.Default.Flag, Gray, "Low"),
+    MenuUiModel(Icons.Default.Flag, Blue, "Medium"),
+    MenuUiModel(Icons.Default.Flag, Orange, "High"),
+    MenuUiModel(Icons.Default.Flag, Red, "Urgent")
 )
 
-// Type List
 val typeList = listOf(
-    MenuDataModel(Icons.Default.BugReport, Red, "Bug"),
-    MenuDataModel(Icons.Default.AutoAwesome, Yellow, "Feature"),
-    MenuDataModel(Icons.Default.Checklist, White, "Task")
+    MenuUiModel(Icons.Default.BugReport, Red, "Bug"),
+    MenuUiModel(Icons.Default.AutoAwesome, Yellow, "Feature"),
+    MenuUiModel(Icons.Default.Checklist, White, "Task")
 )
 
-// Label List
 val labelList = mutableListOf(
     "UI", "Test", "Fix", "Mobile", "DB", "Front-end", "Back-end", "Bug", "Issue"
 )
 
-// Assignee List
 val assigneeList = listOf(
-    User("Mohamed", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    User("Amira", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    User("Hossam", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    User("Youssef", ""),
-    User("Ahmed", "")
+    UserUiModel("Mohamed", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
+    UserUiModel("Amira", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
+    UserUiModel("Hossam", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
+    UserUiModel("Youssef", ""),
+    UserUiModel("Ahmed", "")
+)
+
+val companyList = listOf(
+    CompanyUiModel("Google", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
+    CompanyUiModel("Microsoft", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
+    CompanyUiModel("Meta", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
+    CompanyUiModel("OpenAI", ""),
+    CompanyUiModel("Intel", "")
 )
 

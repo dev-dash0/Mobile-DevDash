@@ -14,40 +14,53 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.component.InputField
-import com.elfeky.devdash.ui.common.component.MenuSelector
 import com.elfeky.devdash.ui.common.component.OutlinedInputField
-import com.elfeky.devdash.ui.common.dialogs.model.MenuDataModel
-import com.elfeky.devdash.ui.common.dialogs.model.User
+import com.elfeky.devdash.ui.common.dialogs.assigneeList
+import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
+import com.elfeky.devdash.ui.common.dialogs.component.HorizontalItem
+import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
+import com.elfeky.devdash.ui.common.dialogs.labelList
 import com.elfeky.devdash.ui.common.dialogs.priorityList
 import com.elfeky.devdash.ui.common.dialogs.statusList
 import com.elfeky.devdash.ui.common.dialogs.typeList
+import com.elfeky.devdash.ui.common.dropdown_menu.MenuSelector
+import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuUiModel
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IssueDialogContent(
     title: String,
     description: String,
-    assignees: MutableList<User>,
+    assignees: MutableList<UserUiModel>,
     dateRangeState: DateRangePickerState,
-    selectedPriority: MenuDataModel,
-    selectedType: MenuDataModel,
-    selectedStatus: MenuDataModel,
-    assigneeList: List<User>,
+    selectedPriority: MenuUiModel,
+    selectedType: MenuUiModel,
+    selectedStatus: MenuUiModel,
+    assigneeList: List<UserUiModel>,
     labelList: List<String>,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
-    onPriorityChange: (MenuDataModel) -> Unit,
-    onTypeChange: (MenuDataModel) -> Unit,
-    onStatusChange: (MenuDataModel) -> Unit,
+    onPriorityChange: (MenuUiModel) -> Unit,
+    onTypeChange: (MenuUiModel) -> Unit,
+    onStatusChange: (MenuUiModel) -> Unit,
     onLabelToggle: (String) -> Unit,
-    onAssigneeToggle: (User) -> Unit,
+    onAssigneeToggle: (UserUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -113,7 +126,6 @@ fun IssueDialogContent(
                 items = statusList,
                 selectedItem = selectedStatus,
                 onItemSelected = { onStatusChange(it) },
-                showIcon = false,
                 modifier = Modifier.weight(.75f)
             )
         }
@@ -138,6 +150,47 @@ fun IssueDialogContent(
                 .imePadding()
                 .fillMaxWidth()
                 .height(150.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun IssueDialogContentPreview() {
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    val selectedLabels = remember { mutableStateListOf<String>() }
+    val assignees = remember { mutableStateListOf<UserUiModel>() }
+
+    val currentYear = LocalDate.now().year
+    val dateRangeState = rememberDateRangePickerState(
+        yearRange = currentYear..(currentYear + 5),
+        selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
+    )
+
+    var selectedType by remember { mutableStateOf(typeList[0]) }
+    var selectedPriority by remember { mutableStateOf(priorityList[0]) }
+    var selectedStatus by remember { mutableStateOf(statusList[0]) }
+
+    DevDashTheme {
+        IssueDialogContent(
+            title,
+            description,
+            assignees,
+            dateRangeState,
+            selectedPriority,
+            selectedType,
+            selectedStatus,
+            assigneeList,
+            labelList,
+            onTitleChange = { title = it },
+            onDescriptionChange = { description = it },
+            onPriorityChange = { selectedPriority = it },
+            onTypeChange = { selectedType = it },
+            onStatusChange = { selectedStatus = it },
+            onLabelToggle = { if (!selectedLabels.remove(it)) selectedLabels.add(it) },
+            onAssigneeToggle = { if (!assignees.remove(it)) assignees.add(it) },
         )
     }
 }

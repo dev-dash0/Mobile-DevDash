@@ -1,9 +1,8 @@
 package com.elfeky.devdash.ui.common.dialogs.issue.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,9 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.component.formatDateRange
-import com.elfeky.devdash.ui.common.dialogs.calender.DateRangeDialog
+import com.elfeky.devdash.ui.common.dialogs.calender.CalenderDialog
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.formatDateRange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +34,7 @@ fun DateRangeInput(
     var showCalendarDialog by remember { mutableStateOf(false) }
     var selectedDateDisplay by remember { mutableStateOf("_") }
 
-    Row(modifier = modifier.fillMaxWidth()) {
+    Box(modifier = modifier) {
         TextButton(onClick = { showCalendarDialog = true }) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -44,17 +43,15 @@ fun DateRangeInput(
                 Icon(
                     painter = painterResource(R.drawable.ic_calender),
                     contentDescription = "Calendar",
-                    modifier = Modifier.padding(8.dp),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
+                Text(text = selectedDateDisplay, color = MaterialTheme.colorScheme.onBackground)
             }
-            Text(text = selectedDateDisplay, color = MaterialTheme.colorScheme.onBackground)
         }
-
     }
 
     if (showCalendarDialog) {
-        DateRangeDialog(
+        CalenderDialog(
             state = state,
             onDismiss = { showCalendarDialog = false },
             onConfirm = {

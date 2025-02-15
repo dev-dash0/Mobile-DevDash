@@ -8,15 +8,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.elfeky.devdash.ui.common.component.DialogContainer
 import com.elfeky.devdash.ui.common.dialogs.company.components.CompanyDialogContent
-import com.elfeky.devdash.ui.common.dialogs.model.CompanyDataModel
+import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
+import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun CompanyDialog(
     onDismiss: () -> Unit,
-    onSubmit: (CompanyDataModel) -> Unit,
+    onSubmit: (CompanyUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var title by remember { mutableStateOf("") }
@@ -29,7 +29,7 @@ fun CompanyDialog(
         onCancel = onDismiss,
         onConfirm = {
             onSubmit(
-                CompanyDataModel(
+                CompanyUiModel(
                     title,
                     websiteUrl,
                     keywords,
@@ -38,7 +38,12 @@ fun CompanyDialog(
                 )
             )
         },
-        title = "Add your company"
+        title = "Add your company",
+        confirmEnable = (
+                title.isNotEmpty()
+                        && websiteUrl.isNotEmpty()
+                        && keywords.isNotEmpty()
+                        && description.isNotEmpty())
     ) {
         CompanyDialogContent(
             title = title,

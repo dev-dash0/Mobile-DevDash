@@ -6,10 +6,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.elfeky.devdash.ui.main_screen.calender.CalenderScreen
-import com.elfeky.devdash.ui.main_screen.company.CompanyScreen
-import com.elfeky.devdash.ui.main_screen.home.HomeScreen
-import com.elfeky.devdash.ui.main_screen.inbox.InboxScreen
+import com.elfeky.devdash.ui.screens.main_screen.calender.CalenderScreen
+import com.elfeky.devdash.ui.screens.main_screen.company.CompanyScreen
+import com.elfeky.devdash.ui.screens.main_screen.home.HomeScreen
+import com.elfeky.devdash.ui.screens.main_screen.inbox.InboxScreen
 
 @Composable
 fun MainNavigation(
