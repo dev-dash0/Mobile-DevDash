@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.main_navigation.MainNavigation
+import com.elfeky.devdash.ui.common.component.TopBar
 import com.elfeky.devdash.ui.screens.main_screen.components.MainNavigationBar
-
 
 @Composable
 fun MainScreen(
@@ -23,6 +23,9 @@ fun MainScreen(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
             MainNavigationBar(navController = mainNavController)
+        },
+        topBar = {
+            TopBar("Home", { mainNavController.navigateUp() })
         }
     ) { innerPadding ->
         MainNavigation(
