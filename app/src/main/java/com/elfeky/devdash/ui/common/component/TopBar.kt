@@ -33,7 +33,7 @@ fun TopBar(
                 IconButton(onClick = onBack) {
                     Icon(
                         imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "Back"
+                        contentDescription = "Navigate Up"
                     )
                 }
         },
@@ -42,20 +42,20 @@ fun TopBar(
                 IconButton(onClick = onBack) {
                     Icon(
                         painter = painterResource(R.drawable.sesrch_ic),
-                        contentDescription = "Back"
+                        contentDescription = "Search"
                     )
                 }
                 IconButton(onClick = onBack) {
                     Icon(
                         painter = painterResource(R.drawable.user_add_ic),
-                        contentDescription = "Back"
+                        contentDescription = "Add member"
                     )
                 }
             }
             IconButton(onClick = onBack) {
                 Icon(
                     painter = painterResource(R.drawable.user_ic),
-                    contentDescription = "Back"
+                    contentDescription = "Settings"
                 )
             }
         },
