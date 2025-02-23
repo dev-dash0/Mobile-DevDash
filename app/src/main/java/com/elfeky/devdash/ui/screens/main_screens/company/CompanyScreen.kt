@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen.company
+package com.elfeky.devdash.ui.screens.main_screens.company
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

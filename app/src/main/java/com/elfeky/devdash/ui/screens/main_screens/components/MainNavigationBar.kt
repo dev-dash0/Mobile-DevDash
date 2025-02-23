@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen.components
+package com.elfeky.devdash.ui.screens.main_screens.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape

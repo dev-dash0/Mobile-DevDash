@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen.home.components
+package com.elfeky.devdash.ui.screens.main_screens.home.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

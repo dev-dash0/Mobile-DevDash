@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.verify_email_screen
+package com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -35,7 +35,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.ui.screens.verify_email_screen.components.OtpTextField
+import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.components.OtpTextField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 

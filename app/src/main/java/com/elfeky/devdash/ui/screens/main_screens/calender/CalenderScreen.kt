@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen.calender
+package com.elfeky.devdash.ui.screens.main_screens.calender
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
