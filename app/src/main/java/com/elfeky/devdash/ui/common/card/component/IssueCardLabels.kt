@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.screens.main_screen.home.components.Label
+import com.elfeky.devdash.ui.screens.main_screens.home.components.Label
 
 @Composable
 fun IssueCardLabels(labels: List<String>) {
