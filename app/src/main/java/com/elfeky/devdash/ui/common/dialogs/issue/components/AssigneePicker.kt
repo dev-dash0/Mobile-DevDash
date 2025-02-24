@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -29,9 +27,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
 import com.elfeky.devdash.ui.common.dialogs.component.AssigneeAvatar
 import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
@@ -51,27 +51,23 @@ fun AssigneePicker(
     val local = LocalDensity.current
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy((-12).dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         selectedAssignees.forEach { assignee ->
             AssigneeAvatar(assignee)
         }
-        IconButton(
-            onClick = { expanded = !expanded },
-            modifier = Modifier
-                .dashBorder(2.dp, 7.dp, 4.dp)
-                .padding(2.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background)
-                .size(32.dp)
-        ) {
+        IconButton(onClick = { expanded = !expanded }) {
             Icon(
-                imageVector = Icons.Default.Person,
+                painter = painterResource(R.drawable.user_add_ic),
                 contentDescription = "Add Assignee",
+                modifier = Modifier
+                    .dashBorder(1.dp, 7.dp, 4.dp)
+                    .padding(2.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(4.dp),
                 tint = MaterialTheme.colorScheme.onBackground
             )
         }
