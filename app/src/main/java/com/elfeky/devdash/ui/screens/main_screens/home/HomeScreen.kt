@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen.company
+package com.elfeky.devdash.ui.screens.main_screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun CompanyScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
     mainNavController: NavController,
     appNavController: NavController
@@ -20,6 +20,6 @@ fun CompanyScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Company")
+        Text("Home")
     }
 }

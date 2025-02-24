@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.verify_email_screen.components
+package com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.components
 
 
 import androidx.compose.foundation.border

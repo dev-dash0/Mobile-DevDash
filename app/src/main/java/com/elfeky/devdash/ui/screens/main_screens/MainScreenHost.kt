@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen
+package com.elfeky.devdash.ui.screens.main_screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.main_navigation.MainNavigation
-import com.elfeky.devdash.ui.screens.main_screen.components.MainNavigationBar
+import com.elfeky.devdash.ui.screens.main_screens.components.MainNavigationBar
 
 
 @Composable

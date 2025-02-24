@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screen.inbox
+package com.elfeky.devdash.ui.screens.main_screens.inbox
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
