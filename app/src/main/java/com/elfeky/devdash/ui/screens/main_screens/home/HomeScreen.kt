@@ -19,8 +19,8 @@ import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.IssueCard
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
 import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.screens.main_screen.home.components.Item
-import com.elfeky.devdash.ui.screens.main_screen.home.components.ProgressRow
+import com.elfeky.devdash.ui.screens.main_screens.home.components.Item
+import com.elfeky.devdash.ui.screens.main_screens.home.components.ProgressRow
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.Red
 import com.elfeky.devdash.ui.utils.gradientBackground
