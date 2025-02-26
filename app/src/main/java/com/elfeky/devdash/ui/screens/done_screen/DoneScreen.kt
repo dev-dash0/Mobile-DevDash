@@ -77,7 +77,7 @@ fun DoneScreen(
                 .fillMaxWidth()
                 .height(64.dp),
             onClick = {
-                navController.navigate(AppScreen.SignInScreen.route)
+                navController.navigate(AppScreen.SignInScreen.route){popUpTo(0) { inclusive = true }}
             },
             colors = defaultButtonColor,
             shape = RoundedCornerShape(8.dp)

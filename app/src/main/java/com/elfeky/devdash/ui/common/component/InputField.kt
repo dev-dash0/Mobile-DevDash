@@ -37,6 +37,7 @@ fun InputField(
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
     isEmail: Boolean = false,
+    isPhoneNumber: Boolean = false,
     singleLine: Boolean = true,
     imeAction: ImeAction = ImeAction.Next,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -62,6 +63,7 @@ fun InputField(
             keyboardType = when {
                 isPassword -> KeyboardType.Password
                 isEmail -> KeyboardType.Email
+                isPhoneNumber -> KeyboardType.Phone
                 else -> KeyboardType.Text
             },
             imeAction = imeAction

@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.sign_in_screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +33,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
@@ -40,11 +43,24 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
+
 @Composable
-fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun SignInScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val state = viewModel.state.value
+
+//    val context = LocalContext.current
+//    val sharedPref = context.getSharedPreferences(USER_DATA_FILE, Context.MODE_PRIVATE)
+//    val savedAccessToken = sharedPref.getString(ACCESS_TOKEN_KEY, "")
+//    val savedRefreshToken = sharedPref.getString(REFRESH_TOKEN_KEY, "")
+//    Log.i("Tokens", "$savedAccessToken && $savedRefreshToken")
 
     Column(
         modifier = modifier
@@ -69,6 +85,12 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium
         )
+
+        if (state.isLoading) {
+            Spacer(modifier = Modifier.height(12.dp))
+            CircularProgressIndicator()
+        }
+
         Spacer(modifier = Modifier.height(64.dp))
 
         InputField(
@@ -109,6 +131,14 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
                 }
                 .align(Alignment.End)
         )
+        if (state.error != "") {
+            Text(
+                text = state.error,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.Start)
+            )
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
 
         val signUpText = buildAnnotatedString {
@@ -136,14 +166,26 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         CustomButton(
             text = "Sign In",
-            onClick = { /*TODO Sign In Button*/ },
+            onClick = {
+                viewModel.login(email = email, password = password)
+            },
             buttonColor = defaultButtonColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
             enabled = email.isNotBlank() && password.isNotBlank()
         )
+        if (state.loggedIn) {
+            navController.navigate(AppScreen.MainScreen.route) {
+                popUpTo(0) {
+                    inclusive = true
+                }
+            }
+        }
+        Log.i("loginState", state.toString())
     }
+
+
 }
 
 @Preview

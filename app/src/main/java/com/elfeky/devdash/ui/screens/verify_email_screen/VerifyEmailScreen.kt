@@ -86,7 +86,7 @@ fun VerifyEmailScreen(
             otpInputFilled = filled
             if (otpInputFilled) {
                 Log.i("destination", destination)
-                navController.navigate(destination)
+                navController.navigate(destination){popUpTo(0) { inclusive = true }}
             }
         }
         Spacer(Modifier.height(16.dp))
