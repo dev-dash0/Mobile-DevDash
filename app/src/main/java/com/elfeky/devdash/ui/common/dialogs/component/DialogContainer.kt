@@ -26,9 +26,9 @@ import com.elfeky.devdash.ui.utils.secondaryButtonColor
 fun DialogContainer(
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
-    title: String? = null,
     confirmEnable: Boolean,
     modifier: Modifier = Modifier,
+    title: String? = null,
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
     content: @Composable (ColumnScope.() -> Unit),
 ) {

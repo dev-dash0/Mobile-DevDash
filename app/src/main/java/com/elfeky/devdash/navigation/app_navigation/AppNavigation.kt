@@ -7,12 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.elfeky.devdash.ui.screens.done_screen.DoneScreen
-import com.elfeky.devdash.ui.screens.main_screen.MainScreen
-import com.elfeky.devdash.ui.screens.reset_password_screen.ResetPasswordScreen
-import com.elfeky.devdash.ui.screens.sign_in_screen.SignInScreen
-import com.elfeky.devdash.ui.screens.sign_up_screen.SignUpScreen
-import com.elfeky.devdash.ui.screens.verify_email_screen.VerifyEmailScreen
+import com.elfeky.devdash.ui.screens.auth_screens.done_screen.DoneScreen
+import com.elfeky.devdash.ui.screens.main_screens.MainScreen
+import com.elfeky.devdash.ui.screens.auth_screens.reset_password_screen.ResetPasswordScreen
+import com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen.SignInScreen
+import com.elfeky.devdash.ui.screens.auth_screens.sign_up_screen.SignUpScreen
+import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.VerifyEmailScreen
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {

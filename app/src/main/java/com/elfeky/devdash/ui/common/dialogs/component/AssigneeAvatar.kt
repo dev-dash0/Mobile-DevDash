@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,42 +21,32 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
-import com.elfeky.devdash.ui.theme.BlueGray
-import com.elfeky.devdash.ui.theme.Gray
+import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.White
 
 @Composable
-fun AssigneeAvatar(assignee: UserUiModel) {
+fun AssigneeAvatar(
+    assignee: UserUiModel,
+    backgroundColor: Color = MaterialTheme.colorScheme.onSecondary
+) {
     SubcomposeAsyncImage(
         model = assignee.avtar,
         contentDescription = "Assignee Image",
         modifier = Modifier
-            .border(2.dp, White, CircleShape)
-            .padding(2.dp)
+            .border(1.dp, White, CircleShape)
             .clip(CircleShape)
-            .background(BlueGray)
-            .size(32.dp),
+            .background(backgroundColor)
+            .padding(4.dp)
+            .size(24.dp),
         loading = {
             Icon(
-                painter = painterResource(id = R.drawable.person),
+                painter = painterResource(id = R.drawable.person_ic),
                 contentDescription = "Assignee Image",
-                modifier = Modifier
-                    .border(2.dp, White, CircleShape)
-                    .padding(2.dp)
-                    .clip(CircleShape)
-                    .size(32.dp),
                 tint = White
             )
         },
         error = {
-            Box(
-                modifier = Modifier
-                    .background(Gray)
-                    .padding(2.dp)
-                    .clip(CircleShape)
-                    .size(32.dp),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(contentAlignment = Alignment.Center) {
                 Text(
                     text = assignee.name.take(2).uppercase(),
                     style = MaterialTheme.typography.labelMedium,
@@ -70,5 +61,5 @@ fun AssigneeAvatar(assignee: UserUiModel) {
 @Preview
 @Composable
 private fun AssigneeAvatarPreview() {
-    AssigneeAvatar(assignee = UserUiModel("John Doe", ""))
+    DevDashTheme { AssigneeAvatar(assignee = UserUiModel("John Doe", "")) }
 }
