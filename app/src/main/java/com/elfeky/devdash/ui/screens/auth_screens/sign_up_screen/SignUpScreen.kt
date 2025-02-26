@@ -26,9 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -36,7 +33,10 @@ import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
-fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun SignUpScreen(
+    onSignUpClick: (email: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -62,7 +62,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(Modifier.height(16.dp))
         Text(
             text = "Let’s create an account ",
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium
         )
@@ -140,10 +140,7 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 
         CustomButton(
             text = "Sign Up",
-            onClick = {
-                // TODO Sign Up Button
-                navController.navigate(AppScreen.VerifyEmailScreen.route + "/${AppScreen.MainScreen.route}/$email")
-            },
+            onClick = { onSignUpClick(email) },
             buttonColor = defaultButtonColor,
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,7 +161,5 @@ fun SignUpScreen(modifier: Modifier = Modifier, navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 private fun SignUpScreenPreview() {
-    DevDashTheme {
-        SignUpScreen(navController = rememberNavController())
-    }
+    DevDashTheme { SignUpScreen({}) }
 }

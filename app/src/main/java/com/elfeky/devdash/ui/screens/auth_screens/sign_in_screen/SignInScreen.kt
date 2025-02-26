@@ -1,7 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +13,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +31,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -41,7 +38,12 @@ import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
-fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun SignInScreen(
+    onForgetPasswordClick: (email: String) -> Unit,
+    onSignUpClick: () -> Unit,
+    onSignInClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -57,15 +59,15 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "DevDash",
+            text = "Sign In",
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(56.dp))
         Text(
-            text = "Sign In",
-            color = MaterialTheme.colorScheme.onSecondary,
+            text = "Welcome Back",
+            color = MaterialTheme.colorScheme.secondary,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium
         )
@@ -96,19 +98,14 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             imeAction = ImeAction.Done
         )
 
-        Text(
-            text = "Forget Password?",
-            color = Color.LightGray,
-            modifier = Modifier
-                .clickable {
-                    if (email.isNotBlank()) {
-                        navController.navigate(
-                            "${AppScreen.VerifyEmailScreen.route}/${AppScreen.ResetPasswordScreen.route}/$email"
-                        )
-                    }
-                }
-                .align(Alignment.End)
-        )
+        TextButton(
+            onClick = { onForgetPasswordClick(email) },
+            enabled = email.isNotBlank(),
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text(text = "Forget Password?", color = Color.LightGray)
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
 
         val signUpText = buildAnnotatedString {
@@ -125,18 +122,18 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
 
-        Text(
-            text = signUpText,
-            fontSize = 16.sp,
+        TextButton(
+            onClick = onSignUpClick,
             modifier = Modifier
                 .padding(32.dp)
                 .align(Alignment.CenterHorizontally)
-                .clickable { navController.navigate(AppScreen.SignUpScreen.route) }
-        )
+        ) {
+            Text(text = signUpText, fontSize = 16.sp)
+        }
 
         CustomButton(
             text = "Sign In",
-            onClick = { /*TODO Sign In Button*/ },
+            onClick = { onSignInClick() },
             buttonColor = defaultButtonColor,
             modifier = Modifier
                 .fillMaxWidth()
@@ -149,8 +146,5 @@ fun SignInScreen(modifier: Modifier = Modifier, navController: NavController) {
 @Preview
 @Composable
 private fun SignInScreenPreview() {
-    DevDashTheme {
-        val navController = rememberNavController()
-        SignInScreen(navController = navController)
-    }
+    DevDashTheme { SignInScreen({}, {}, {}) }
 }

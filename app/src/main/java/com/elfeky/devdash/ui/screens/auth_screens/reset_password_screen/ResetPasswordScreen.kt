@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.reset_password_screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,15 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -37,12 +36,11 @@ import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
-fun ResetPasswordScreen(
-    modifier: Modifier = Modifier, navController: NavController
-) {
-
+fun ResetPasswordScreen(onConfirmClick: () -> Unit, modifier: Modifier = Modifier) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var showToast by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -52,7 +50,6 @@ fun ResetPasswordScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Image(
             painter = painterResource(R.drawable.reset_password),
             contentDescription = "Reset Password",
@@ -79,7 +76,6 @@ fun ResetPasswordScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-
         InputField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
@@ -94,22 +90,24 @@ fun ResetPasswordScreen(
         CustomButton(
             text = "Change Password",
             onClick = {
-                // TODO Reset Password Button
-                navController.navigate(AppScreen.DoneScreen.route)
+                onConfirmClick()
+                showToast = true
             },
             buttonColor = defaultButtonColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
-            enabled = (password.isNotBlank() and confirmPassword.isNotBlank() and (password == confirmPassword))
+            enabled = (password.isNotBlank() && confirmPassword.isNotBlank() && (password == confirmPassword))
         )
+    }
+    if (showToast) {
+        Toast.makeText(context, "Password changed successfully", Toast.LENGTH_SHORT).show()
+        showToast = false
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ResetPasswordScreenPreview() {
-    DevDashTheme {
-        ResetPasswordScreen(navController = rememberNavController())
-    }
+    DevDashTheme { ResetPasswordScreen({}) }
 }

@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
@@ -77,7 +76,7 @@ fun DoneScreen(
                 .fillMaxWidth()
                 .height(64.dp),
             onClick = {
-                navController.navigate(AppScreen.SignInScreen.route)
+//                navController.navigate(AppScreen.SignInScreen.route)
             },
             colors = defaultButtonColor,
             shape = RoundedCornerShape(8.dp)
