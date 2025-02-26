@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,20 +30,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.components.OtpTextField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun VerifyEmailScreen(
-    navController: NavController,
-    destination: String,
     email: String,
-    modifier: Modifier = Modifier
+    onOtpInputFilled: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
     var otp by remember { mutableStateOf("") }
@@ -85,35 +80,34 @@ fun VerifyEmailScreen(
             otp = value
             otpInputFilled = filled
             if (otpInputFilled) {
-                Log.i("destination", destination)
-                navController.navigate(destination){popUpTo(0) { inclusive = true }}
+                onOtpInputFilled()
             }
         }
-        Spacer(Modifier.height(16.dp))
-
-        Text(
-            text = buildAnnotatedString {
-
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                    append("Didn't get an email? ")
-                }
-
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.tertiary,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    append("Resend email")
-                }
-            },
-            fontSize = 16.sp,
-            modifier = Modifier
-                .clickable(onClick = {
-                    // TODO Resend Email
-                })
-        )
     }
+    Spacer(Modifier.height(16.dp))
+
+    Text(
+        text = buildAnnotatedString {
+
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                append("Didn't get an email? ")
+            }
+
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    textDecoration = TextDecoration.Underline
+                )
+            ) {
+                append("Resend email")
+            }
+        },
+        fontSize = 16.sp,
+        modifier = Modifier
+            .clickable(onClick = {
+                // TODO Resend Email
+            })
+    )
 }
 
 @Preview(showBackground = true)
@@ -121,9 +115,8 @@ fun VerifyEmailScreen(
 private fun VerifyEmailScreenPreview() {
     DevDashTheme {
         VerifyEmailScreen(
-            navController = rememberNavController(),
-            destination = AppScreen.ResetPasswordScreen.route,
-            email = ""
+            email = "",
+            onOtpInputFilled = {}
         )
     }
 }

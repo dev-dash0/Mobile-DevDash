@@ -13,10 +13,10 @@ import com.elfeky.devdash.ui.screens.auth_screens.sign_up_screen.SignUpScreen
 import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.VerifyEmailScreen
 
 fun NavGraphBuilder.authNavigation(navController: NavController) {
-    navigation<Auth>(startDestination = LoginRoute) {
-        composable<LoginRoute> {
+    navigation<Auth>(startDestination = SignInRoute) {
+        composable<SignInRoute> {
             SignInScreen(
-                onForgetPasswordClick = { navController.navigate(ResetPasswordRoute) },
+                onForgetPasswordClick = { navController.navigate(VerifyEmailRoute(it, true)) },
                 onSignUpClick = { navController.navigate(SignUpRoute) },
                 onSignInClick = {
                     navController.navigate(HomeRoute) {
@@ -47,7 +47,7 @@ fun NavGraphBuilder.authNavigation(navController: NavController) {
         }
 
         composable<ResetPasswordRoute> {
-            ResetPasswordScreen(onConfirmClick = { navController.navigate(LoginRoute) })
+            ResetPasswordScreen(onConfirmClick = { navController.navigate(SignInRoute) })
         }
     }
 }

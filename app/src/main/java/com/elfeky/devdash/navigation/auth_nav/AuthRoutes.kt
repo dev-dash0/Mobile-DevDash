@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 object Auth
 
 @Serializable
-object LoginRoute
+object SignInRoute
 
 @Serializable
 object SignUpRoute

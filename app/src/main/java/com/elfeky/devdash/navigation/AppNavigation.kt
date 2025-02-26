@@ -13,16 +13,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.auth_nav.Auth
 import com.elfeky.devdash.navigation.auth_nav.authNavigation
-import com.elfeky.devdash.navigation.main_nav.Main
 import com.elfeky.devdash.navigation.main_nav.mainNavigation
 import com.elfeky.devdash.ui.screens.main_screens.components.bottom_bar.MainNavigationBar
+import com.elfeky.devdash.ui.screens.main_screens.components.bottom_bar.navigationItems
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val showBottomBar = currentDestination?.hierarchy?.any { it.hasRoute<Main>() } == true
+    val showBottomBar =
+        navigationItems.any { item -> currentDestination?.hasRoute(item.destination::class) == true }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

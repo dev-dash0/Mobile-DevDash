@@ -31,7 +31,7 @@ fun MainNavigationBar(
         containerColor = Lavender,
         modifier = modifier.clip(RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp))
     ) {
-        navigationItems.forEach { item ->
+            navigationItems.forEach { item ->
             NavigationBarItem(
                 selected = isSelected(item),
                 onClick = { onItemClick(item) },
