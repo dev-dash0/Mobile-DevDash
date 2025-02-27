@@ -11,15 +11,16 @@ import com.elfeky.devdash.ui.common.card.component.CardTitle
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
-fun CompanyCard(
+fun ProjectCard(
     companyName: String,
     date: String,
     status: Status,
     issueTitle: String,
     description: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CardContainer(modifier) {
+    CardContainer(onClick = onClick, modifier = modifier) {
         CardHeader(
             projectName = companyName,
             date = date
@@ -36,12 +37,13 @@ fun CompanyCard(
 @Composable
 private fun CompanyCardPreview() {
     DevDashTheme {
-        CompanyCard(
-            "Company Name",
-            "12 Feb | 18 Feb",
-            Status.InProgress,
-            "Project Name",
-            "SwiftTech Solutions is an innovative software development company specializing in cutting-edge mobile and web applications. We deliver scalable, high-performance solutions tailored to businesses of all sizes, leveraging modern technologies to drive digital transformation."
+        ProjectCard(
+            companyName = "Company Name",
+            date = "12 Feb | 18 Feb",
+            status = Status.InProgress,
+            issueTitle = "Project Name",
+            description = "SwiftTech Solutions is an innovative software development company specializing in cutting-edge mobile and web applications. We deliver scalable, high-performance solutions tailored to businesses of all sizes, leveraging modern technologies to drive digital transformation.",
+            onClick = {}
         )
     }
 }

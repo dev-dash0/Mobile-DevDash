@@ -7,10 +7,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.component.CardContainer
-import com.elfeky.devdash.ui.common.card.component.IssueCardFooter
 import com.elfeky.devdash.ui.common.card.component.CardHeader
-import com.elfeky.devdash.ui.common.card.component.IssueCardLabels
 import com.elfeky.devdash.ui.common.card.component.CardTitle
+import com.elfeky.devdash.ui.common.card.component.IssueCardFooter
+import com.elfeky.devdash.ui.common.card.component.IssueCardLabels
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
 import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
 import com.elfeky.devdash.ui.common.dialogs.labelList
@@ -26,10 +26,11 @@ fun IssueCard(
     labels: List<String>,
     assignees: List<UserUiModel>,
     priorityTint: Color,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
-    CardContainer(modifier) {
+    CardContainer(onClick = onClick, modifier = modifier) {
         CardHeader(projectName = projectName, date = date)
         CardTitle(status = status, issueTitle = issueTitle)
         IssueCardLabels(labels = labels)
@@ -46,13 +47,14 @@ fun IssueCard(
 private fun IssueCardPreview() {
     DevDashTheme {
         IssueCard(
-            "DevDash",
-            "12 Feb | 18 Feb",
-            Status.Canceled,
-            "Issue Title",
-            labelList.take(3),
-            assigneeList,
-            Red
+            projectName = "DevDash",
+            date = "12 Feb | 18 Feb",
+            status = Status.Canceled,
+            issueTitle = "Issue Title",
+            labels = labelList.take(3),
+            assignees = assigneeList,
+            priorityTint = Red,
+            onClick = {}
         )
     }
 }

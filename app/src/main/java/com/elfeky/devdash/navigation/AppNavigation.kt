@@ -42,6 +42,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(gradientBackground)
         ) {
             authNavigation(navController)
             mainNavigation(navController)

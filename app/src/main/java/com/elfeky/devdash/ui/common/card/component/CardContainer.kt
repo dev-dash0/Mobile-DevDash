@@ -1,6 +1,7 @@
 package com.elfeky.devdash.ui.common.card.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -24,6 +25,7 @@ import com.elfeky.devdash.ui.utils.cardGradientBackground
 
 @Composable
 fun CardContainer(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Brush = cardGradientBackground,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
@@ -32,7 +34,7 @@ fun CardContainer(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent,
             contentColor = contentColor
@@ -55,6 +57,7 @@ fun CardContainer(
 private fun CardContainerPreview() {
     DevDashTheme {
         CardContainer(
+            onClick = {},
             modifier = Modifier.height(100.dp)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {}

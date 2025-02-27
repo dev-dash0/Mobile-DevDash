@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.main_screens.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,14 +20,11 @@ import com.elfeky.devdash.ui.screens.main_screens.home.components.Item
 import com.elfeky.devdash.ui.screens.main_screens.home.components.ProgressRow
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.Red
-import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(gradientBackground),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
@@ -55,7 +51,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     "Issue Title",
                     labelList.take(3),
                     assigneeList,
-                    Red
+                    Red,
+                    {/*TODO*/ }
                 )
             }
         }
@@ -69,7 +66,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     "Issue Title",
                     labelList.take(3),
                     assigneeList,
-                    Red
+                    Red,
+                    {/*TODO*/ }
                 )
             }
         }

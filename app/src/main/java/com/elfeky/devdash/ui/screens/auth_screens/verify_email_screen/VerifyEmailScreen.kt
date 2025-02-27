@@ -50,7 +50,6 @@ fun VerifyEmailScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(gradientBackground)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

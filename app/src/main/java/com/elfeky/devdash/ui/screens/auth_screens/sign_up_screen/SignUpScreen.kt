@@ -69,7 +69,6 @@ fun SignUpScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = gradientBackground)
             .padding(horizontal = 24.dp, vertical = 24.dp)
             .imePadding() // Add padding for the keyboard
             .verticalScroll(rememberScrollState()),
