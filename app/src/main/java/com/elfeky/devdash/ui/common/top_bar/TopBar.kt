@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component
+package com.elfeky.devdash.ui.common.top_bar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
