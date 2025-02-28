@@ -1,7 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.reset_password_screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +33,6 @@ import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
-import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun ResetPasswordScreen(
@@ -47,7 +45,6 @@ fun ResetPasswordScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = gradientBackground)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

@@ -8,17 +8,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
@@ -45,20 +47,24 @@ fun CircularProgressCard(
     backgroundColor: Color = Color.LightGray,
     textColor: Color = colors[1]
 ) {
+    var startAnimation by remember { mutableFloatStateOf(0f) }
     val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = tween(durationMillis = 1000),
-        label = "Progress Animation"
+        targetValue = startAnimation,
+        animationSpec = tween(durationMillis = 1500),
+        label = "Progress Animation",
     )
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(0.dp)
-    ) {
+
+    LaunchedEffect(key1 = true) {
+        startAnimation = progress
+    }
+
+    Card(modifier = modifier.fillMaxHeight()) {
         Column(
             modifier = Modifier
+                .fillMaxHeight()
                 .background(Brush.verticalGradient(listOf(Indigo, DarkBlue)))
-                .padding(horizontal = 4.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -66,11 +72,13 @@ fun CircularProgressCard(
                 modifier = Modifier.fillMaxWidth(),
                 color = textColor,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
                 Canvas(
                     modifier = Modifier
@@ -106,7 +114,6 @@ fun CircularProgressCard(
                 )
             }
         }
-
     }
 
 }

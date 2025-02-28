@@ -1,7 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,7 +40,6 @@ import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
-import com.elfeky.devdash.ui.utils.gradientBackground
 
 
 @Composable
@@ -65,9 +63,6 @@ fun SignInScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                brush = gradientBackground
-            )
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

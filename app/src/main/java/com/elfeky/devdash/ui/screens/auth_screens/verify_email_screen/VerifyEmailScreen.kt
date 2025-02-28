@@ -2,7 +2,6 @@ package com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,6 @@ import com.elfeky.devdash.R
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.components.OtpTextField
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun VerifyEmailScreen(
@@ -55,7 +53,6 @@ fun VerifyEmailScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(gradientBackground)
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

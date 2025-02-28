@@ -1,7 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.sign_up_screen
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +40,6 @@ import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.screens.sign_up_screen.SignUpViewModel
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
-import com.elfeky.devdash.ui.utils.gradientBackground
 import com.elfeky.domain.model.User
 
 @Composable
@@ -72,7 +70,6 @@ fun SignUpScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = gradientBackground)
             .padding(horizontal = 24.dp, vertical = 24.dp)
             .imePadding() // Add padding for the keyboard
             .verticalScroll(rememberScrollState()),
