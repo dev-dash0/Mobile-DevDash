@@ -28,18 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun DoneScreen(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavToSignInClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -76,9 +73,7 @@ fun DoneScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
-            onClick = {
-                navController.navigate(AppScreen.SignInScreen.route){popUpTo(0) { inclusive = true }}
-            },
+            onClick = onNavToSignInClick,
             colors = defaultButtonColor,
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -98,6 +93,6 @@ fun DoneScreen(
 @Composable
 private fun DoneScreenPreview() {
     DevDashTheme {
-        DoneScreen(navController = rememberNavController())
+        DoneScreen {}
     }
 }

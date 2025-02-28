@@ -1,7 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen
 
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,9 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -44,8 +41,10 @@ import com.elfeky.devdash.ui.utils.defaultButtonColor
 
 @Composable
 fun SignInScreen(
+    onSignInClick: () -> Unit,
+    onSignUpClick: () -> Unit,
+    onForgetPassword: (email: String) -> Unit,
     modifier: Modifier = Modifier,
-    navController: NavController,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
@@ -113,19 +112,17 @@ fun SignInScreen(
             imeAction = ImeAction.Done
         )
 
-        Text(
-            text = "Forget Password?",
-            color = Color.LightGray,
-            modifier = Modifier
-                .clickable {
-                    if (email.isNotBlank()) {
-                        navController.navigate(
-                            "${AppScreen.VerifyEmailScreen.route}/${AppScreen.ResetPasswordScreen.route}/$email"
-                        )
-                    }
-                }
-                .align(Alignment.End)
-        )
+        TextButton(
+            onClick = { onForgetPassword(email) },
+            modifier = Modifier.align(Alignment.End),
+            enabled = email.isNotBlank()
+        ) {
+            Text(
+                text = "Forget Password?",
+                color = Color.LightGray
+            )
+        }
+
         if (state.error != "") {
             Text(
                 text = state.error,
@@ -150,14 +147,17 @@ fun SignInScreen(
             }
         }
 
-        Text(
-            text = signUpText,
-            fontSize = 16.sp,
+        TextButton(
+            onClick = onSignUpClick,
             modifier = Modifier
                 .padding(32.dp)
                 .align(Alignment.CenterHorizontally)
-                .clickable { navController.navigate(AppScreen.SignUpScreen.route) }
-        )
+        ) {
+            Text(
+                text = signUpText,
+                fontSize = 16.sp,
+            )
+        }
 
         CustomButton(
             text = "Sign In",
@@ -170,13 +170,7 @@ fun SignInScreen(
                 .height(64.dp),
             enabled = email.isNotBlank() && password.isNotBlank()
         )
-        if (state.loggedIn) {
-            navController.navigate(AppScreen.MainScreen.route) {
-                popUpTo(0) {
-                    inclusive = true
-                }
-            }
-        }
+        if (state.loggedIn) onSignInClick()
         Log.i("loginState", state.toString())
     }
 
@@ -187,7 +181,6 @@ fun SignInScreen(
 @Composable
 private fun SignInScreenPreview() {
     DevDashTheme {
-        val navController = rememberNavController()
-        SignInScreen(navController = navController)
+        SignInScreen({}, {}, {})
     }
 }

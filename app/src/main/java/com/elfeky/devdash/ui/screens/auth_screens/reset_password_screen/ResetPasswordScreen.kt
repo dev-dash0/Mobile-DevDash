@@ -25,19 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 
 @Composable
-fun ResetPasswordScreen(
-    modifier: Modifier = Modifier, navController: NavController
-) {
+fun ResetPasswordScreen(modifier: Modifier = Modifier, onChangePasswordClick: () -> Unit) {
 
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -92,7 +87,7 @@ fun ResetPasswordScreen(
             text = "Change Password",
             onClick = {
                 // TODO Reset Password Button
-                navController.navigate(AppScreen.DoneScreen.route)
+                onChangePasswordClick()
             },
             buttonColor = defaultButtonColor,
             modifier = Modifier
@@ -107,6 +102,6 @@ fun ResetPasswordScreen(
 @Composable
 private fun ResetPasswordScreenPreview() {
     DevDashTheme {
-        ResetPasswordScreen(navController = rememberNavController())
+        ResetPasswordScreen {}
     }
 }

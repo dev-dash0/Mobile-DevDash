@@ -11,8 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.IssueCard
@@ -24,11 +22,7 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.Red
 
 @Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier,
-    mainNavController: NavController,
-    appNavController: NavController
-) {
+fun HomeScreen(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -81,8 +75,7 @@ fun HomeScreen(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    val navController = rememberNavController()
     DevDashTheme {
-        HomeScreen(Modifier.fillMaxSize(), navController, navController)
+        HomeScreen(Modifier.fillMaxSize())
     }
 }

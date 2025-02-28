@@ -2,7 +2,6 @@ package com.elfeky.devdash.navigation.main_navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,35 +12,25 @@ import com.elfeky.devdash.ui.screens.main_screens.inbox.InboxScreen
 
 @Composable
 fun MainNavigation(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
-    appNavController: NavController,
-    mainNavController: NavHostController
 ) {
-
-    NavHost(navController = mainNavController, startDestination = MainScreen.HomeScreen.route) {
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = MainScreen.HomeScreen.route
+    ) {
         composable(route = MainScreen.HomeScreen.route) {
-            HomeScreen(
-                mainNavController = mainNavController,
-                appNavController = appNavController
-            )
+            HomeScreen()
         }
         composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen(
-                mainNavController = mainNavController,
-                appNavController = appNavController
-            )
+            CompanyScreen()
         }
         composable(route = MainScreen.CalenderScreen.route) {
-            CalenderScreen(
-                mainNavController = mainNavController,
-                appNavController = appNavController
-            )
+            CalenderScreen()
         }
         composable(route = MainScreen.InboxScreen.route) {
-            InboxScreen(
-                mainNavController = mainNavController,
-                appNavController = appNavController
-            )
+            InboxScreen()
         }
     }
 }

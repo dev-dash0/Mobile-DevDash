@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,17 +29,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.R
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.components.OtpTextField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun VerifyEmailScreen(
-    navController: NavController,
-    destination: String,
+    onOtpInputFilled: () -> Unit,
     email: String,
     modifier: Modifier = Modifier
 ) {
@@ -81,10 +76,7 @@ fun VerifyEmailScreen(
         OtpTextField(otpText = otp, otpCount = 4) { value, filled ->
             otp = value
             otpInputFilled = filled
-            if (otpInputFilled) {
-                Log.i("destination", destination)
-                navController.navigate(destination){popUpTo(0) { inclusive = true }}
-            }
+            if (otpInputFilled) onOtpInputFilled()
         }
         Spacer(Modifier.height(16.dp))
 
@@ -118,8 +110,7 @@ fun VerifyEmailScreen(
 private fun VerifyEmailScreenPreview() {
     DevDashTheme {
         VerifyEmailScreen(
-            navController = rememberNavController(),
-            destination = AppScreen.ResetPasswordScreen.route,
+            onOtpInputFilled = {},
             email = ""
         )
     }

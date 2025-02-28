@@ -1,6 +1,5 @@
 package com.elfeky.devdash.navigation.app_navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
@@ -14,24 +13,40 @@ import com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen.SignInScreen
 import com.elfeky.devdash.ui.screens.auth_screens.sign_up_screen.SignUpScreen
 import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.VerifyEmailScreen
 import com.elfeky.devdash.ui.screens.main_screens.MainScreen
-import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     NavHost(
-        modifier = Modifier.background(gradientBackground),
+        modifier = modifier,
         navController = navController,
         startDestination = AppScreen.SignInScreen.route
     ) {
-
         composable(AppScreen.SignInScreen.route) {
-            SignInScreen(navController = navController)
+            SignInScreen(
+                onSignInClick = {
+                    navController.navigate(AppScreen.MainScreen.route) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onSignUpClick = { navController.navigate(AppScreen.SignUpScreen.route) },
+                onForgetPassword = { email ->
+                    navController.navigate(
+                        "${AppScreen.VerifyEmailScreen.route}/${AppScreen.ResetPasswordScreen.route}/$email"
+                    )
+                }
+            )
         }
 
         composable(AppScreen.SignUpScreen.route) {
-            SignUpScreen(navController = navController)
+            SignUpScreen(
+                onSignedUp = { email ->
+                    navController.navigate(AppScreen.VerifyEmailScreen.route + "/${AppScreen.SignInScreen.route}/$email")
+                }
+            )
         }
 
         composable(
@@ -45,23 +60,33 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             val email = it.arguments?.getString("email")!!
 
             VerifyEmailScreen(
-                navController = navController,
-                destination = destination,
+                onOtpInputFilled = {
+                    navController.navigate(destination) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                    }
+                },
                 email = email
             )
         }
 
         composable(AppScreen.ResetPasswordScreen.route) {
-            ResetPasswordScreen(navController = navController)
+            ResetPasswordScreen { navController.navigate(AppScreen.DoneScreen.route) }
         }
 
         composable(AppScreen.DoneScreen.route) {
-            DoneScreen(navController = navController)
+            DoneScreen {
+                navController.navigate(AppScreen.SignInScreen.route) {
+                    popUpTo(0) {
+                        inclusive = true
+                    }
+                }
+            }
         }
 
         composable(AppScreen.MainScreen.route) {
-            MainScreen(appNavController = navController)
+            MainScreen()
         }
-
     }
 }

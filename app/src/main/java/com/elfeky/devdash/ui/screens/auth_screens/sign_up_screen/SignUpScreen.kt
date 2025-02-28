@@ -31,13 +31,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.common.component.DateTextField
 import com.elfeky.devdash.ui.common.component.InputField
-import com.elfeky.devdash.ui.screens.sign_up_screen.SignUpViewModel
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 import com.elfeky.domain.model.User
@@ -45,8 +41,8 @@ import com.elfeky.domain.model.User
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel(),
+    onSignedUp: (email: String) -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -248,9 +244,7 @@ fun SignUpScreen(
                             and (password == confirmPassword)
                     )
         )
-        if (state.signedUp) {
-            navController.navigate(AppScreen.VerifyEmailScreen.route + "/${AppScreen.SignInScreen.route}/$email")
-        }
+        if (state.signedUp) onSignedUp(email)
     }
 }
 
@@ -258,6 +252,6 @@ fun SignUpScreen(
 @Composable
 private fun SignUpScreenPreview() {
     DevDashTheme {
-        SignUpScreen(navController = rememberNavController())
+        SignUpScreen {}
     }
 }
