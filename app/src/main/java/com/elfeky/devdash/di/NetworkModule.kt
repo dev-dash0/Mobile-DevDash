@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -20,7 +21,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttp(): OkHttpClient {
-        return OkHttpClient().newBuilder().connectTimeout(20, TimeUnit.SECONDS)
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        return OkHttpClient().newBuilder().addInterceptor(logging)
+            .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS).build()
     }
 
@@ -34,7 +39,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): AuthenticationApiService{
+    fun provideApiService(retrofit: Retrofit): AuthenticationApiService {
         return retrofit.create(AuthenticationApiService::class.java)
     }
 }
