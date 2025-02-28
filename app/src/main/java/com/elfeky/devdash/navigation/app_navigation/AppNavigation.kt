@@ -1,5 +1,6 @@
 package com.elfeky.devdash.navigation.app_navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
@@ -8,17 +9,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.elfeky.devdash.ui.screens.auth_screens.done_screen.DoneScreen
-import com.elfeky.devdash.ui.screens.main_screens.MainScreen
 import com.elfeky.devdash.ui.screens.auth_screens.reset_password_screen.ResetPasswordScreen
 import com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen.SignInScreen
 import com.elfeky.devdash.ui.screens.auth_screens.sign_up_screen.SignUpScreen
 import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.VerifyEmailScreen
+import com.elfeky.devdash.ui.screens.main_screens.MainScreen
+import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     NavHost(
+        modifier = Modifier.background(gradientBackground),
         navController = navController,
         startDestination = AppScreen.SignInScreen.route
     ) {
