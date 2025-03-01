@@ -12,15 +12,16 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun ProjectCard(
+    id: Int,
     companyName: String,
     date: String,
     status: Status,
     issueTitle: String,
     description: String,
-    onClick: () -> Unit,
+    onClick: (id: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CardContainer(onClick = onClick, modifier = modifier) {
+    CardContainer(onClick = { onClick(id) }, modifier = modifier) {
         CardHeader(
             projectName = companyName,
             date = date
@@ -38,6 +39,7 @@ fun ProjectCard(
 private fun CompanyCardPreview() {
     DevDashTheme {
         ProjectCard(
+            id = 0,
             companyName = "Company Name",
             date = "12 Feb | 18 Feb",
             status = Status.InProgress,

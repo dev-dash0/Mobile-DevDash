@@ -25,7 +25,7 @@ fun MainNavigation(
             HomeScreen()
         }
         composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen(onProjectClick = onProjectNavigate)
+            CompanyScreen(onCompanyClick = onProjectNavigate)
         }
         composable(route = MainScreen.CalenderScreen.route) {
             CalenderScreen()

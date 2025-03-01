@@ -8,8 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.elfeky.devdash.ui.screens.detail_screens.issue.IssueScreen
-import com.elfeky.devdash.ui.screens.detail_screens.project.ProjectScreen
+import com.elfeky.devdash.ui.common.Status
+import com.elfeky.devdash.ui.screens.details_screens.issue.IssueScreen
+import com.elfeky.devdash.ui.screens.details_screens.project.ProjectScreen
+import com.elfeky.devdash.ui.screens.details_screens.project.model.ProjectUiModel
 
 @Composable
 fun DetailNavigation(id: Int, modifier: Modifier = Modifier) {
@@ -20,17 +22,28 @@ fun DetailNavigation(id: Int, modifier: Modifier = Modifier) {
         startDestination = DetailScreen.ProjectScreen.route + "/$id"
     ) {
         composable(
-            route = DetailScreen.ProjectScreen.route,
+            route = DetailScreen.ProjectScreen.route + "/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
             val projectID = it.arguments?.getInt("id")!!
-            ProjectScreen(id = projectID) { id ->
+            ProjectScreen(
+                id = projectID, projectList = listOf(
+                    ProjectUiModel(
+                        0,
+                        "Google",
+                        "15 Nov | 28 Nov",
+                        Status.ToDo,
+                        "Gemini",
+                        "Enhance Gemini"
+                    )
+                )
+            ) { id ->
                 navController.navigate(DetailScreen.IssueScreen.route + "/$id")
             }
         }
 
         composable(
-            route = DetailScreen.IssueScreen.route,
+            route = DetailScreen.IssueScreen.route + "/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
             val issueID = it.arguments?.getInt("id")!!

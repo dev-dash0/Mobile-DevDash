@@ -51,7 +51,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     "Issue Title",
                     labelList.take(3),
                     assigneeList,
-                    Red
+                    Red,
+                    onClick = { TODO() },
                 )
             }
         }
@@ -65,7 +66,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     "Issue Title",
                     labelList.take(3),
                     assigneeList,
-                    Red
+                    Red,
+                    onClick = { TODO() },
                 )
             }
         }
