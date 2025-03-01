@@ -10,11 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun IssueScreen(id: Int, modifier: Modifier = Modifier) {
+fun IssueScreen(companyId: Int, projectId: Int, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("ID= $id", color = MaterialTheme.colorScheme.onBackground)
+        Text("Company Id= $companyId", color = MaterialTheme.colorScheme.onBackground)
+        Text("Project Id= $projectId", color = MaterialTheme.colorScheme.onBackground)
     }
 }

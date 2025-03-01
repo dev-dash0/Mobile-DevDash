@@ -25,9 +25,9 @@ fun DetailNavigation(id: Int, modifier: Modifier = Modifier) {
             route = DetailScreen.ProjectScreen.route + "/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
-            val projectID = it.arguments?.getInt("id")!!
+            val companyId = it.arguments?.getInt("id")!!
             ProjectScreen(
-                id = projectID, projectList = listOf(
+                id = companyId, projectList = listOf(
                     ProjectUiModel(
                         0,
                         "Google",
@@ -37,17 +37,20 @@ fun DetailNavigation(id: Int, modifier: Modifier = Modifier) {
                         "Enhance Gemini"
                     )
                 )
-            ) { id ->
-                navController.navigate(DetailScreen.IssueScreen.route + "/$id")
+            ) { projectId ->
+                navController.navigate(DetailScreen.IssueScreen.route + "/$companyId/$projectId")
             }
         }
 
         composable(
-            route = DetailScreen.IssueScreen.route + "/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            route = DetailScreen.IssueScreen.route + "/{company_id}/{project_id}",
+            arguments = listOf(
+                navArgument("company_id") { type = NavType.IntType },
+                navArgument("project_id") { type = NavType.IntType })
         ) {
-            val issueID = it.arguments?.getInt("id")!!
-            IssueScreen(id = issueID)
+            val companyId = it.arguments?.getInt("company_id")!!
+            val projectId = it.arguments?.getInt("project_id")!!
+            IssueScreen(projectId = projectId, companyId = companyId)
         }
     }
 }
