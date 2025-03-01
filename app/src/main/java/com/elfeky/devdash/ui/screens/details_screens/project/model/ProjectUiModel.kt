@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.nested_nav_screens.project.model
+package com.elfeky.devdash.ui.screens.details_screens.project.model
 
 import com.elfeky.devdash.ui.common.Status
 

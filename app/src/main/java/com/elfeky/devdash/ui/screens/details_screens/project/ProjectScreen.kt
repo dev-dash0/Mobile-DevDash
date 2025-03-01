@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.nested_nav_screens.project
+package com.elfeky.devdash.ui.screens.details_screens.project
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,12 +12,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.ProjectCard
-import com.elfeky.devdash.ui.screens.nested_nav_screens.project.model.ProjectUiModel
+import com.elfeky.devdash.ui.screens.details_screens.project.model.ProjectUiModel
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun ProjectScreen(
+    id: Int,
     projectList: List<ProjectUiModel>,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -45,6 +46,7 @@ fun ProjectScreen(
 private fun ProjectScreenPreview() {
     DevDashTheme {
         ProjectScreen(
+            id = 0,
             projectList = listOf(
                 ProjectUiModel(
                     0,
