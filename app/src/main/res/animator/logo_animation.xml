@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1000"
+    android:interpolator="@android:anim/anticipate_overshoot_interpolator"
+    android:valueFrom=".5"
+    android:valueTo=".8"
+    android:valueType="floatType">
+    <propertyValuesHolder android:propertyName="scaleX" />
+    <propertyValuesHolder android:propertyName="scaleY" />
+</objectAnimator>

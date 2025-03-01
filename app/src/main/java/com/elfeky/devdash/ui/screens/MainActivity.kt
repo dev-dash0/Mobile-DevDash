@@ -1,4 +1,4 @@
-package com.elfeky.devdash
+package com.elfeky.devdash.ui.screens
 
 import android.graphics.Color
 import android.os.Bundle
@@ -10,7 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.elfeky.devdash.navigation.app_navigation.AppNavigation
+import com.elfeky.devdash.navigation.AppNavigation
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 import dagger.hilt.android.AndroidEntryPoint
