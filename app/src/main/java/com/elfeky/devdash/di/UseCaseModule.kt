@@ -1,7 +1,9 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.domain.repo.AuthenticationRepo
+import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LoginUserUseCase
+import com.elfeky.domain.usecase.LogoutUseCase
 import com.elfeky.domain.usecase.RegisterUserUseCase
 import dagger.Module
 import dagger.Provides
@@ -22,5 +24,17 @@ object UseCaseModule {
     @Singleton
     fun provideRegisterUseCase(authenticationRepo: AuthenticationRepo): RegisterUserUseCase {
         return RegisterUserUseCase(authenticationRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogoutUseCase(authenticationRepo: AuthenticationRepo): LogoutUseCase {
+        return LogoutUseCase(authenticationRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetUserProfileUseCase(authenticationRepo: AuthenticationRepo): GetUserProfileUseCase {
+        return GetUserProfileUseCase(authenticationRepo)
     }
 }

@@ -1,7 +1,9 @@
 package com.elfeky.devdash.ui.screens.main_screens.more
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -18,22 +20,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.navigation.main_navigation.MainScreen
 import com.elfeky.devdash.ui.screens.main_screens.more.components.IconAndTextMoreItem
 import com.elfeky.devdash.ui.screens.main_screens.more.components.SureAlertDialog
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.domain.model.LoginResponse
 
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
     mainNavController: NavController,
-    appNavController: NavController
+    appNavController: NavController,
+    viewModel: MoreViewModel = hiltViewModel(),
+    accessToken: String,
+    refreshToken: String
 ) {
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showDeleteAccountDialog by remember { mutableStateOf(false) }
+
+    val state = viewModel.state.value
+
+
 
 
     Column(
@@ -67,6 +79,7 @@ fun MoreScreen(
             showDeleteAccountDialog = true
         }
         HorizontalDivider()
+        Spacer(Modifier.height(16.dp))
         IconAndTextMoreItem(
             primaryText = "Logout",
             secondaryText = "End Session",
@@ -82,9 +95,15 @@ fun MoreScreen(
             SureAlertDialog(
                 onDismiss = { showLogoutDialog = false },
                 onConfirm = {
-                    showLogoutDialog = false
+                    viewModel.logout(
+                        LoginResponse(
+                            accessToken = accessToken,
+                            refreshToken = refreshToken
+                        )
+                    )
                 },
-                action = "Logout"
+                action = "Logout",
+                error = state.logoutError
             )
         }
 
@@ -94,8 +113,20 @@ fun MoreScreen(
                 onConfirm = {
                     showDeleteAccountDialog = false
                 },
-                action = "Delete Account"
+                action = "Delete Account",
+                error = ""
             )
+        }
+
+
+        if (state.isLoggedOut) {
+            showLogoutDialog = false
+            viewModel.eraseLoginResponse()
+            appNavController.navigate(AppScreen.SignInScreen.route) {
+                popUpTo(0) {
+                    inclusive = true
+                }
+            }
         }
 
     }
@@ -107,7 +138,9 @@ private fun MoreScreenPreview() {
     DevDashTheme {
         MoreScreen(
             appNavController = rememberNavController(),
-            mainNavController = rememberNavController()
+            mainNavController = rememberNavController(),
+            accessToken = "",
+            refreshToken = ""
         )
     }
 }

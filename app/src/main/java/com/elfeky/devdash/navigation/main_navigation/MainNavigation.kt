@@ -9,15 +9,16 @@ import androidx.navigation.compose.composable
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
 import com.elfeky.devdash.ui.screens.main_screens.home.HomeScreen
-import com.elfeky.devdash.ui.screens.main_screens.inbox.InboxScreen
 import com.elfeky.devdash.ui.screens.main_screens.more.MoreScreen
-import com.elfeky.devdash.ui.screens.main_screens.more.components.ProfileScreen
+import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen.ProfileScreen
 
 @Composable
 fun MainNavigation(
     modifier: Modifier = Modifier,
     appNavController: NavController,
-    mainNavController: NavHostController
+    mainNavController: NavHostController,
+    accessToken: String,
+    refreshToken: String
 ) {
 
     NavHost(navController = mainNavController, startDestination = MainScreen.HomeScreen.route) {
@@ -42,11 +43,16 @@ fun MainNavigation(
         composable(route = MainScreen.MoreScreen.route) {
             MoreScreen(
                 mainNavController = mainNavController,
-                appNavController = appNavController
+                appNavController = appNavController,
+                accessToken = accessToken,
+                refreshToken = refreshToken
             )
         }
-        composable(route = MainScreen.ProfileScreen.route){
-            ProfileScreen()
+        composable(route = MainScreen.ProfileScreen.route) {
+            ProfileScreen(
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
         }
     }
 }
