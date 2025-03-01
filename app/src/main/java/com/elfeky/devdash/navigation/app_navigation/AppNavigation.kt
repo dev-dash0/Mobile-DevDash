@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.elfeky.devdash.navigation.detail_navigation.DetailNavigation
 import com.elfeky.devdash.ui.screens.auth_screens.done_screen.DoneScreen
 import com.elfeky.devdash.ui.screens.auth_screens.reset_password_screen.ResetPasswordScreen
 import com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen.SignInScreen
@@ -86,7 +87,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
 
         composable(AppScreen.MainScreen.route) {
-            MainScreen()
+            MainScreen { id ->
+                navController.navigate(AppScreen.DetailScreen.route + "/$id")
+            }
+        }
+
+        composable(
+            AppScreen.DetailScreen.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) {
+            val id = it.arguments?.getInt("id")!!
+            DetailNavigation(id = id)
         }
     }
 }

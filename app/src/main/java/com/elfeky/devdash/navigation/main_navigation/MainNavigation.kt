@@ -14,6 +14,7 @@ import com.elfeky.devdash.ui.screens.main_screens.inbox.InboxScreen
 fun MainNavigation(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    onProjectNavigate: (id: Int) -> Unit
 ) {
     NavHost(
         modifier = modifier,
@@ -24,7 +25,7 @@ fun MainNavigation(
             HomeScreen()
         }
         composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen()
+            CompanyScreen(onProjectClick = onProjectNavigate)
         }
         composable(route = MainScreen.CalenderScreen.route) {
             CalenderScreen()
