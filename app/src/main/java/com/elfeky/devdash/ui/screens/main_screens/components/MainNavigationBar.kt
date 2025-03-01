@@ -45,8 +45,8 @@ fun MainNavigationBar(navController: NavController, modifier: Modifier = Modifie
             icon = R.drawable.calender_ic,
         ),
         BottomNavigationItem(
-            title = "Inbox",
-            icon = R.drawable.inbox_ic,
+            title = "More",
+            icon = R.drawable.more_1,
         ),
     )
 

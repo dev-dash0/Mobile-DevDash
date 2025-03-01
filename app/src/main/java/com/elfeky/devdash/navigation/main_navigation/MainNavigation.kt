@@ -10,6 +10,8 @@ import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
 import com.elfeky.devdash.ui.screens.main_screens.home.HomeScreen
 import com.elfeky.devdash.ui.screens.main_screens.inbox.InboxScreen
+import com.elfeky.devdash.ui.screens.main_screens.more.MoreScreen
+import com.elfeky.devdash.ui.screens.main_screens.more.components.ProfileScreen
 
 @Composable
 fun MainNavigation(
@@ -37,11 +39,14 @@ fun MainNavigation(
                 appNavController = appNavController
             )
         }
-        composable(route = MainScreen.InboxScreen.route) {
-            InboxScreen(
+        composable(route = MainScreen.MoreScreen.route) {
+            MoreScreen(
                 mainNavController = mainNavController,
                 appNavController = appNavController
             )
+        }
+        composable(route = MainScreen.ProfileScreen.route){
+            ProfileScreen()
         }
     }
 }

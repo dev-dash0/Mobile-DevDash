@@ -4,5 +4,6 @@ sealed class MainScreen(val route: String) {
     data object HomeScreen : MainScreen("Home")
     data object CompanyScreen : MainScreen("Company")
     data object CalenderScreen : MainScreen("Calender")
-    data object InboxScreen : MainScreen("Inbox")
+    data object MoreScreen : MainScreen("More")
+    data object ProfileScreen : MainScreen("Profile")
 }
