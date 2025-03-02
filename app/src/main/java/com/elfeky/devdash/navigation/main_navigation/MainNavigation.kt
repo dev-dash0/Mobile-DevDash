@@ -2,36 +2,57 @@ package com.elfeky.devdash.navigation.main_navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
 import com.elfeky.devdash.ui.screens.main_screens.home.HomeScreen
-import com.elfeky.devdash.ui.screens.main_screens.inbox.InboxScreen
+import com.elfeky.devdash.ui.screens.main_screens.more.MoreScreen
+import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen.ProfileScreen
 
 @Composable
 fun MainNavigation(
-    navController: NavHostController,
     modifier: Modifier = Modifier,
-    onProjectNavigate: (id: Int) -> Unit
+    appNavController: NavController,
+    mainNavController: NavHostController,
+    accessToken: String,
+    refreshToken: String
 ) {
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = MainScreen.HomeScreen.route
-    ) {
+
+    NavHost(navController = mainNavController, startDestination = MainScreen.HomeScreen.route) {
         composable(route = MainScreen.HomeScreen.route) {
-            HomeScreen()
+            HomeScreen(
+                mainNavController = mainNavController,
+                appNavController = appNavController
+            )
         }
         composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen(onCompanyClick = onProjectNavigate)
+            CompanyScreen(
+                mainNavController = mainNavController,
+                appNavController = appNavController
+            )
         }
         composable(route = MainScreen.CalenderScreen.route) {
-            CalenderScreen()
+            CalenderScreen(
+                mainNavController = mainNavController,
+                appNavController = appNavController
+            )
         }
-        composable(route = MainScreen.InboxScreen.route) {
-            InboxScreen()
+        composable(route = MainScreen.MoreScreen.route) {
+            MoreScreen(
+                mainNavController = mainNavController,
+                appNavController = appNavController,
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
+        }
+        composable(route = MainScreen.ProfileScreen.route) {
+            ProfileScreen(
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
         }
     }
 }
