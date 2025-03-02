@@ -1,6 +1,8 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.domain.repo.AuthenticationRepo
+import com.elfeky.domain.usecase.ChangePasswordUseCase
+import com.elfeky.domain.usecase.DeleteAccountUseCase
 import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LoginUserUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
@@ -36,5 +38,17 @@ object UseCaseModule {
     @Singleton
     fun provideGetUserProfileUseCase(authenticationRepo: AuthenticationRepo): GetUserProfileUseCase {
         return GetUserProfileUseCase(authenticationRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteAccountUseCase(authenticationRepo: AuthenticationRepo): DeleteAccountUseCase {
+        return DeleteAccountUseCase(authenticationRepo)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChangePasswordUseCase(authenticationRepo: AuthenticationRepo): ChangePasswordUseCase {
+        return ChangePasswordUseCase(authenticationRepo)
     }
 }

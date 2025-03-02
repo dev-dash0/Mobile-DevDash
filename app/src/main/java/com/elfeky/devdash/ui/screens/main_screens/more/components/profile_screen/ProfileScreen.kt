@@ -37,16 +37,23 @@ fun ProfileScreen(
         if (state.isProfileLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = 32.dp))
         } else {
+            if (state.profileError != "") {
+                Text(text = state.profileError, color = MaterialTheme.colorScheme.error)
+            } else {
+                ProfileInfoItem(primaryName = "Email", secondaryName = state.userProfile!!.email)
+                ProfileInfoItem(
+                    primaryName = "Full Name",
+                    secondaryName = state.userProfile.firstName + " " + state.userProfile.lastName
+                )
+                ProfileInfoItem(
+                    primaryName = "username",
+                    secondaryName = state.userProfile.userName
+                )
+                ProfileInfoItem(primaryName = "Phone Number", secondaryName = "01000431490")
+            }
 
-            ProfileInfoItem(primaryName = "Email", secondaryName = state.userProfile!!.email)
-            ProfileInfoItem(
-                primaryName = "Full Name",
-                secondaryName = state.userProfile!!.firstName + " " + state.userProfile!!.lastName
-            )
-            ProfileInfoItem(primaryName = "username", secondaryName = state.userProfile!!.userName)
-            ProfileInfoItem(primaryName = "Phone Number", secondaryName = "01000431490")
         }
-        Text(text = state.profileError, color = MaterialTheme.colorScheme.error)
+
 
     }
 

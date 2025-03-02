@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.main_screens.more
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +13,14 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,9 +28,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.devdash.navigation.main_navigation.MainScreen
+import com.elfeky.devdash.ui.screens.main_screens.more.components.ChangePasswordDialog
 import com.elfeky.devdash.ui.screens.main_screens.more.components.IconAndTextMoreItem
 import com.elfeky.devdash.ui.screens.main_screens.more.components.SureAlertDialog
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.domain.model.ChangePasswordRequest
 import com.elfeky.domain.model.LoginResponse
 
 @Composable
@@ -39,9 +44,11 @@ fun MoreScreen(
     accessToken: String,
     refreshToken: String
 ) {
-
+    var showChangePasswordDialog by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showDeleteAccountDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     val state = viewModel.state.value
 
@@ -68,7 +75,9 @@ fun MoreScreen(
             secondaryText = "Reset your password",
             logo = Icons.Default.Lock,
             contentDescription = "Update Password",
-        ) { }
+        ) {
+            showChangePasswordDialog = true
+        }
         HorizontalDivider()
         IconAndTextMoreItem(
             primaryText = "Delete Account",
@@ -89,6 +98,21 @@ fun MoreScreen(
             showLogoutDialog = true
         }
 
+        if (showChangePasswordDialog) {
+            ChangePasswordDialog(
+                onDismiss = { showChangePasswordDialog = false },
+                onConfirm = { currentPassword, newPassword ->
+                    viewModel.changePassword(
+                        accessToken = accessToken,
+                        changePasswordRequest = ChangePasswordRequest(
+                            currentPassword = currentPassword,
+                            newPassword = newPassword
+                        )
+                    )
+                },
+                error = state.changePasswordError
+            )
+        }
 
 
         if (showLogoutDialog) {
@@ -111,16 +135,24 @@ fun MoreScreen(
             SureAlertDialog(
                 onDismiss = { showDeleteAccountDialog = false },
                 onConfirm = {
-                    showDeleteAccountDialog = false
+                    viewModel.deleteAccount(accessToken)
                 },
                 action = "Delete Account",
-                error = ""
+                error = state.deleteAccountError
             )
         }
 
+        if (state.passwordChanged){
+            showChangePasswordDialog = false
+            LaunchedEffect(Unit) {
+                Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        if (state.isLoggedOut) {
+
+        if (state.isLoggedOut || state.isAccountDeleted) {
             showLogoutDialog = false
+            showDeleteAccountDialog = false
             viewModel.eraseLoginResponse()
             appNavController.navigate(AppScreen.SignInScreen.route) {
                 popUpTo(0) {
