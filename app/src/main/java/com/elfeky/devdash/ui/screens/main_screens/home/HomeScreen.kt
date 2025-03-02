@@ -22,7 +22,11 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.Red
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    accessToken: String,
+    refreshToken: String,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp),
@@ -78,6 +82,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun HomeScreenPreview() {
     DevDashTheme {
-        HomeScreen(Modifier.fillMaxSize())
+        HomeScreen(
+            refreshToken = "",
+            accessToken = "",
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }

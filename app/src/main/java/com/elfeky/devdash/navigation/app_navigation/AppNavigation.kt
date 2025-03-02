@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.elfeky.devdash.navigation.detail_navigation.DetailNavigation
+import com.elfeky.devdash.navigation.project_details_navigation.ProjectDetailsNavigation
 import com.elfeky.devdash.ui.screens.auth_screens.done_screen.DoneScreen
 import com.elfeky.devdash.ui.screens.auth_screens.reset_password_screen.ResetPasswordScreen
 import com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen.SignInScreen
@@ -87,17 +87,27 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
 
         composable(AppScreen.MainScreen.route) {
-            MainScreen { id ->
-                navController.navigate(AppScreen.DetailScreen.route + "/$id")
+            MainScreen(onLogout = {
+                navController.navigate(AppScreen.SignInScreen.route) {
+                    popUpTo(0) {
+                        inclusive = true
+                    }
+                }
+            }) { companyId, projectId ->
+                navController.navigate(AppScreen.DetailScreen.route + "/$companyId/$projectId")
             }
         }
 
         composable(
-            AppScreen.DetailScreen.route + "/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            AppScreen.DetailScreen.route + "/{company_id}/{project_id}",
+            arguments = listOf(
+                navArgument("company_id") { type = NavType.IntType },
+                navArgument("project_id") { type = NavType.IntType }
+            )
         ) {
-            val id = it.arguments?.getInt("id")!!
-            DetailNavigation(id = id)
+            val companyId = it.arguments?.getInt("company_id")!!
+            val projectId = it.arguments?.getInt("project_id")!!
+            ProjectDetailsNavigation(companyId, projectId)
         }
     }
 }

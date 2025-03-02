@@ -16,7 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.component.voice_to_text_button.VoiceToTextButton
 
 @Composable
-fun CalenderScreen(modifier: Modifier = Modifier) {
+fun CalenderScreen(
+    accessToken: String,
+    refreshToken: String,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

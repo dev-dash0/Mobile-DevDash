@@ -16,18 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.elfeky.devdash.navigation.app_navigation.AppScreen
-import com.elfeky.devdash.navigation.main_navigation.MainScreen
 import com.elfeky.devdash.ui.screens.main_screens.more.components.ChangePasswordDialog
 import com.elfeky.devdash.ui.screens.main_screens.more.components.IconAndTextMoreItem
 import com.elfeky.devdash.ui.screens.main_screens.more.components.SureAlertDialog
@@ -38,11 +34,11 @@ import com.elfeky.domain.model.LoginResponse
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
-    mainNavController: NavController,
-    appNavController: NavController,
     viewModel: MoreViewModel = hiltViewModel(),
     accessToken: String,
-    refreshToken: String
+    refreshToken: String,
+    onLogout: () -> Unit,
+    onProfileNavigate: () -> Unit
 ) {
     var showChangePasswordDialog by remember { mutableStateOf(false) }
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -66,9 +62,8 @@ fun MoreScreen(
             secondaryText = "Your information",
             logo = Icons.Default.ManageAccounts,
             contentDescription = "Personal Information",
-        ) {
-            mainNavController.navigate(MainScreen.ProfileScreen.route)
-        }
+            onItemClick = onProfileNavigate
+        )
         HorizontalDivider()
         IconAndTextMoreItem(
             primaryText = "Update Password",
@@ -142,7 +137,7 @@ fun MoreScreen(
             )
         }
 
-        if (state.passwordChanged){
+        if (state.passwordChanged) {
             showChangePasswordDialog = false
             LaunchedEffect(Unit) {
                 Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
@@ -154,13 +149,8 @@ fun MoreScreen(
             showLogoutDialog = false
             showDeleteAccountDialog = false
             viewModel.eraseLoginResponse()
-            appNavController.navigate(AppScreen.SignInScreen.route) {
-                popUpTo(0) {
-                    inclusive = true
-                }
-            }
+            onLogout()
         }
-
     }
 }
 
@@ -169,10 +159,10 @@ fun MoreScreen(
 private fun MoreScreenPreview() {
     DevDashTheme {
         MoreScreen(
-            appNavController = rememberNavController(),
-            mainNavController = rememberNavController(),
             accessToken = "",
-            refreshToken = ""
+            refreshToken = "",
+            onLogout = {},
+            onProfileNavigate = {}
         )
     }
 }

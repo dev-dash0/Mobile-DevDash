@@ -21,10 +21,19 @@ import com.elfeky.devdash.ui.utils.gradientBackground
 @Composable
 fun ProjectScreen(
     id: Int,
-    projectList: List<ProjectUiModel>,
     modifier: Modifier = Modifier,
     onClick: (id: Int) -> Unit,
 ) {
+    val projectList = listOf(
+        ProjectUiModel(
+            0,
+            "Google",
+            "15 Nov | 28 Nov",
+            Status.ToDo,
+            "Gemini",
+            "Enhance Gemini"
+        )
+    )
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -52,17 +61,7 @@ fun ProjectScreen(
 private fun ProjectScreenPreview() {
     DevDashTheme {
         ProjectScreen(
-            id = 0,
-            projectList = listOf(
-                ProjectUiModel(
-                    0,
-                    "Google",
-                    "15 Nov | 28 Nov",
-                    Status.ToDo,
-                    "Gemini",
-                    "Enhance Gemini"
-                )
-            ),
+            id = 5,
             modifier = Modifier
                 .fillMaxSize()
                 .background(gradientBackground)
