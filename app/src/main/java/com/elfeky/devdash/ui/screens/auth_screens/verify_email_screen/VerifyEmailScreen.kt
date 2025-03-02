@@ -39,11 +39,8 @@ fun VerifyEmailScreen(
     email: String,
     modifier: Modifier = Modifier
 ) {
-
     var otp by remember { mutableStateOf("") }
     var otpInputFilled by remember { mutableStateOf(false) }
-
-
 
     Column(
         modifier = modifier
@@ -97,15 +94,12 @@ fun VerifyEmailScreen(
                 }
             },
             fontSize = 16.sp,
-            modifier = Modifier
-                .clickable(onClick = {
-                    // TODO Resend Email
-                })
+            modifier = Modifier.clickable(onClick = { /* TODO Resend Email */ })
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun VerifyEmailScreenPreview() {
     DevDashTheme {

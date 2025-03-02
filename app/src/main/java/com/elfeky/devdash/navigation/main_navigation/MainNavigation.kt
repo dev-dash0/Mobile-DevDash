@@ -23,7 +23,6 @@ fun MainNavigation(
     onLogout: () -> Unit,
     onProjectDetailsNavigate: (companyId: Int, projectId: Int) -> Unit,
 ) {
-
     NavHost(
         navController = navController,
         startDestination = MainScreen.HomeScreen.route

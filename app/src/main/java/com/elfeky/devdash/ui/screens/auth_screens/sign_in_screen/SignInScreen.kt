@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen
 
+
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,12 +40,11 @@ import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 
-
 @Composable
 fun SignInScreen(
-    onSignInClick: () -> Unit,
+    onSignInSuccess: () -> Unit,
     onSignUpClick: () -> Unit,
-    onForgetPassword: (email: String) -> Unit,
+    onForgotPasswordClick: (email: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -51,13 +52,13 @@ fun SignInScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val state = viewModel.state.value
+    val loginState = viewModel.state.value
 
-//    val context = LocalContext.current
-//    val sharedPref = context.getSharedPreferences(USER_DATA_FILE, Context.MODE_PRIVATE)
-//    val savedAccessToken = sharedPref.getString(ACCESS_TOKEN_KEY, "")
-//    val savedRefreshToken = sharedPref.getString(REFRESH_TOKEN_KEY, "")
-//    Log.i("Tokens", "$savedAccessToken && $savedRefreshToken")
+    LaunchedEffect(loginState.loggedIn) {
+        if (loginState.loggedIn) {
+            onSignInSuccess()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -67,22 +68,23 @@ fun SignInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "DevDash",
+            text = "Sign In",
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(56.dp))
+
         Text(
-            text = "Sign In",
-            color = MaterialTheme.colorScheme.onSecondary,
+            text = "Welcome Back",
+            color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium
         )
 
-        if (state.isLoading) {
+        if (loginState.isLoading) {
             Spacer(modifier = Modifier.height(12.dp))
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
         }
 
         Spacer(modifier = Modifier.height(64.dp))
@@ -113,19 +115,19 @@ fun SignInScreen(
         )
 
         TextButton(
-            onClick = { onForgetPassword(email) },
+            onClick = { onForgotPasswordClick(email) },
             modifier = Modifier.align(Alignment.End),
             enabled = email.isNotBlank()
         ) {
             Text(
-                text = "Forget Password?",
+                text = "Forgot Password?",
                 color = Color.LightGray
             )
         }
 
-        if (state.error != "") {
+        if (loginState.error.isNotBlank()) {
             Text(
-                text = state.error,
+                text = loginState.error,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.align(Alignment.Start)
             )
@@ -135,7 +137,7 @@ fun SignInScreen(
 
         val signUpText = buildAnnotatedString {
             withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                append("You don't have account? ")
+                append("Don't have an account? ") // Improved wording
             }
             withStyle(
                 style = SpanStyle(
@@ -170,11 +172,8 @@ fun SignInScreen(
                 .height(64.dp),
             enabled = email.isNotBlank() && password.isNotBlank()
         )
-        if (state.loggedIn) onSignInClick()
-        Log.i("loginState", state.toString())
+        Log.i("loginState", loginState.toString())
     }
-
-
 }
 
 @Preview

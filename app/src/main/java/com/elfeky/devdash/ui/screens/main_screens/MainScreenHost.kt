@@ -1,9 +1,7 @@
 package com.elfeky.devdash.ui.screens.main_screens
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
 import androidx.compose.material3.Scaffold
@@ -16,7 +14,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.main_navigation.MainNavigation
 import com.elfeky.devdash.ui.common.bottom_bar.MainNavigationBar
-import com.elfeky.devdash.ui.utils.gradientBackground
 import com.elfeky.domain.util.Constants.ACCESS_TOKEN_KEY
 import com.elfeky.domain.util.Constants.REFRESH_TOKEN_KEY
 import com.elfeky.domain.util.Constants.USER_DATA_FILE
@@ -39,9 +36,7 @@ fun MainScreen(
 
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(gradientBackground),
+        modifier = modifier,
         bottomBar = {
             MainNavigationBar(
                 isSelected = { route -> currentDestination?.hierarchy?.any { it.route == route } == true },

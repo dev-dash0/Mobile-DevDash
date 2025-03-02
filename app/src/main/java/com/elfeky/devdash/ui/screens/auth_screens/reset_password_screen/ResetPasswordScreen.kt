@@ -32,8 +32,10 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
 
 @Composable
-fun ResetPasswordScreen(modifier: Modifier = Modifier, onChangePasswordClick: () -> Unit) {
-
+fun ResetPasswordScreen(
+    modifier: Modifier = Modifier,
+    onChangePasswordClick: () -> Unit
+) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
@@ -85,10 +87,7 @@ fun ResetPasswordScreen(modifier: Modifier = Modifier, onChangePasswordClick: ()
 
         CustomButton(
             text = "Change Password",
-            onClick = {
-                // TODO Reset Password Button
-                onChangePasswordClick()
-            },
+            onClick = { onChangePasswordClick() },
             buttonColor = defaultButtonColor,
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,7 +97,7 @@ fun ResetPasswordScreen(modifier: Modifier = Modifier, onChangePasswordClick: ()
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun ResetPasswordScreenPreview() {
     DevDashTheme {

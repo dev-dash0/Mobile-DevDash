@@ -26,7 +26,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     ) {
         composable(AppScreen.SignInScreen.route) {
             SignInScreen(
-                onSignInClick = {
+                onSignInSuccess = {
                     navController.navigate(AppScreen.MainScreen.route) {
                         popUpTo(0) {
                             inclusive = true
@@ -34,7 +34,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     }
                 },
                 onSignUpClick = { navController.navigate(AppScreen.SignUpScreen.route) },
-                onForgetPassword = { email ->
+                onForgotPasswordClick = { email ->
                     navController.navigate(
                         "${AppScreen.VerifyEmailScreen.route}/${AppScreen.ResetPasswordScreen.route}/$email"
                     )

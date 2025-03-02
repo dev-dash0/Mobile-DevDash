@@ -1,8 +1,8 @@
 package com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.components
 
-
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextRange
@@ -65,14 +66,9 @@ private fun CharView(
     otpCount: Int
 ) {
     val isFocused = text.length == index
-    val char = when {
-        index == text.length -> ""
-        index > text.length -> ""
-        else -> text[index].toString()
-    }
-    Text(
-        text = char,
-        modifier = Modifier
+    val char = if (index < text.length) text[index].toString() else ""
+    Box(
+        Modifier
             .width((LocalConfiguration.current.screenWidthDp / (otpCount + 2)).dp)
             .aspectRatio(1f)
             .border(
@@ -80,9 +76,14 @@ private fun CharView(
                     isFocused -> MaterialTheme.colorScheme.tertiary
                     else -> MaterialTheme.colorScheme.outline
                 }, MaterialTheme.shapes.large
-            ),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.displaySmall,
-        color = MaterialTheme.colorScheme.onBackground
-    )
+            )
+    ) {
+        Text(
+            text = char,
+            modifier = Modifier.align(Alignment.Center),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
 }

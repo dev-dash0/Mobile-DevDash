@@ -81,13 +81,13 @@ fun SignUpScreen(
         Spacer(Modifier.height(16.dp))
         Text(
             text = "Let’s create an account ",
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium
         )
         if (state.isLoading) {
             Spacer(modifier = Modifier.height(12.dp))
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
         }
         Spacer(Modifier.height(32.dp))
 
@@ -248,7 +248,7 @@ fun SignUpScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun SignUpScreenPreview() {
     DevDashTheme {
