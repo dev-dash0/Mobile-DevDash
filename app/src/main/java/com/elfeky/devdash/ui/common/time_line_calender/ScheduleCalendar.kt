@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender
+package com.elfeky.devdash.ui.common.time_line_calender
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
@@ -14,12 +14,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.component.swipe_calender.components.CalendarSectionRow
-import com.elfeky.devdash.ui.common.component.swipe_calender.components.DayDividers
-import com.elfeky.devdash.ui.common.component.swipe_calender.components.DaysRow
-import com.elfeky.devdash.ui.common.component.swipe_calender.components.HoursRow
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.CalendarSection
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.ScheduleCalendarState
+import com.elfeky.devdash.ui.common.time_line_calender.components.CalendarSectionRow
+import com.elfeky.devdash.ui.common.time_line_calender.components.DayDividers
+import com.elfeky.devdash.ui.common.time_line_calender.components.DaysRow
+import com.elfeky.devdash.ui.common.time_line_calender.components.HoursRow
+import com.elfeky.devdash.ui.common.time_line_calender.model.CalendarSection
+import com.elfeky.devdash.ui.common.time_line_calender.model.ScheduleCalendarState
 import java.time.LocalDateTime
 
 

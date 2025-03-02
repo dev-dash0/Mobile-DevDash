@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender.components
+package com.elfeky.devdash.ui.common.time_line_calender.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
@@ -6,8 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.ScheduleCalendarState
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.daysBetween
+import com.elfeky.devdash.ui.common.time_line_calender.model.ScheduleCalendarState
+import com.elfeky.devdash.ui.common.time_line_calender.model.daysBetween
 
 @Composable
 fun DayDividers(

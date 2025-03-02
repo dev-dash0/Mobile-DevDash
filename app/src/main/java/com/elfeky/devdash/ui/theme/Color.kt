@@ -20,3 +20,8 @@ val Pink = Color(0xFFDB83F1)
 val Blue = Color(0xFF4854F1)
 val Orange = Color(0xFFD07805)
 val Red = Color(0xFFD02705)
+
+val B400 = Color(0xFF0052CC)
+val G500 = Color(0xFF006644)
+val R500 = Color(0xFFBF2600)
+val Y500 = Color(0xFFFF8B00)

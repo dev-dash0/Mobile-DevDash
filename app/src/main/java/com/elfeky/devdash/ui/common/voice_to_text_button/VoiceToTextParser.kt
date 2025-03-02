@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.voice_to_text_button
+package com.elfeky.devdash.ui.common.voice_to_text_button
 
 import android.app.Application
 import android.content.Intent

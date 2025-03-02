@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender.model
+package com.elfeky.devdash.ui.common.time_line_calender.model
 
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.ParentDataModifier
@@ -7,21 +7,10 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 /**
- * [ParentDataModifier] that holds a [LocalDateTime] value.
- *
- * This class is used to pass [LocalDateTime] data as parent data to a child composable
- * within a layout. It allows the child composable to access and utilize the
- * associated [LocalDateTime] information.
- *
- * @property localDateTime The [LocalDateTime] value to be associated with the child composable.
- * @constructor Creates a [LocalDateTimeData] instance with the given [LocalDateTime].
- *
- * @see ParentDataModifier
- * @see Modifier.parentData
- * @see Density.modifyParentData
+ * Data class for holding LocalDateTime as parent data.
  */
 data class LocalDateTimeData(
-    val localDateTime: LocalDateTime,
+    val localDateTime: LocalDateTime
 ) : ParentDataModifier {
     override fun Density.modifyParentData(parentData: Any?) = this@LocalDateTimeData
 }
@@ -30,12 +19,8 @@ data class LocalDateTimeData(
  * Retrieves the [LocalDateTime] associated with this [Measurable].
  *
  * This property accesses the parent data of the [Measurable] and attempts to cast it to [LocalDateTimeData].
- * If successful, it returns the [LocalDateTime] stored within the [LocalDateTimeData].
- * If the parent data is not of type [LocalDateTimeData] or if the parent data is null, it throws an [IllegalStateException]
- * indicating that no [LocalDateTime] is available for this [Measurable].
- *
- * This is useful when you want to associate a specific [LocalDateTime] with a composable element and
- * retrieve it later during the layout phase.
+ * If successful, it returns the LocalDateTime.
+ * Throws IllegalStateException if no LocalDateTime is found.
  *
  * @throws IllegalStateException if the parent data is not of type [LocalDateTimeData] or is null.
  */
@@ -111,7 +96,8 @@ fun LocalDateTime.between(
  */
 infix fun LocalDateTime.daysBetween(target: LocalDateTime): Sequence<LocalDateTime> {
     val start = truncatedTo(ChronoUnit.DAYS)
-    return start.between(target.truncatedTo(ChronoUnit.DAYS).plusDays(1)) {
+    val end = target.truncatedTo(ChronoUnit.DAYS).plusDays(1)
+    return start.between(end) {
         plusDays(1)
     }
 }

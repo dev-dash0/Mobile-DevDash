@@ -1,9 +1,9 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender
+package com.elfeky.devdash.ui.common.time_line_calender
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.ScheduleCalendarState
+import com.elfeky.devdash.ui.common.time_line_calender.model.ScheduleCalendarState
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit
  * Creates and remembers a [ScheduleCalendarState] for managing the state of a schedule calendar.
  *
  * This function simplifies the creation and management of the state for a calendar that allows the
- * user to select a specific date and potentially time. It utilizes Compose's `remember` API
+ * user to select a specific date and potentially time. It utilizes Composes' `remember` API
  * to ensure that the state is preserved across recompositions.
  *
  * @param referenceDateTime The initial date and time that the calendar will use as a reference point.

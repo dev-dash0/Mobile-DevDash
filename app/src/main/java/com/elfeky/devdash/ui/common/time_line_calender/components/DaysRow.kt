@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender.components
+package com.elfeky.devdash.ui.common.time_line_calender.components
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.ScheduleCalendarState
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.daysBetween
+import com.elfeky.devdash.ui.common.time_line_calender.model.ScheduleCalendarState
+import com.elfeky.devdash.ui.common.time_line_calender.model.daysBetween
 import java.time.format.DateTimeFormatter
 
 @Composable

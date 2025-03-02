@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.voice_to_text_button
+package com.elfeky.devdash.ui.common.voice_to_text_button
 
 import android.Manifest
 import android.app.Application
@@ -12,9 +12,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color

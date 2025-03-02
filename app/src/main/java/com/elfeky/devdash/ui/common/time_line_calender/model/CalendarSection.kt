@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender.model
+package com.elfeky.devdash.ui.common.time_line_calender.model
 
 /**
  * Represents a section within a calendar, grouping related events.

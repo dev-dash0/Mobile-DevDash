@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender.components
+package com.elfeky.devdash.ui.common.time_line_calender.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Text
@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.sp
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.LocalDateTimeData
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.ScheduleCalendarState
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.localDateTime
+import com.elfeky.devdash.ui.common.time_line_calender.model.LocalDateTimeData
+import com.elfeky.devdash.ui.common.time_line_calender.model.ScheduleCalendarState
+import com.elfeky.devdash.ui.common.time_line_calender.model.localDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable

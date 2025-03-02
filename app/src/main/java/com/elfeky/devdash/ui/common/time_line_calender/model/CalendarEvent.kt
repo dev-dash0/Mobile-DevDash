@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender.model
+package com.elfeky.devdash.ui.common.time_line_calender.model
 
 import androidx.compose.ui.graphics.Color
 import com.elfeky.devdash.ui.theme.G500

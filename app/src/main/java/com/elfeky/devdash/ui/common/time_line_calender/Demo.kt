@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.common.component.swipe_calender
+package com.elfeky.devdash.ui.common.time_line_calender
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,8 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.CalendarEvent
-import com.elfeky.devdash.ui.common.component.swipe_calender.model.CalendarSection
+import com.elfeky.devdash.ui.common.time_line_calender.model.CalendarEvent
+import com.elfeky.devdash.ui.common.time_line_calender.model.CalendarSection
 import com.elfeky.devdash.ui.theme.B400
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.G500
