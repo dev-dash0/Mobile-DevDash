@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectScreen
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
@@ -34,24 +35,31 @@ fun MainNavigation(
                 refreshToken = refreshToken
             )
         }
-        composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen(
-                modifier = modifier,
-                accessToken = accessToken,
-                refreshToken = refreshToken
+        navigation(
+            startDestination = MainScreen.CompanyScreen.route,
+            route = MainScreen.WorkSpaceScreen.route
+        ) {
+            composable(route = MainScreen.CompanyScreen.route) {
+                CompanyScreen(
+                    modifier = modifier,
+                    accessToken = accessToken,
+                    refreshToken = refreshToken
+                ) {
+                    navController.navigate(MainScreen.ProjectScreen.route + "/$it")
+                }
+            }
+
+            composable(
+                route = MainScreen.ProjectScreen.route + "/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) {
-                navController.navigate(MainScreen.ProjectScreen.route + "/$it")
+                val companyId = it.arguments?.getInt("id")!!
+                ProjectScreen(
+                    id = companyId,
+                    onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) })
             }
         }
-        composable(
-            route = MainScreen.ProjectScreen.route + "/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ) {
-            val companyId = it.arguments?.getInt("id")!!
-            ProjectScreen(
-                id = companyId,
-                onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) })
-        }
+
         composable(route = MainScreen.CalenderScreen.route) {
             CalenderScreen(
                 modifier = modifier,
@@ -59,20 +67,27 @@ fun MainNavigation(
                 refreshToken = refreshToken
             )
         }
-        composable(route = MainScreen.MoreScreen.route) {
-            MoreScreen(
-                accessToken = accessToken,
-                refreshToken = refreshToken,
-                onLogout = onLogout,
-                onProfileNavigate = { navController.navigate(MainScreen.ProfileScreen.route) }
-            )
-        }
-        composable(route = MainScreen.ProfileScreen.route) {
-            ProfileScreen(
-                modifier = modifier,
-                accessToken = accessToken,
-                refreshToken = refreshToken
-            )
+
+        navigation(
+            startDestination = MainScreen.SettingsScreen.route,
+            route = MainScreen.MoreScreen.route
+        ) {
+            composable(route = MainScreen.SettingsScreen.route) {
+                MoreScreen(
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    onLogout = onLogout,
+                    onProfileNavigate = { navController.navigate(MainScreen.ProfileScreen.route) }
+                )
+            }
+
+            composable(route = MainScreen.ProfileScreen.route) {
+                ProfileScreen(
+                    modifier = modifier,
+                    accessToken = accessToken,
+                    refreshToken = refreshToken
+                )
+            }
         }
     }
 }

@@ -40,7 +40,10 @@ fun MainScreen(
         bottomBar = {
             MainNavigationBar(
                 isSelected = { route -> currentDestination?.hierarchy?.any { it.route == route } == true },
-                onItemClick = { route -> mainNavController.navigate(route) })
+                onItemClick = { route ->
+                    mainNavController.navigate(route) { launchSingleTop = true }
+                }
+            )
         },
         contentWindowInsets = WindowInsets.safeContent
     ) { innerPadding ->

@@ -40,7 +40,7 @@ fun MainNavigationBar(
         BottomNavigationItem(
             title = "Company",
             icon = R.drawable.company_ic,
-            route = MainScreen.CompanyScreen.route
+            route = MainScreen.WorkSpaceScreen.route
         ),
         BottomNavigationItem(
             title = "Calender",
