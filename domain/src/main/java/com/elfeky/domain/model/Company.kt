@@ -1,6 +1,6 @@
 package com.elfeky.domain.model
 
-data class Tenant(
+data class Company(
     val description: String,
     val id: Int,
     val image: String,

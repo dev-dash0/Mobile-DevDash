@@ -5,13 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfeky.domain.model.ChangePasswordRequest
-import com.elfeky.domain.model.LoginResponse
 import com.elfeky.domain.usecase.ChangePasswordUseCase
 import com.elfeky.domain.usecase.DeleteAccountUseCase
 import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
-import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
-import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -23,18 +20,13 @@ class MoreViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase,
-    private val accessTokenUseCase: AccessTokenUseCase,
-    private val refreshTokenUseCase: RefreshTokenUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase
 ) : ViewModel() {
     var state = mutableStateOf(MoreScreenState())
         private set
 
-    val accessToken = accessTokenUseCase() ?: ""
-    val refreshToken = refreshTokenUseCase() ?: ""
-
-    fun logout(loginResponse: LoginResponse) {
-        logoutUseCase(loginResponse).onEach { result ->
+    fun logout() {
+        logoutUseCase().onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {
@@ -57,7 +49,7 @@ class MoreViewModel @Inject constructor(
     }
 
     fun getUserProfile() {
-        getUserProfileUseCase(accessToken).onEach { result ->
+        getUserProfileUseCase().onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {
@@ -82,8 +74,8 @@ class MoreViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun deleteAccount(accessToken: String) {
-        deleteAccountUseCase(accessToken).onEach { result ->
+    fun deleteAccount() {
+        deleteAccountUseCase().onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {
@@ -106,8 +98,8 @@ class MoreViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun changePassword(accessToken: String, changePasswordRequest: ChangePasswordRequest) {
-        changePasswordUseCase(accessToken, changePasswordRequest).onEach { result ->
+    fun changePassword(changePasswordRequest: ChangePasswordRequest) {
+        changePasswordUseCase(changePasswordRequest).onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {
@@ -126,13 +118,6 @@ class MoreViewModel @Inject constructor(
                         )
                 }
             }
-
         }.launchIn(viewModelScope)
     }
-
-    fun eraseLoginResponse() {
-        accessTokenUseCase("")
-        refreshTokenUseCase("")
-    }
-
 }

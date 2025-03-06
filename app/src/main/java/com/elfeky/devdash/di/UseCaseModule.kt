@@ -8,6 +8,7 @@ import com.elfeky.domain.usecase.LoginUserUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
 import com.elfeky.domain.usecase.RegisterUserUseCase
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
+import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,9 +22,10 @@ object UseCaseModule {
     @Singleton
     fun provideLoginUseCase(
         authenticationRepo: AuthenticationRepo,
-        accessTokenUseCase: AccessTokenUseCase
+        accessTokenUseCase: AccessTokenUseCase,
+        refreshTokenUseCase: RefreshTokenUseCase
     ): LoginUserUseCase {
-        return LoginUserUseCase(authenticationRepo, accessTokenUseCase)
+        return LoginUserUseCase(authenticationRepo, accessTokenUseCase, refreshTokenUseCase)
     }
 
     @Provides
@@ -34,25 +36,38 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideLogoutUseCase(authenticationRepo: AuthenticationRepo): LogoutUseCase {
-        return LogoutUseCase(authenticationRepo)
+    fun provideLogoutUseCase(
+        authenticationRepo: AuthenticationRepo,
+        accessTokenUseCase: AccessTokenUseCase,
+        refreshTokenUseCase: RefreshTokenUseCase
+    ): LogoutUseCase {
+        return LogoutUseCase(authenticationRepo, accessTokenUseCase, refreshTokenUseCase)
     }
 
     @Provides
     @Singleton
-    fun provideGetUserProfileUseCase(authenticationRepo: AuthenticationRepo): GetUserProfileUseCase {
-        return GetUserProfileUseCase(authenticationRepo)
+    fun provideGetUserProfileUseCase(
+        authenticationRepo: AuthenticationRepo,
+        accessTokenUseCase: AccessTokenUseCase
+    ): GetUserProfileUseCase {
+        return GetUserProfileUseCase(authenticationRepo, accessTokenUseCase)
     }
 
     @Provides
     @Singleton
-    fun provideDeleteAccountUseCase(authenticationRepo: AuthenticationRepo): DeleteAccountUseCase {
-        return DeleteAccountUseCase(authenticationRepo)
+    fun provideDeleteAccountUseCase(
+        authenticationRepo: AuthenticationRepo,
+        accessTokenUseCase: AccessTokenUseCase
+    ): DeleteAccountUseCase {
+        return DeleteAccountUseCase(authenticationRepo, accessTokenUseCase)
     }
 
     @Provides
     @Singleton
-    fun provideChangePasswordUseCase(authenticationRepo: AuthenticationRepo): ChangePasswordUseCase {
-        return ChangePasswordUseCase(authenticationRepo)
+    fun provideChangePasswordUseCase(
+        authenticationRepo: AuthenticationRepo,
+        accessTokenUseCase: AccessTokenUseCase
+    ): ChangePasswordUseCase {
+        return ChangePasswordUseCase(authenticationRepo, accessTokenUseCase)
     }
 }

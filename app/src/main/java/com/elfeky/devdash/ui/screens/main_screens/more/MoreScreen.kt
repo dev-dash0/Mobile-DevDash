@@ -29,7 +29,6 @@ import com.elfeky.devdash.ui.screens.main_screens.more.components.IconAndTextMor
 import com.elfeky.devdash.ui.screens.main_screens.more.components.SureAlertDialog
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.ChangePasswordRequest
-import com.elfeky.domain.model.LoginResponse
 
 @Composable
 fun MoreScreen(
@@ -94,7 +93,6 @@ fun MoreScreen(
                 onDismiss = { showChangePasswordDialog = false },
                 onConfirm = { currentPassword, newPassword ->
                     viewModel.changePassword(
-                        accessToken = viewModel.accessToken,
                         changePasswordRequest = ChangePasswordRequest(
                             currentPassword = currentPassword,
                             newPassword = newPassword
@@ -109,14 +107,7 @@ fun MoreScreen(
         if (showLogoutDialog) {
             SureAlertDialog(
                 onDismiss = { showLogoutDialog = false },
-                onConfirm = {
-                    viewModel.logout(
-                        LoginResponse(
-                            accessToken = viewModel.accessToken,
-                            refreshToken = viewModel.refreshToken
-                        )
-                    )
-                },
+                onConfirm = { viewModel.logout() },
                 action = "Logout",
                 error = state.logoutError
             )
@@ -125,9 +116,7 @@ fun MoreScreen(
         if (showDeleteAccountDialog) {
             SureAlertDialog(
                 onDismiss = { showDeleteAccountDialog = false },
-                onConfirm = {
-                    viewModel.deleteAccount(viewModel.accessToken)
-                },
+                onConfirm = { viewModel.deleteAccount() },
                 action = "Delete Account",
                 error = state.deleteAccountError
             )
@@ -144,7 +133,6 @@ fun MoreScreen(
         if (state.isLoggedOut || state.isAccountDeleted) {
             showLogoutDialog = false
             showDeleteAccountDialog = false
-            viewModel.eraseLoginResponse()
             onLogout()
         }
     }

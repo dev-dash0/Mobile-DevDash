@@ -23,10 +23,7 @@ interface AuthenticationApiService {
     suspend fun getProfile(@Header("Authorization") accessToken: String): UserProfile
 
     @POST("/api/Account/Logout")
-    suspend fun logout(
-        @Header("Authorization") accessToken: String,
-        @Body loginResponse: LoginResponse
-    )
+    suspend fun logout(@Body loginResponse: LoginResponse)
 
     @POST("/api/Account/ChangePassword")
     suspend fun changePassword(
