@@ -7,7 +7,6 @@ import com.elfeky.domain.model.LoginResponse
 import com.elfeky.domain.model.User
 import com.elfeky.domain.repo.AuthenticationRepo
 
-
 class AuthenticationRepoImpl(
     private val authApiService: AuthenticationApiService
 ) : AuthenticationRepo {
@@ -18,10 +17,7 @@ class AuthenticationRepoImpl(
     override suspend fun getProfile(accessToken: String) = authApiService.getProfile("Bearer $accessToken")
 
     override suspend fun logout(loginResponse: LoginResponse) {
-        authApiService.logout(
-            accessToken = "Bearer ${loginResponse.accessToken}",
-            loginResponse = loginResponse
-        )
+        authApiService.logout(loginResponse = loginResponse)
     }
 
     override suspend fun changePassword(

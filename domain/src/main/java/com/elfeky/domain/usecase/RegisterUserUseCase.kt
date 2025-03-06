@@ -9,7 +9,6 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class RegisterUserUseCase(private val repo: AuthenticationRepo) {
-
     operator fun invoke(user: User): Flow<Resource<Any>> = flow {
         try {
             emit(Resource.Loading())
