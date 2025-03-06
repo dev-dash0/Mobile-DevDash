@@ -3,7 +3,7 @@ package com.elfeky.devdash.ui.screens.main_screens
 import android.content.Context
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +45,7 @@ fun MainScreen(
                 }
             )
         },
-        contentWindowInsets = WindowInsets.safeContent
+        contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         MainNavigation(
             modifier = Modifier.padding(innerPadding),

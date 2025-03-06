@@ -16,13 +16,13 @@ import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.VerifyEmai
 import com.elfeky.devdash.ui.screens.main_screens.MainScreen
 
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier) {
+fun AppNavigation(startDestination: String, modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = AppScreen.SignInScreen.route
+        startDestination = startDestination
     ) {
         composable(AppScreen.SignInScreen.route) {
             SignInScreen(

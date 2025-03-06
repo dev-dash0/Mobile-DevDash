@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.auth_screens.sign_in_screen
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,15 +7,13 @@ import com.elfeky.domain.model.LoginRequest
 import com.elfeky.domain.usecase.LoginUserUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.launchIn
-import javax.inject.Inject
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUserUseCase,
-    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     var state = mutableStateOf(LoginState())
@@ -24,7 +21,7 @@ class LoginViewModel @Inject constructor(
 
     fun login(email: String, password: String) {
 
-        loginUseCase(LoginRequest(email, password),context).onEach { result ->
+        loginUseCase(LoginRequest(email, password)).onEach { result ->
             when (result) {
 
                 is Resource.Loading -> {

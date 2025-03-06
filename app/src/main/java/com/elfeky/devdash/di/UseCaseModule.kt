@@ -1,5 +1,6 @@
 package com.elfeky.devdash.di
 
+import android.content.SharedPreferences
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.usecase.ChangePasswordUseCase
 import com.elfeky.domain.usecase.DeleteAccountUseCase
@@ -18,8 +19,11 @@ import javax.inject.Singleton
 object UseCaseModule {
     @Provides
     @Singleton
-    fun provideLoginUseCase(authenticationRepo: AuthenticationRepo): LoginUserUseCase {
-        return LoginUserUseCase(authenticationRepo)
+    fun provideLoginUseCase(
+        authenticationRepo: AuthenticationRepo,
+        sharedPref: SharedPreferences
+    ): LoginUserUseCase {
+        return LoginUserUseCase(authenticationRepo, sharedPref)
     }
 
     @Provides
