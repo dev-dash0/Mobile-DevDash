@@ -19,8 +19,6 @@ import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen
 fun MainNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    accessToken: String,
-    refreshToken: String,
     onLogout: () -> Unit,
     onProjectDetailsNavigate: (companyId: Int, projectId: Int) -> Unit,
 ) {
@@ -29,22 +27,14 @@ fun MainNavigation(
         startDestination = MainScreen.HomeScreen.route
     ) {
         composable(route = MainScreen.HomeScreen.route) {
-            HomeScreen(
-                modifier = modifier,
-                accessToken = accessToken,
-                refreshToken = refreshToken
-            )
+            HomeScreen(modifier = modifier)
         }
         navigation(
             startDestination = MainScreen.CompanyScreen.route,
             route = MainScreen.WorkSpaceScreen.route
         ) {
             composable(route = MainScreen.CompanyScreen.route) {
-                CompanyScreen(
-                    modifier = modifier,
-                    accessToken = accessToken,
-                    refreshToken = refreshToken
-                ) {
+                CompanyScreen(modifier = modifier) {
                     navController.navigate(MainScreen.ProjectScreen.route + "/$it")
                 }
             }
@@ -61,11 +51,7 @@ fun MainNavigation(
         }
 
         composable(route = MainScreen.CalenderScreen.route) {
-            CalenderScreen(
-                modifier = modifier,
-                accessToken = accessToken,
-                refreshToken = refreshToken
-            )
+            CalenderScreen(modifier = modifier)
         }
 
         navigation(
@@ -73,20 +59,11 @@ fun MainNavigation(
             route = MainScreen.MoreScreen.route
         ) {
             composable(route = MainScreen.SettingsScreen.route) {
-                MoreScreen(
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
-                    onLogout = onLogout,
-                    onProfileNavigate = { navController.navigate(MainScreen.ProfileScreen.route) }
-                )
+                MoreScreen(onLogout = onLogout) { navController.navigate(MainScreen.ProfileScreen.route) }
             }
 
             composable(route = MainScreen.ProfileScreen.route) {
-                ProfileScreen(
-                    modifier = modifier,
-                    accessToken = accessToken,
-                    refreshToken = refreshToken
-                )
+                ProfileScreen(modifier = modifier)
             }
         }
     }

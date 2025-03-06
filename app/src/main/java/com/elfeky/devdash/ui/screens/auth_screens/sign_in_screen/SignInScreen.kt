@@ -46,7 +46,7 @@ fun SignInScreen(
     onSignUpClick: () -> Unit,
     onForgotPasswordClick: (email: String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel<LoginViewModel>()
 ) {
 
     var email by remember { mutableStateOf("") }

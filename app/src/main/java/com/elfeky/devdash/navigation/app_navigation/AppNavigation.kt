@@ -16,7 +16,10 @@ import com.elfeky.devdash.ui.screens.auth_screens.verify_email_screen.VerifyEmai
 import com.elfeky.devdash.ui.screens.main_screens.MainScreen
 
 @Composable
-fun AppNavigation(startDestination: String, modifier: Modifier = Modifier) {
+fun AppNavigation(
+    startDestination: String,
+    modifier: Modifier = Modifier
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -87,13 +90,14 @@ fun AppNavigation(startDestination: String, modifier: Modifier = Modifier) {
         }
 
         composable(AppScreen.MainScreen.route) {
-            MainScreen(onLogout = {
-                navController.navigate(AppScreen.SignInScreen.route) {
-                    popUpTo(0) {
-                        inclusive = true
+            MainScreen(
+                onLogout = {
+                    navController.navigate(AppScreen.SignInScreen.route) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
                     }
-                }
-            }) { companyId, projectId ->
+                }) { companyId, projectId ->
                 navController.navigate(AppScreen.DetailScreen.route + "/$companyId/$projectId")
             }
         }

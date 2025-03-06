@@ -11,8 +11,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun CompanyScreen(
-    accessToken: String,
-    refreshToken: String,
     modifier: Modifier = Modifier,
     onCompanyClick: (id: Int) -> Unit
 ) {

@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.main_screens.more
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,15 +10,13 @@ import com.elfeky.domain.usecase.ChangePasswordUseCase
 import com.elfeky.domain.usecase.DeleteAccountUseCase
 import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
-import com.elfeky.domain.util.Constants.ACCESS_TOKEN_KEY
-import com.elfeky.domain.util.Constants.REFRESH_TOKEN_KEY
-import com.elfeky.domain.util.Constants.USER_DATA_FILE
+import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
+import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.launchIn
-import javax.inject.Inject
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @HiltViewModel
 class MoreViewModel @Inject constructor(
@@ -27,10 +24,14 @@ class MoreViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
-    @ApplicationContext private val context: Context
+    private val accessTokenUseCase: AccessTokenUseCase,
+    private val refreshTokenUseCase: RefreshTokenUseCase
 ) : ViewModel() {
     var state = mutableStateOf(MoreScreenState())
         private set
+
+    val accessToken = accessTokenUseCase() ?: ""
+    val refreshToken = refreshTokenUseCase() ?: ""
 
     fun logout(loginResponse: LoginResponse) {
         logoutUseCase(loginResponse).onEach { result ->
@@ -55,7 +56,7 @@ class MoreViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getUserProfile(accessToken: String) {
+    fun getUserProfile() {
         getUserProfileUseCase(accessToken).onEach { result ->
             when (result) {
 
@@ -130,13 +131,8 @@ class MoreViewModel @Inject constructor(
     }
 
     fun eraseLoginResponse() {
-        val editor = context.getSharedPreferences(
-            USER_DATA_FILE,
-            Context.MODE_PRIVATE
-        ).edit()
-        editor.putString(ACCESS_TOKEN_KEY, "")
-        editor.putString(REFRESH_TOKEN_KEY, "")
-        editor.apply()
+        accessTokenUseCase("")
+        refreshTokenUseCase("")
     }
 
 }

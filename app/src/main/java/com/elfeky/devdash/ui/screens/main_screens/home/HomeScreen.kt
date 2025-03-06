@@ -23,8 +23,6 @@ import com.elfeky.devdash.ui.theme.Red
 
 @Composable
 fun HomeScreen(
-    accessToken: String,
-    refreshToken: String,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -83,8 +81,6 @@ fun HomeScreen(
 private fun HomeScreenPreview() {
     DevDashTheme {
         HomeScreen(
-            refreshToken = "",
-            accessToken = "",
             modifier = Modifier.fillMaxSize(),
         )
     }

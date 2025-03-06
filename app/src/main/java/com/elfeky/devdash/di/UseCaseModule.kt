@@ -1,6 +1,5 @@
 package com.elfeky.devdash.di
 
-import android.content.SharedPreferences
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.usecase.ChangePasswordUseCase
 import com.elfeky.domain.usecase.DeleteAccountUseCase
@@ -8,6 +7,7 @@ import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LoginUserUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
 import com.elfeky.domain.usecase.RegisterUserUseCase
+import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,9 +21,9 @@ object UseCaseModule {
     @Singleton
     fun provideLoginUseCase(
         authenticationRepo: AuthenticationRepo,
-        sharedPref: SharedPreferences
+        accessTokenUseCase: AccessTokenUseCase
     ): LoginUserUseCase {
-        return LoginUserUseCase(authenticationRepo, sharedPref)
+        return LoginUserUseCase(authenticationRepo, accessTokenUseCase)
     }
 
     @Provides

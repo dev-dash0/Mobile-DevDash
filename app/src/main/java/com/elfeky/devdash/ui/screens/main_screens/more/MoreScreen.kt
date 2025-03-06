@@ -35,8 +35,6 @@ import com.elfeky.domain.model.LoginResponse
 fun MoreScreen(
     modifier: Modifier = Modifier,
     viewModel: MoreViewModel = hiltViewModel(),
-    accessToken: String,
-    refreshToken: String,
     onLogout: () -> Unit,
     onProfileNavigate: () -> Unit
 ) {
@@ -47,8 +45,6 @@ fun MoreScreen(
     val context = LocalContext.current
 
     val state = viewModel.state.value
-
-
 
 
     Column(
@@ -98,7 +94,7 @@ fun MoreScreen(
                 onDismiss = { showChangePasswordDialog = false },
                 onConfirm = { currentPassword, newPassword ->
                     viewModel.changePassword(
-                        accessToken = accessToken,
+                        accessToken = viewModel.accessToken,
                         changePasswordRequest = ChangePasswordRequest(
                             currentPassword = currentPassword,
                             newPassword = newPassword
@@ -116,8 +112,8 @@ fun MoreScreen(
                 onConfirm = {
                     viewModel.logout(
                         LoginResponse(
-                            accessToken = accessToken,
-                            refreshToken = refreshToken
+                            accessToken = viewModel.accessToken,
+                            refreshToken = viewModel.refreshToken
                         )
                     )
                 },
@@ -130,7 +126,7 @@ fun MoreScreen(
             SureAlertDialog(
                 onDismiss = { showDeleteAccountDialog = false },
                 onConfirm = {
-                    viewModel.deleteAccount(accessToken)
+                    viewModel.deleteAccount(viewModel.accessToken)
                 },
                 action = "Delete Account",
                 error = state.deleteAccountError
@@ -159,8 +155,6 @@ fun MoreScreen(
 private fun MoreScreenPreview() {
     DevDashTheme {
         MoreScreen(
-            accessToken = "",
-            refreshToken = "",
             onLogout = {},
             onProfileNavigate = {}
         )

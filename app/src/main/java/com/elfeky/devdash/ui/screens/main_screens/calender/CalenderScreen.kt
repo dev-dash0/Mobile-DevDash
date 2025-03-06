@@ -15,8 +15,6 @@ import com.elfeky.devdash.ui.screens.main_screens.calender.components.DaysSectio
 
 @Composable
 fun CalenderScreen(
-    accessToken: String,
-    refreshToken: String,
     modifier: Modifier = Modifier,
     viewModel: CalenderViewModel = hiltViewModel()
 ) {

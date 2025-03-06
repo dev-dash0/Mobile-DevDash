@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                         is AppState.Unauthenticated -> {
                             startDestination =
                                 (appState as AppState.Unauthenticated).startDestination
-                            delay(  100)
+                            delay(100)
                             keepSplashScreen = false
                         }
 

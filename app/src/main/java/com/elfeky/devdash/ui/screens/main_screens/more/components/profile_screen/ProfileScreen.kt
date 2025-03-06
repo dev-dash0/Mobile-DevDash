@@ -20,13 +20,11 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: MoreViewModel = hiltViewModel(),
-    accessToken: String,
-    refreshToken: String
+    viewModel: MoreViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
     LaunchedEffect(true) {
-        viewModel.getUserProfile(accessToken)
+        viewModel.getUserProfile()
     }
     Column(
         modifier = modifier
@@ -65,6 +63,6 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreview() {
     DevDashTheme {
-        ProfileScreen(accessToken = "", refreshToken = "")
+        ProfileScreen()
     }
 }
