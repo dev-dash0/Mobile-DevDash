@@ -1,14 +1,14 @@
 package com.elfeky.domain.repo
 
-import com.elfeky.domain.model.ChangePasswordRequest
-import com.elfeky.domain.model.LoginRequest
-import com.elfeky.domain.model.LoginResponse
-import com.elfeky.domain.model.User
-import com.elfeky.domain.model.UserProfile
+import com.elfeky.domain.model.account.ChangePasswordRequest
+import com.elfeky.domain.model.account.LoginRequest
+import com.elfeky.domain.model.account.LoginResponse
+import com.elfeky.domain.model.account.User
+import com.elfeky.domain.model.account.UserProfile
 
 
 interface AuthenticationRepo {
-    suspend fun login(request:LoginRequest): LoginResponse
+    suspend fun login(request: LoginRequest): LoginResponse
     suspend fun signup(user: User)
     suspend fun getProfile(accessToken: String): UserProfile
     suspend fun logout(loginResponse: LoginResponse)

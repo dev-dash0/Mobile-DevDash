@@ -1,6 +1,8 @@
-package com.elfeky.domain.model
+package com.elfeky.domain.model.tenant
 
-data class Company(
+import com.elfeky.domain.model.account.User
+
+data class Tenant(
     val description: String,
     val id: Int,
     val image: String,

@@ -1,6 +1,6 @@
 package com.elfeky.domain.usecase
 
-import com.elfeky.domain.model.User
+import com.elfeky.domain.model.account.User
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.util.Resource
 import kotlinx.coroutines.flow.Flow

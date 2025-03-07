@@ -18,7 +18,7 @@ class MainViewModel @Inject constructor(
     var appState = MutableStateFlow<AppState>(AppState.Loading)
         private set
 
-    private val accessToken = accessTokenUseCase()
+    private val accessToken = accessTokenUseCase.get()
 
     init {
         checkAuthenticationStatus()

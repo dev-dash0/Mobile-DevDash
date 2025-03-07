@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elfeky.domain.model.ChangePasswordRequest
+import com.elfeky.domain.model.account.ChangePasswordRequest
 import com.elfeky.domain.usecase.ChangePasswordUseCase
 import com.elfeky.domain.usecase.DeleteAccountUseCase
 import com.elfeky.domain.usecase.GetUserProfileUseCase

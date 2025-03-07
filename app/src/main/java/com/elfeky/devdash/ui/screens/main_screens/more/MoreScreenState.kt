@@ -1,6 +1,6 @@
 package com.elfeky.devdash.ui.screens.main_screens.more
 
-import com.elfeky.domain.model.UserProfile
+import com.elfeky.domain.model.account.UserProfile
 
 data class MoreScreenState(
     val isLoadingLogout: Boolean = false,

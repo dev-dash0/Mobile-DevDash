@@ -1,11 +1,14 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.data.remote.AuthenticationApiService
-import com.elfeky.data.remote.CompanyApiService
+import com.elfeky.data.remote.ProjectApiService
+import com.elfeky.data.remote.TenantApiService
 import com.elfeky.data.repo.AuthenticationRepoImpl
-import com.elfeky.data.repo.CompanyRepoImpl
+import com.elfeky.data.repo.ProjectRepoImpl
+import com.elfeky.data.repo.TenantRepoImpl
 import com.elfeky.domain.repo.AuthenticationRepo
-import com.elfeky.domain.repo.CompanyRepo
+import com.elfeky.domain.repo.ProjectRepo
+import com.elfeky.domain.repo.TenantRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +26,13 @@ object RepoModule {
 
     @Provides
     @Singleton
-    fun provideCompanyRepo(companyApiService: CompanyApiService): CompanyRepo {
-        return CompanyRepoImpl(companyApiService)
+    fun provideTenantRepo(tenantApiService: TenantApiService): TenantRepo {
+        return TenantRepoImpl(tenantApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRepo(projectApiService: ProjectApiService): ProjectRepo {
+        return ProjectRepoImpl(projectApiService)
     }
 }

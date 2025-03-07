@@ -1,7 +1,8 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.data.remote.AuthenticationApiService
-import com.elfeky.data.remote.CompanyApiService
+import com.elfeky.data.remote.ProjectApiService
+import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -46,7 +47,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCompanyApiService(retrofit: Retrofit): CompanyApiService {
-        return retrofit.create(CompanyApiService::class.java)
+    fun provideCompanyApiService(retrofit: Retrofit): TenantApiService {
+        return retrofit.create(TenantApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProjectApiService(retrofit: Retrofit): ProjectApiService {
+        return retrofit.create(ProjectApiService::class.java)
     }
 }

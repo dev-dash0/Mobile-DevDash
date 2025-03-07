@@ -28,7 +28,7 @@ import com.elfeky.devdash.ui.screens.main_screens.more.components.ChangePassword
 import com.elfeky.devdash.ui.screens.main_screens.more.components.IconAndTextMoreItem
 import com.elfeky.devdash.ui.screens.main_screens.more.components.SureAlertDialog
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.domain.model.ChangePasswordRequest
+import com.elfeky.domain.model.account.ChangePasswordRequest
 
 @Composable
 fun MoreScreen(

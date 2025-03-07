@@ -1,6 +1,6 @@
-package com.elfeky.domain.model
+package com.elfeky.domain.model.tenant
 
-data class CompanyRequest(
+data class TenantRequest(
     val description: String,
     val image: String,
     val keywords: String,

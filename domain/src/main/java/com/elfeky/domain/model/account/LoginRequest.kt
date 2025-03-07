@@ -1,4 +1,4 @@
-package com.elfeky.domain.model
+package com.elfeky.domain.model.account
 
 data class LoginRequest(
     val email: String,

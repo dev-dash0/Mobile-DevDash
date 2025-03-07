@@ -5,10 +5,10 @@ import com.elfeky.domain.repo.RefreshTokenRepo
 import com.elfeky.domain.util.Constants.REFRESH_TOKEN_KEY
 
 class RefreshTokenUseCase(private val sharedPref: SharedPreferences) : RefreshTokenRepo {
-    override suspend fun save(refreshToken: String) =
+    override fun save(refreshToken: String) =
         sharedPref.edit().putString(REFRESH_TOKEN_KEY, refreshToken).apply()
 
-    override suspend fun get(): String? = sharedPref.getString(REFRESH_TOKEN_KEY, "")
+    override fun get(): String? = sharedPref.getString(REFRESH_TOKEN_KEY, "")
 
-    override suspend fun delete() = sharedPref.edit().remove(REFRESH_TOKEN_KEY).apply()
+    override fun delete() = sharedPref.edit().remove(REFRESH_TOKEN_KEY).apply()
 }

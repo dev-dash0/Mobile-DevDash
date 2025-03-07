@@ -1,7 +1,7 @@
-package com.elfeky.domain.usecase
+package com.elfeky.domain.usecase.tenant
 
-import com.elfeky.domain.model.account.UserProfile
-import com.elfeky.domain.repo.AuthenticationRepo
+import com.elfeky.domain.model.tenant.TenantRequest
+import com.elfeky.domain.repo.TenantRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -9,15 +9,14 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 
-class GetUserProfileUseCase(
-    private val repo: AuthenticationRepo,
-    private val accessTokenUseCase: AccessTokenUseCase,
+class AddTenantUseCase(
+    private val repo: TenantRepo, private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(): Flow<Resource<UserProfile>> = flow {
+    operator fun invoke(request: TenantRequest): Flow<Resource<Any>> = flow {
         try {
             emit(Resource.Loading())
-            val response = repo.getProfile(accessTokenUseCase.get() ?: "")
-            emit(Resource.Success(data = response))
+            repo.createTenant(accessTokenUseCase.get() ?: "", request)
+            emit(Resource.Success())
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
         } catch (e: HttpException) {

@@ -36,7 +36,7 @@ import com.elfeky.devdash.ui.common.component.DateTextField
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.defaultButtonColor
-import com.elfeky.domain.model.User
+import com.elfeky.domain.model.account.User
 
 @Composable
 fun SignUpScreen(

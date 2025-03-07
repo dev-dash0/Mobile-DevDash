@@ -1,6 +1,6 @@
 package com.elfeky.domain.usecase
 
-import com.elfeky.domain.model.ChangePasswordRequest
+import com.elfeky.domain.model.account.ChangePasswordRequest
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
