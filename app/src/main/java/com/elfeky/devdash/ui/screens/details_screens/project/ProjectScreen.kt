@@ -1,59 +1,53 @@
 package com.elfeky.devdash.ui.screens.details_screens.project
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.Status
-import com.elfeky.devdash.ui.common.card.ProjectCard
-import com.elfeky.devdash.ui.screens.details_screens.project.model.ProjectUiModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 
 @Composable
 fun ProjectScreen(
-    id: Int,
+    tenantId: Int,
     modifier: Modifier = Modifier,
     onClick: (id: Int) -> Unit,
+    viewModel: ProjectViewModel = hiltViewModel()
 ) {
-    val projectList = listOf(
-        ProjectUiModel(
-            0,
-            "Google",
-            "15 Nov | 28 Nov",
-            Status.ToDo,
-            "Gemini",
-            "Enhance Gemini"
-        )
-    )
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            Text("Company ID : $id", color = MaterialTheme.colorScheme.onBackground)
-        }
-        items(projectList) { project ->
-            ProjectCard(
-                project.id,
-                project.companyName,
-                project.date,
-                project.status,
-                project.title,
-                project.description,
-                { id -> onClick(id) }
-            )
+    val projectState by viewModel.state.collectAsState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.getAllProjects(tenantId)
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is Event.ShowError -> {
+                    println("Error: ${event.message}")
+                }
+
+                is Event.ProjectCreated -> {
+                    println("Project Created")
+                }
+
+                is Event.HideCreateDialog -> {
+                    println("Hide Create Dialog")
+                }
+            }
         }
     }
+
+    ProjectScreenContent(
+        modifier = modifier,
+        onClick = onClick,
+        projectState = projectState
+    )
 }
 
 @Preview
@@ -61,10 +55,11 @@ fun ProjectScreen(
 private fun ProjectScreenPreview() {
     DevDashTheme {
         ProjectScreen(
-            id = 5,
+            tenantId = 5,
             modifier = Modifier
                 .fillMaxSize()
-                .background(gradientBackground)
-        ) {}
+                .background(gradientBackground),
+            onClick = {}
+        )
     }
 }

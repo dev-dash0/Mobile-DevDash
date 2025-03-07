@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.component.CardContainer
-import com.elfeky.devdash.ui.common.card.component.CardHeader
 import com.elfeky.devdash.ui.common.card.component.CardTitle
 import com.elfeky.devdash.ui.common.card.component.IssueCardFooter
 import com.elfeky.devdash.ui.common.card.component.IssueCardLabels
@@ -19,7 +18,6 @@ import com.elfeky.devdash.ui.theme.Red
 
 @Composable
 fun IssueCard(
-    projectName: String,
     date: String,
     status: Status,
     issueTitle: String,
@@ -31,8 +29,7 @@ fun IssueCard(
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
     CardContainer(onClick = onClick, modifier = modifier) {
-        CardHeader(projectName = projectName, date = date)
-        CardTitle(status = status, issueTitle = issueTitle)
+        CardTitle(status = status, issueTitle = issueTitle, date = date)
         IssueCardLabels(labels = labels)
         IssueCardFooter(
             priorityTint = priorityTint,
@@ -47,7 +44,6 @@ fun IssueCard(
 private fun IssueCardPreview() {
     DevDashTheme {
         IssueCard(
-            projectName = "DevDash",
             date = "12 Feb | 18 Feb",
             status = Status.Canceled,
             issueTitle = "Issue Title",

@@ -47,7 +47,6 @@ fun HomeScreen(
         item {
             Item(R.drawable.alert_ic, "Urgent Issues") {
                 IssueCard(
-                    "DevDash",
                     "12 Feb | 18 Feb",
                     Status.Canceled,
                     "Issue Title",
@@ -62,7 +61,6 @@ fun HomeScreen(
         item {
             Item(R.drawable.pin_ic, "Pinned") {
                 IssueCard(
-                    "DevDash",
                     "12 Feb | 18 Feb",
                     Status.Canceled,
                     "Issue Title",

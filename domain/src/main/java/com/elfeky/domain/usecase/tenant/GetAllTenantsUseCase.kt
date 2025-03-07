@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 
-class GetTenantsUseCase(
+class GetAllTenantsUseCase(
     private val repo: TenantRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {

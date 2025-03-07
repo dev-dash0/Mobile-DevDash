@@ -5,7 +5,7 @@ import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.tenant.AddTenantUseCase
 import com.elfeky.domain.usecase.tenant.DeleteTenantUseCase
 import com.elfeky.domain.usecase.tenant.GetTenantByIdUseCase
-import com.elfeky.domain.usecase.tenant.GetTenantsUseCase
+import com.elfeky.domain.usecase.tenant.GetAllTenantsUseCase
 import com.elfeky.domain.usecase.tenant.UpdateTenantUseCase
 import dagger.Module
 import dagger.Provides
@@ -30,8 +30,8 @@ object TenantUseCaseModule {
     fun provideGetCompaniesUseCase(
         repo: TenantRepo,
         accessTokenUseCase: AccessTokenUseCase
-    ): GetTenantsUseCase {
-        return GetTenantsUseCase(repo, accessTokenUseCase)
+    ): GetAllTenantsUseCase {
+        return GetAllTenantsUseCase(repo, accessTokenUseCase)
     }
 
     @Provides

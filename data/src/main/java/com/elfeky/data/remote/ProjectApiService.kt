@@ -11,6 +11,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ProjectApiService {
     @POST("/api/Project")
@@ -20,7 +21,10 @@ interface ProjectApiService {
     ): CRUDResponse<ProjectResult>
 
     @GET("/api/Project")
-    suspend fun getProjects(@Header("Authorization") accessToken: String): CRUDResponse<List<Project>>
+    suspend fun getAllProjects(
+        @Header("Authorization") accessToken: String,
+        @Query("tenantId") id: Int
+    ): CRUDResponse<List<Project>>
 
     @GET("/api/Project/{projectId}")
     suspend fun getProjectById(

@@ -4,8 +4,8 @@ import com.elfeky.domain.repo.ProjectRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.project.AddProjectUseCase
 import com.elfeky.domain.usecase.project.DeleteProjectUseCase
+import com.elfeky.domain.usecase.project.GetAllProjectsUseCase
 import com.elfeky.domain.usecase.project.GetProjectByIdUseCase
-import com.elfeky.domain.usecase.project.GetProjectsUseCase
 import com.elfeky.domain.usecase.project.UpdateProjectUseCase
 import dagger.Module
 import dagger.Provides
@@ -27,11 +27,11 @@ object ProjectUceCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetProjectsUseCase(
+    fun provideGetAllProjectsUseCase(
         repo: ProjectRepo,
         accessTokenUseCase: AccessTokenUseCase
-    ): GetProjectsUseCase {
-        return GetProjectsUseCase(repo, accessTokenUseCase)
+    ): GetAllProjectsUseCase {
+        return GetAllProjectsUseCase(repo, accessTokenUseCase)
     }
 
     @Provides

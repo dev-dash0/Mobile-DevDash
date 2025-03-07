@@ -18,3 +18,16 @@ sealed class Status(
     data object Canceled : Status(R.string.canceled, null, Color(0xFFD32F2F))
     data object Postponed : Status(R.string.postponed, null, Color(0xFFFFC107))
 }
+
+fun String.toStatus(): Status {
+    return when (this) {
+        "Backlog" -> Status.Backlog
+        "To Do" -> Status.ToDo
+        "In Progress" -> Status.InProgress
+        "Reviewing" -> Status.Reviewing
+        "Completed" -> Status.Completed
+        "Canceled" -> Status.Canceled
+        "Postponed" -> Status.Postponed
+        else -> Status.Backlog
+    }
+}

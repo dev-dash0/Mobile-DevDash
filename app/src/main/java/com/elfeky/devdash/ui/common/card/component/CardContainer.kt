@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.cardGradientBackground
@@ -30,6 +31,7 @@ fun CardContainer(
     containerColor: Brush = cardGradientBackground,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+    verticalSpaceBetweenItems: Dp = 8.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -46,7 +48,7 @@ fun CardContainer(
                 .fillMaxWidth()
                 .background(containerColor)
                 .padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(verticalSpaceBetweenItems),
             content = content
         )
     }

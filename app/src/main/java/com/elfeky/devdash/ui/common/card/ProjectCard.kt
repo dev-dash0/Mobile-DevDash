@@ -1,19 +1,19 @@
 package com.elfeky.devdash.ui.common.card
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.component.CardContainer
-import com.elfeky.devdash.ui.common.card.component.CardHeader
 import com.elfeky.devdash.ui.common.card.component.CardTitle
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun ProjectCard(
     id: Int,
-    companyName: String,
     date: String,
     status: Status,
     issueTitle: String,
@@ -21,16 +21,17 @@ fun ProjectCard(
     onClick: (id: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CardContainer(onClick = { onClick(id) }, modifier = modifier) {
-        CardHeader(
-            projectName = companyName,
-            date = date
-        )
+    CardContainer(
+        onClick = { onClick(id) },
+        modifier = modifier,
+        verticalSpaceBetweenItems = 16.dp
+    ) {
         CardTitle(
             status = status,
-            issueTitle = issueTitle
+            issueTitle = issueTitle,
+            date = date
         )
-        Text(text = description)
+        Text(text = description, Modifier.padding(horizontal = 8.dp))
     }
 }
 
@@ -40,7 +41,6 @@ private fun CompanyCardPreview() {
     DevDashTheme {
         ProjectCard(
             id = 0,
-            companyName = "Company Name",
             date = "12 Feb | 18 Feb",
             status = Status.InProgress,
             issueTitle = "Project Name",

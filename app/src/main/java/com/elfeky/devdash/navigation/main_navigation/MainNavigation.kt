@@ -45,7 +45,8 @@ fun MainNavigation(
             ) {
                 val companyId = it.arguments?.getInt("id")!!
                 ProjectScreen(
-                    id = companyId,
+                    tenantId = companyId,
+                    modifier = modifier,
                     onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) })
             }
         }

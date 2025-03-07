@@ -1,15 +1,15 @@
 package com.elfeky.domain.model.project
 
 data class Project(
-    val creationDate: String,
-    val creatorId: Int,
-    val description: String,
-    val endDate: String,
     val id: Int,
     val name: String,
-    val priority: String,
+    val description: String,
     val projectCode: String,
     val startDate: String,
+    val endDate: String,
+    val creationDate: String,
+    val priority: String,
     val status: String,
-    val tenantId: Int
+    val tenantId: Int,
+    val creatorId: Int,
 )

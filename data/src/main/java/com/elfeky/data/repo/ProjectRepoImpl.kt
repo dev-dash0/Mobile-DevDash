@@ -7,17 +7,17 @@ import com.elfeky.domain.repo.ProjectRepo
 
 class ProjectRepoImpl(private val projectApiService: ProjectApiService) : ProjectRepo {
     override suspend fun createProject(accessToken: String, request: ProjectRequest): Project =
-        projectApiService.createProject(accessToken, request).result.project
+        projectApiService.createProject("Bearer $accessToken", request).result.project
 
-    override suspend fun getProjects(accessToken: String): List<Project> =
-        projectApiService.getProjects(accessToken).result
+    override suspend fun getAllProjects(accessToken: String, id: Int): List<Project> =
+        projectApiService.getAllProjects("Bearer $accessToken", id).result
 
     override suspend fun getProjectById(accessToken: String, id: Int): Project =
-        projectApiService.getProjectById(accessToken, id).result
+        projectApiService.getProjectById("Bearer $accessToken", id).result
 
     override suspend fun updateProject(accessToken: String, id: Int, request: ProjectRequest) =
-        projectApiService.updateProject(accessToken, id, request).result
+        projectApiService.updateProject("Bearer $accessToken", id, request).result
 
     override suspend fun deleteProject(accessToken: String, id: Int) =
-        projectApiService.deleteProject(accessToken, id).result
+        projectApiService.deleteProject("Bearer $accessToken", id).result
 }
