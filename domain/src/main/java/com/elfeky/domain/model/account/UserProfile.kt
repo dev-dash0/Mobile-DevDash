@@ -7,4 +7,6 @@ data class UserProfile(
     val firstName: String,
     val lastName: String,
     val userName: String,
+    val phoneNumber: String,
+    val birthday: String
 )
