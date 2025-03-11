@@ -5,10 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfeky.domain.model.account.ChangePasswordRequest
+import com.elfeky.domain.model.account.UserProfileRequest
 import com.elfeky.domain.usecase.ChangePasswordUseCase
 import com.elfeky.domain.usecase.DeleteAccountUseCase
 import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
+import com.elfeky.domain.usecase.UpdateProfileUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +22,8 @@ class MoreViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase,
+    private val updateProfileUseCase: UpdateProfileUseCase
 ) : ViewModel() {
     var state = mutableStateOf(MoreScreenState())
         private set
@@ -120,4 +123,29 @@ class MoreViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    fun updateProfile(userProfileRequest: UserProfileRequest) {
+        updateProfileUseCase(userProfileRequest).onEach { result ->
+            when (result) {
+
+                is Resource.Loading -> {
+                    state.value = MoreScreenState(isUpdatingProfile = true)
+                }
+
+                is Resource.Success -> {
+                    state.value = MoreScreenState(profileUpdated = true)
+                    this.getUserProfile()
+                }
+
+                is Resource.Error -> {
+                    state.value =
+                        MoreScreenState(
+                            updateProfileError = result.message
+                                ?: "An unexpected error is occurred ",
+                        )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 }

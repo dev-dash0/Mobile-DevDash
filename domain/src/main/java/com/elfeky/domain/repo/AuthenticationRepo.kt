@@ -5,6 +5,7 @@ import com.elfeky.domain.model.account.LoginRequest
 import com.elfeky.domain.model.account.LoginResponse
 import com.elfeky.domain.model.account.User
 import com.elfeky.domain.model.account.UserProfile
+import com.elfeky.domain.model.account.UserProfileRequest
 
 
 interface AuthenticationRepo {
@@ -13,5 +14,6 @@ interface AuthenticationRepo {
     suspend fun getProfile(accessToken: String): UserProfile
     suspend fun logout(loginResponse: LoginResponse)
     suspend fun changePassword(accessToken: String,changePasswordRequest: ChangePasswordRequest)
+    suspend fun updateProfile(accessToken: String,userProfileRequest: UserProfileRequest)
     suspend fun deleteAccount(accessToken: String)
 }

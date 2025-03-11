@@ -5,6 +5,7 @@ import com.elfeky.domain.model.account.LoginRequest
 import com.elfeky.domain.model.account.LoginResponse
 import com.elfeky.domain.model.account.User
 import com.elfeky.domain.model.account.UserProfile
+import com.elfeky.domain.model.account.UserProfileRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -31,6 +32,11 @@ interface AuthenticationApiService {
         @Body changePasswordRequest: ChangePasswordRequest
     )
 
+    @POST("/api/Account/UpdateProfile")
+    suspend fun updateProfile(
+        @Header("Authorization") accessToken: String,
+        @Body userProfileRequest: UserProfileRequest
+    )
 
     @DELETE("/api/Account/RemoveAccount")
     suspend fun deleteAccount(@Header("Authorization") accessToken: String)
