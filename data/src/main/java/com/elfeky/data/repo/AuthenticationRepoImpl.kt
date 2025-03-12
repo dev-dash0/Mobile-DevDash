@@ -5,6 +5,7 @@ import com.elfeky.domain.model.account.ChangePasswordRequest
 import com.elfeky.domain.model.account.LoginRequest
 import com.elfeky.domain.model.account.LoginResponse
 import com.elfeky.domain.model.account.User
+import com.elfeky.domain.model.account.UserProfileRequest
 import com.elfeky.domain.repo.AuthenticationRepo
 
 class AuthenticationRepoImpl(
@@ -27,6 +28,16 @@ class AuthenticationRepoImpl(
         authApiService.changePassword(
             accessToken = "Bearer $accessToken",
             changePasswordRequest = changePasswordRequest
+        )
+    }
+
+    override suspend fun updateProfile(
+        accessToken: String,
+        userProfileRequest: UserProfileRequest
+    ) {
+        authApiService.updateProfile(
+            accessToken = "Bearer $accessToken",
+            userProfileRequest = userProfileRequest
         )
     }
 

@@ -7,6 +7,7 @@ import com.elfeky.domain.usecase.GetUserProfileUseCase
 import com.elfeky.domain.usecase.LoginUserUseCase
 import com.elfeky.domain.usecase.LogoutUseCase
 import com.elfeky.domain.usecase.RegisterUserUseCase
+import com.elfeky.domain.usecase.UpdateProfileUseCase
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
 import dagger.Module
@@ -69,5 +70,14 @@ object AccountUseCaseModule {
         accessTokenUseCase: AccessTokenUseCase
     ): ChangePasswordUseCase {
         return ChangePasswordUseCase(authenticationRepo, accessTokenUseCase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateProfileUseCase(
+        authenticationRepo: AuthenticationRepo,
+        accessTokenUseCase: AccessTokenUseCase
+    ): UpdateProfileUseCase {
+        return UpdateProfileUseCase(authenticationRepo, accessTokenUseCase)
     }
 }

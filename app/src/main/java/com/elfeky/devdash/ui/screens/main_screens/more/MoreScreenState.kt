@@ -15,9 +15,13 @@ data class MoreScreenState(
     val isLoadingChangePassword: Boolean = false,
     val passwordChanged: Boolean = false,
 
+    val isUpdatingProfile: Boolean = false,
+    val profileUpdated: Boolean = false,
+
     val logoutError: String = "",
     val profileError: String = "",
     val deleteAccountError: String = "",
     val changePasswordError: String = "",
+    val updateProfileError: String = ""
 
-    )
+)
