@@ -6,4 +6,6 @@ object Constants {
     const val USER_DATA_FILE = "user_data"
     const val ACCESS_TOKEN_KEY = "AccessToken"
     const val REFRESH_TOKEN_KEY = "RefreshToken"
+    const val IS_FIRST_LOGIN = "isFirstLogin"
+    const val LOGIN_REQUEST = "loginRequest"
 }

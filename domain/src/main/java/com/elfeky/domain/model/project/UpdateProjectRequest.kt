@@ -1,11 +1,12 @@
 package com.elfeky.domain.model.project
 
-data class ProjectRequest(
-    val name: String,
+data class UpdateProjectRequest(
     val description: String,
-    val creationDate: String,
-    val startDate: String,
     val endDate: String,
+    val id: Int,
+    val isPinned: Boolean,
+    val name: String,
     val priority: String,
+    val startDate: String,
     val status: String
 )

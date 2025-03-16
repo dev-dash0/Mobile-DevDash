@@ -27,6 +27,15 @@ val statusList = listOf(
     MenuUiModel(Icons.Default.Circle, Color(0xFFFFC107), "Postponed")
 )
 
+val projectStatusList = listOf(
+    MenuUiModel(Icons.Default.Circle, Color(0xFFC2BFBF), "Planning"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFF4854F1), "Working on"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFFFFA500), "Reviewing"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFF1E8024), "Completed"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFFD32F2F), "Canceled"),
+    MenuUiModel(Icons.Default.Circle, Color(0xFFFFC107), "Postponed")
+)
+
 val priorityList = listOf(
     MenuUiModel(Icons.Default.Flag, Gray, "Low"),
     MenuUiModel(Icons.Default.Flag, Blue, "Medium"),

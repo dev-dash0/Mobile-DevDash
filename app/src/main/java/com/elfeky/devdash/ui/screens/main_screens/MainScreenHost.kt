@@ -1,6 +1,7 @@
 package com.elfeky.devdash.ui.screens.main_screens
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
@@ -12,7 +13,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.elfeky.devdash.navigation.main_navigation.MainNavigation
 import com.elfeky.devdash.ui.common.bottom_bar.MainNavigationBar
-
 
 @Composable
 fun MainScreen(
@@ -38,7 +38,7 @@ fun MainScreen(
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         MainNavigation(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             navController = mainNavController,
             onLogout = onLogout,
             onProjectDetailsNavigate = onProjectDetailsNavigate

@@ -25,12 +25,23 @@ fun IssueCard(
     assignees: List<UserUiModel>,
     priorityTint: Color,
     onClick: () -> Unit,
+    onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
 ) {
-    CardContainer(onClick = onClick, modifier = modifier) {
-        CardTitle(status = status, issueTitle = issueTitle, date = date)
+    CardContainer(
+        onClick = onClick,
+        onLongClick = onLongClick,
+        modifier = modifier
+    ) {
+        CardTitle(
+            status = status,
+            issueTitle = issueTitle,
+            date = date
+        )
+
         IssueCardLabels(labels = labels)
+
         IssueCardFooter(
             priorityTint = priorityTint,
             assignees = assignees,
@@ -50,7 +61,8 @@ private fun IssueCardPreview() {
             labels = labelList.take(3),
             assignees = assigneeList,
             priorityTint = Red,
-            onClick = {}
+            onClick = {},
+            onLongClick = {}
         )
     }
 }

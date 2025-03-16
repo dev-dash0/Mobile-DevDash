@@ -4,6 +4,7 @@ import com.elfeky.data.dto.CRUDResponse
 import com.elfeky.data.dto.ProjectResult
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.ProjectRequest
+import com.elfeky.domain.model.project.UpdateProjectRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -17,6 +18,7 @@ interface ProjectApiService {
     @POST("/api/Project")
     suspend fun createProject(
         @Header("Authorization") accessToken: String,
+        @Query("tenantId") id: Int,
         @Body projectRequest: ProjectRequest
     ): CRUDResponse<ProjectResult>
 
@@ -36,7 +38,7 @@ interface ProjectApiService {
     suspend fun updateProject(
         @Header("Authorization") accessToken: String,
         @Path("projectId") id: Int,
-        @Body projectRequest: ProjectRequest
+        @Body projectRequest: UpdateProjectRequest
     ): CRUDResponse<Unit>
 
     @DELETE("/api/Project/{projectId}")

@@ -1,27 +1,42 @@
 package com.elfeky.devdash.ui.screens.details_screens.project
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.card.ProjectCard
+import com.elfeky.devdash.ui.common.component.LoadingIndicator
+import com.elfeky.devdash.ui.common.component.SwipeToDismissItem
 import com.elfeky.devdash.ui.common.toStatus
+import com.elfeky.devdash.ui.screens.details_screens.project.model.ProjectState
+import com.elfeky.devdash.ui.screens.details_screens.project.model.projectList
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.domain.model.project.Project
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ProjectScreenContent(
-    modifier: Modifier = Modifier,
+    projectState: ProjectState,
     onClick: (id: Int) -> Unit,
-    projectState: ProjectState
+    onSwipeToDelete: (id: Int) -> Boolean,
+    onSwipeToPin: (id: Int) -> Unit,
+    onLongPress: (project: Project) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -29,28 +44,62 @@ fun ProjectScreenContent(
     ) {
         if (projectState.isLoading) {
             item {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(48.dp),
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-                }
-
+                LoadingIndicator()
             }
         } else {
-            items(projectState.projects) { project ->
-                ProjectCard(
-                    project.id,
-                    project.endDate,
-                    project.status.toStatus(),
-                    project.name,
-                    project.description,
-                    { id -> onClick(id) }
+            items(items = projectState.projects, key = { it.id }) { project ->
+
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = { dismissValue ->
+                        when (dismissValue) {
+                            SwipeToDismissBoxValue.StartToEnd -> {
+                                onSwipeToPin(project.id)
+                                false
+                            }
+
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                scope.launch { delay(1.seconds) }
+                                onSwipeToDelete(project.id)
+
+                            }
+
+                            SwipeToDismissBoxValue.Settled -> false
+                        }
+                    },
+                    positionalThreshold = { totalDistance -> totalDistance * .5f }
                 )
+
+                SwipeToDismissItem(dismissState) {
+                    ProjectCard(
+                        date = project.endDate,
+                        status = project.status.toStatus(),
+                        issueTitle = project.name,
+                        description = project.description,
+                        onClick = { onClick(project.id) },
+                        onLongClick = { onLongPress(project) }
+                    )
+                }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ProjectScreenContentPreview() {
+    val projectState =
+        remember { mutableStateOf(ProjectState(isLoading = false, projects = projectList)) }
+    DevDashTheme {
+        ProjectScreenContent(
+            projectState = projectState.value,
+            onClick = { },
+            onSwipeToDelete = { id ->
+                val updatedList = projectState.value.projects.filter { it.id != id }
+                projectState.value = projectState.value.copy(projects = updatedList)
+                true
+            },
+            onSwipeToPin = { _ -> },
+            onLongPress = { }
+        )
     }
 }

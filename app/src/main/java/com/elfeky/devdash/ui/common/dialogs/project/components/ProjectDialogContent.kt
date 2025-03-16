@@ -22,8 +22,9 @@ import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableD
 import com.elfeky.devdash.ui.common.dialogs.component.HorizontalItem
 import com.elfeky.devdash.ui.common.dialogs.component.VerticalItem
 import com.elfeky.devdash.ui.common.dialogs.issue.components.DateRangeInput
+import com.elfeky.devdash.ui.common.dialogs.priorityList
+import com.elfeky.devdash.ui.common.dialogs.projectStatusList
 import com.elfeky.devdash.ui.common.dialogs.statusList
-import com.elfeky.devdash.ui.common.dialogs.typeList
 import com.elfeky.devdash.ui.common.dropdown_menu.MenuSelector
 import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuUiModel
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -35,11 +36,11 @@ fun ProjectDialogContent(
     title: String,
     description: String,
     dateRangeState: DateRangePickerState,
-    selectedType: MenuUiModel,
+    selectedPriority: MenuUiModel,
     selectedStatus: MenuUiModel,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
-    onTypeChange: (MenuUiModel) -> Unit,
+    onPriorityChange: (MenuUiModel) -> Unit,
     onStatusChange: (MenuUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -73,18 +74,18 @@ fun ProjectDialogContent(
             DateRangeInput(state = dateRangeState, modifier = Modifier.weight(.75f))
         }
 
-        HorizontalItem(label = "Type") {
+        HorizontalItem(label = "Priority") {
             MenuSelector(
-                items = typeList,
-                selectedItem = selectedType,
-                onItemSelected = { onTypeChange(it) },
+                items = priorityList,
+                selectedItem = selectedPriority,
+                onItemSelected = { onPriorityChange(it) },
                 modifier = Modifier.weight(.75f)
             )
         }
 
         HorizontalItem(label = "Status") {
             MenuSelector(
-                items = statusList,
+                items = projectStatusList,
                 selectedItem = selectedStatus,
                 onItemSelected = { onStatusChange(it) },
                 modifier = Modifier.weight(.75f)
@@ -105,8 +106,7 @@ private fun ProjectDialogContentPreview() {
         yearRange = currentYear..(currentYear + 5),
         selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
     )
-
-    var selectedType by remember { mutableStateOf(typeList[0]) }
+    var selectedPriority by remember { mutableStateOf(priorityList[0]) }
     var selectedStatus by remember { mutableStateOf(statusList[0]) }
 
     DevDashTheme {
@@ -114,11 +114,11 @@ private fun ProjectDialogContentPreview() {
             title,
             description,
             dateRangeState,
-            selectedType,
+            selectedPriority,
             selectedStatus,
             { title = it },
             { description = it },
-            { selectedType = it },
+            { selectedPriority = it },
             { selectedStatus = it }
         )
     }

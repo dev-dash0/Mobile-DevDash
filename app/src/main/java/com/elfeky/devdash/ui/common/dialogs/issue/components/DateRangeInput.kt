@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +33,13 @@ fun DateRangeInput(
     modifier: Modifier = Modifier
 ) {
     var showCalendarDialog by remember { mutableStateOf(false) }
-    var selectedDateDisplay by remember { mutableStateOf("_") }
+    val selectedDateDisplay by remember {
+        derivedStateOf {
+            if (state.selectedEndDateMillis != null) {
+                formatDateRange(state.selectedStartDateMillis, state.selectedEndDateMillis)
+            } else "_"
+        }
+    }
 
     Box(modifier = modifier) {
         TextButton(onClick = { showCalendarDialog = true }) {
@@ -54,13 +61,7 @@ fun DateRangeInput(
         CalenderDialog(
             state = state,
             onDismiss = { showCalendarDialog = false },
-            onConfirm = {
-                selectedDateDisplay = formatDateRange(
-                    state.selectedStartDateMillis,
-                    state.selectedEndDateMillis
-                )
-                showCalendarDialog = false
-            }
+            onConfirm = { showCalendarDialog = false }
         )
     }
 }

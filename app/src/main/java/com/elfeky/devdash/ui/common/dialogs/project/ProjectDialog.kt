@@ -1,8 +1,10 @@
 package com.elfeky.devdash.ui.common.dialogs.project
 
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,71 +13,87 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
 import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
+import com.elfeky.devdash.ui.common.dialogs.priorityList
 import com.elfeky.devdash.ui.common.dialogs.project.components.ProjectDialogContent
-import com.elfeky.devdash.ui.common.dialogs.project.model.ProjectUiModel
-import com.elfeky.devdash.ui.common.dialogs.statusList
-import com.elfeky.devdash.ui.common.dialogs.typeList
+import com.elfeky.devdash.ui.common.dialogs.projectStatusList
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.nowLocalDate
+import com.elfeky.devdash.ui.utils.toEpochMillis
+import com.elfeky.devdash.ui.utils.toStringDate
+import com.elfeky.domain.model.project.ProjectRequest
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDialog(
+    dateRangeState: DateRangePickerState,
     onDismiss: () -> Unit,
-    onSubmit: (ProjectUiModel) -> Unit,
-    modifier: Modifier = Modifier
+    onSubmit: (ProjectRequest) -> Unit,
+    modifier: Modifier = Modifier,
+    project: ProjectRequest? = null
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(project?.name ?: "") }
+    var description by remember { mutableStateOf(project?.description ?: "") }
 
-    val currentYear = LocalDate.now().year
-    val dateRangeState = rememberDateRangePickerState(
-        yearRange = currentYear..(currentYear + 5),
-        selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
-    )
+    LaunchedEffect(project) {
+        project?.let {
+            dateRangeState.setSelection(it.startDate.toEpochMillis(), it.endDate.toEpochMillis())
+        }
+    }
 
-    var selectedType by remember { mutableStateOf(typeList[0]) }
-    var selectedStatus by remember { mutableStateOf(statusList[0]) }
+    var selectedPriority by remember {
+        mutableStateOf(priorityList.find { it.text == project?.priority } ?: priorityList[0])
+    }
+    var selectedStatus by remember {
+        mutableStateOf(projectStatusList.find { it.text == project?.status }
+            ?: projectStatusList[0])
+    }
 
     DialogContainer(
         onCancel = onDismiss,
         onConfirm = {
             onSubmit(
-                ProjectUiModel(
-                    title,
-                    description,
-                    dateRangeState.selectedStartDateMillis,
-                    dateRangeState.selectedEndDateMillis,
-                    selectedType.text,
-                    selectedStatus.text
+                ProjectRequest(
+                    name = title,
+                    description = description,
+                    creationDate = nowLocalDate(),
+                    startDate = dateRangeState.selectedStartDateMillis!!.toStringDate(),
+                    endDate = dateRangeState.selectedEndDateMillis!!.toStringDate(),
+                    priority = selectedPriority.text,
+                    status = selectedStatus.text
                 )
             )
         },
-        title = "Create New Project",
+        title = if (project == null) "Create New Project" else "Edit Project",
         confirmEnable = (
-                title.isNotEmpty()
-                        && description.isNotEmpty()
-                        && dateRangeState.selectedEndDateMillis != null),
+                title.isNotEmpty() &&
+                        description.isNotEmpty() &&
+                        dateRangeState.selectedEndDateMillis != null
+                ),
         modifier = modifier
     ) {
         ProjectDialogContent(
-            title,
-            description,
-            dateRangeState,
-            selectedType,
-            selectedStatus,
-            { title = it },
-            { description = it },
-            { selectedType = it },
-            { selectedStatus = it }
+            title = title,
+            description = description,
+            dateRangeState = dateRangeState,
+            selectedPriority = selectedPriority,
+            selectedStatus = selectedStatus,
+            onTitleChange = { title = it },
+            onDescriptionChange = { description = it },
+            onPriorityChange = { selectedPriority = it },
+            onStatusChange = { selectedStatus = it }
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun ProjectDialogPreview() {
     DevDashTheme {
-        ProjectDialog({}, {})
+        ProjectDialog(rememberDateRangePickerState(
+            yearRange = LocalDate.now().year..(LocalDate.now().year + 5),
+            selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
+        ), {}, {})
     }
 }

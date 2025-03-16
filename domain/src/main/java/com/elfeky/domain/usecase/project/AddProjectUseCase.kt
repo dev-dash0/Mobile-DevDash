@@ -12,10 +12,10 @@ import java.io.IOException
 class AddProjectUseCase(
     private val repo: ProjectRepo, private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(request: ProjectRequest): Flow<Resource<Any>> = flow {
+    operator fun invoke(request: ProjectRequest, tenantId: Int): Flow<Resource<Any>> = flow {
         try {
             emit(Resource.Loading())
-            repo.createProject(accessTokenUseCase.get() ?: "", request)
+            repo.createProject(accessTokenUseCase.get(), request, tenantId)
             emit(Resource.Success())
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))

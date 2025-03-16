@@ -9,6 +9,8 @@ import com.elfeky.domain.usecase.LogoutUseCase
 import com.elfeky.domain.usecase.RegisterUserUseCase
 import com.elfeky.domain.usecase.UpdateProfileUseCase
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
+import com.elfeky.domain.usecase.local_storage.IsFirstLoginUseCase
+import com.elfeky.domain.usecase.local_storage.LoginDataUseCase
 import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
 import dagger.Module
 import dagger.Provides
@@ -24,9 +26,17 @@ object AccountUseCaseModule {
     fun provideLoginUseCase(
         authenticationRepo: AuthenticationRepo,
         accessTokenUseCase: AccessTokenUseCase,
-        refreshTokenUseCase: RefreshTokenUseCase
+        refreshTokenUseCase: RefreshTokenUseCase,
+        loginDataUseCase: LoginDataUseCase,
+        isFirstLoginUseCase: IsFirstLoginUseCase
     ): LoginUserUseCase {
-        return LoginUserUseCase(authenticationRepo, accessTokenUseCase, refreshTokenUseCase)
+        return LoginUserUseCase(
+            authenticationRepo,
+            accessTokenUseCase,
+            refreshTokenUseCase,
+            loginDataUseCase,
+            isFirstLoginUseCase
+        )
     }
 
     @Provides
