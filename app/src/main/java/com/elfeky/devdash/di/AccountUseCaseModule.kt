@@ -1,13 +1,13 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.domain.repo.AuthenticationRepo
-import com.elfeky.domain.usecase.ChangePasswordUseCase
-import com.elfeky.domain.usecase.DeleteAccountUseCase
-import com.elfeky.domain.usecase.GetUserProfileUseCase
-import com.elfeky.domain.usecase.LoginUserUseCase
-import com.elfeky.domain.usecase.LogoutUseCase
-import com.elfeky.domain.usecase.RegisterUserUseCase
-import com.elfeky.domain.usecase.UpdateProfileUseCase
+import com.elfeky.domain.usecase.account.ChangePasswordUseCase
+import com.elfeky.domain.usecase.account.DeleteAccountUseCase
+import com.elfeky.domain.usecase.account.GetUserProfileUseCase
+import com.elfeky.domain.usecase.account.LoginUserUseCase
+import com.elfeky.domain.usecase.account.LogoutUseCase
+import com.elfeky.domain.usecase.account.RegisterUserUseCase
+import com.elfeky.domain.usecase.account.UpdateProfileUseCase
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.local_storage.IsFirstLoginUseCase
 import com.elfeky.domain.usecase.local_storage.LoginDataUseCase

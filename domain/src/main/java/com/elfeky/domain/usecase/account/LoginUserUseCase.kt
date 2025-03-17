@@ -1,4 +1,4 @@
-package com.elfeky.domain.usecase
+package com.elfeky.domain.usecase.account
 
 import com.elfeky.domain.model.account.LoginRequest
 import com.elfeky.domain.model.account.LoginResponse

@@ -1,6 +1,6 @@
-package com.elfeky.data.dto
+package com.elfeky.data.remote.dto
 
-data class CRUDResponse<T>(
+data class ServiceResponse<T>(
     val errorMessages: List<String>,
     val isSuccess: Boolean,
     val result: T,

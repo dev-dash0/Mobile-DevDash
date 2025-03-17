@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elfeky.domain.usecase.LoginUserUseCase
+import com.elfeky.domain.usecase.account.LoginUserUseCase
 import com.elfeky.domain.usecase.local_storage.LoginDataUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

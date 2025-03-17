@@ -1,4 +1,4 @@
-package com.elfeky.data.dto
+package com.elfeky.data.remote.dto
 
 import com.elfeky.domain.model.project.Project
 

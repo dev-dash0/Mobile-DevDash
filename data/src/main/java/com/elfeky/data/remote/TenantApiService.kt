@@ -1,7 +1,7 @@
 package com.elfeky.data.remote
 
-import com.elfeky.data.dto.CRUDResponse
-import com.elfeky.data.dto.TenantResult
+import com.elfeky.data.remote.dto.ServiceResponse
+import com.elfeky.data.remote.dto.TenantResult
 import com.elfeky.domain.model.tenant.Tenant
 import com.elfeky.domain.model.tenant.TenantRequest
 import retrofit2.http.Body
@@ -17,27 +17,27 @@ interface TenantApiService {
     suspend fun addCompany(
         @Header("Authorization") accessToken: String,
         @Body request: TenantRequest
-    ): CRUDResponse<TenantResult>
+    ): ServiceResponse<TenantResult>
 
     @GET("/api/Tenant")
-    fun getCompanies(@Header("Authorization") accessToken: String): CRUDResponse<List<Tenant>>
+    fun getCompanies(@Header("Authorization") accessToken: String): ServiceResponse<List<Tenant>>
 
     @GET("/api/Tenant/{tenantId}")
     fun getCompanyById(
         @Header("Authorization") accessToken: String,
         @Path("tenantId") tenantId: Int
-    ): CRUDResponse<Tenant>
+    ): ServiceResponse<Tenant>
 
     @PUT("/api/Tenant/{tenantId}")
     fun updateCompany(
         @Header("Authorization") accessToken: String,
         @Path("tenantId") tenantId: Int,
         @Body request: TenantRequest
-    ): CRUDResponse<Unit>
+    ): ServiceResponse<Unit>
 
     @DELETE("/api/Tenant/{tenantId}")
     fun deleteCompany(
         @Header("Authorization") accessToken: String,
         @Path("tenantId") tenantId: Int
-    ): CRUDResponse<Unit>
+    ): ServiceResponse<Unit>
 }

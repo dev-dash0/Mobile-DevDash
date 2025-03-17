@@ -1,7 +1,7 @@
 package com.elfeky.data.remote
 
-import com.elfeky.data.dto.CRUDResponse
-import com.elfeky.data.dto.ProjectResult
+import com.elfeky.data.remote.dto.ProjectResult
+import com.elfeky.data.remote.dto.ServiceResponse
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.project.UpdateProjectRequest
@@ -20,30 +20,30 @@ interface ProjectApiService {
         @Header("Authorization") accessToken: String,
         @Query("tenantId") id: Int,
         @Body projectRequest: ProjectRequest
-    ): CRUDResponse<ProjectResult>
+    ): ServiceResponse<ProjectResult>
 
     @GET("/api/Project")
     suspend fun getAllProjects(
         @Header("Authorization") accessToken: String,
         @Query("tenantId") id: Int
-    ): CRUDResponse<List<Project>>
+    ): ServiceResponse<List<Project>>
 
     @GET("/api/Project/{projectId}")
     suspend fun getProjectById(
         @Header("Authorization") accessToken: String,
         @Path("projectId") id: Int
-    ): CRUDResponse<Project>
+    ): ServiceResponse<Project>
 
     @PUT("/api/Project/{projectId}")
     suspend fun updateProject(
         @Header("Authorization") accessToken: String,
         @Path("projectId") id: Int,
         @Body projectRequest: UpdateProjectRequest
-    ): CRUDResponse<Unit>
+    ): ServiceResponse<Unit>
 
     @DELETE("/api/Project/{projectId}")
     suspend fun deleteProject(
         @Header("Authorization") accessToken: String,
         @Path("projectId") id: Int
-    ): CRUDResponse<Unit>
+    ): ServiceResponse<Unit>
 }

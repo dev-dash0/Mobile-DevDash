@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
@@ -32,6 +33,7 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 @Composable
 fun SwipeToDismissItem(
     dismissState: SwipeToDismissBoxState,
+    isPinned: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable (RowScope.() -> Unit),
 ) {
@@ -45,11 +47,11 @@ fun SwipeToDismissItem(
                     SwipeToDismissBoxValue.Settled -> Color.Transparent
                 }
             )
-            val icon by remember {
+            val icon by remember(isPinned) {
                 derivedStateOf {
                     when (dismissState.dismissDirection) {
                         SwipeToDismissBoxValue.StartToEnd -> {
-                            R.drawable.ic_pin
+                            if (isPinned) R.drawable.ic_un_pin else R.drawable.ic_pin
                         }
 
                         SwipeToDismissBoxValue.EndToStart -> R.drawable.ic_trash
@@ -68,7 +70,7 @@ fun SwipeToDismissItem(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color)
+                    .background(color, CardDefaults.shape)
                     .padding(16.dp),
                 contentAlignment = align
             ) {
@@ -102,7 +104,7 @@ private fun SwipeToDismissItemPreview() {
     )
 
     DevDashTheme {
-        SwipeToDismissItem(dismissState) {
+        SwipeToDismissItem(dismissState, false) {
             ProjectCard(
                 date = project.endDate,
                 status = project.status.toStatus(),

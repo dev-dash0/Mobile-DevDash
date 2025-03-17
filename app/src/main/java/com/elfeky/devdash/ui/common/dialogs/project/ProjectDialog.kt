@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
 import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
 import com.elfeky.devdash.ui.common.dialogs.priorityList
 import com.elfeky.devdash.ui.common.dialogs.project.components.ProjectDialogContent
@@ -21,16 +20,15 @@ import com.elfeky.devdash.ui.utils.nowLocalDate
 import com.elfeky.devdash.ui.utils.toEpochMillis
 import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.project.ProjectRequest
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectDialog(
-    dateRangeState: DateRangePickerState,
     onDismiss: () -> Unit,
     onSubmit: (ProjectRequest) -> Unit,
     modifier: Modifier = Modifier,
-    project: ProjectRequest? = null
+    project: ProjectRequest? = null,
+    dateRangeState: DateRangePickerState = rememberDateRangePickerState()
 ) {
     var title by remember { mutableStateOf(project?.name ?: "") }
     var description by remember { mutableStateOf(project?.description ?: "") }
@@ -91,9 +89,6 @@ fun ProjectDialog(
 @Composable
 private fun ProjectDialogPreview() {
     DevDashTheme {
-        ProjectDialog(rememberDateRangePickerState(
-            yearRange = LocalDate.now().year..(LocalDate.now().year + 5),
-            selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
-        ), {}, {})
+        ProjectDialog({}, {})
     }
 }
