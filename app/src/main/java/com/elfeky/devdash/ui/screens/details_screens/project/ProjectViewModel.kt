@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.details_screens.project
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfeky.domain.model.project.Project
@@ -136,7 +135,6 @@ class ProjectViewModel @Inject constructor(
                                 pinnedProjects = result.data?.projects ?: emptyList()
                             )
                         }
-                        Log.d("ProjectViewModel", result.data?.toString() ?: "null")
                     }
 
                     is Resource.Error -> _state.update {

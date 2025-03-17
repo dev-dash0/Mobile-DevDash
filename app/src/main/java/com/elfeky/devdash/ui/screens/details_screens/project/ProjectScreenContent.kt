@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.screens.details_screens.project
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -55,7 +54,6 @@ fun ProjectScreenContent(
                     )
                 }
             }
-            Log.d("ProjectScreenContent", "${project.name} is pinned: $isPinned")
             val dismissState = rememberSwipeToDismissBoxState(
                 confirmValueChange = { dismissValue ->
                     when (dismissValue) {
