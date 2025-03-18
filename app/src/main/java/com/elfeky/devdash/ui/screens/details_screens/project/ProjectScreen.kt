@@ -1,17 +1,19 @@
 package com.elfeky.devdash.ui.screens.details_screens.project
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.utils.gradientBackground
+import com.elfeky.devdash.ui.common.ScreenContainer
+import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
+import com.elfeky.devdash.ui.screens.details_screens.project.model.toProjectRequest
+import com.elfeky.domain.model.project.UpdateProjectRequest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectScreen(
     tenantId: Int,
@@ -21,45 +23,56 @@ fun ProjectScreen(
 ) {
     val projectState by viewModel.state.collectAsState()
 
-    LaunchedEffect(key1 = true) {
-        viewModel.getAllProjects(tenantId)
+    LaunchedEffect(Unit) { viewModel.refreshUi(tenantId) }
+
+    ScreenContainer(
+        isLoading = projectState.projects.isEmpty(),
+        onCreateClick = { viewModel.openProjectDialog(null) },
+        modifier = modifier.fillMaxSize()
+    ) {
+        ProjectScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            onClick = onClick,
+            projects = projectState.projects,
+            pinnedProjects = projectState.pinnedProjects,
+            onSwipeToDelete = {
+                viewModel.deleteProject(it, tenantId)
+                projectState.projectDeleted
+            },
+            onSwipeToPin = { id ->
+                if (viewModel.isPinned(id))
+                    viewModel.unpinProject(id)
+                else viewModel.pinProject(id)
+            },
+            onLongPress = { project -> viewModel.openProjectDialog(project) }
+        )
     }
 
-    LaunchedEffect(key1 = true) {
-        viewModel.event.collect { event ->
-            when (event) {
-                is Event.ShowError -> {
-                    println("Error: ${event.message}")
+    if (projectState.showProjectDialog) {
+        ProjectDialog(
+            project = projectState.selectedProject?.toProjectRequest(),
+            onDismiss = { viewModel.closeProjectDialog() },
+            onSubmit = { editedProject ->
+                if (projectState.selectedProject != null) {
+                    viewModel.updateProject(
+                        editedProject = UpdateProjectRequest(
+                            id = projectState.selectedProject!!.id,
+                            name = editedProject.name,
+                            description = editedProject.description,
+                            priority = editedProject.priority,
+                            status = editedProject.status,
+                            isPinned = viewModel.isPinned(projectState.selectedProject!!.id),
+                            startDate = editedProject.startDate,
+                            endDate = editedProject.endDate
+                        ),
+                        id = projectState.selectedProject!!.id,
+                        tenantId = tenantId
+                    )
+                } else {
+                    viewModel.addProject(editedProject, tenantId)
                 }
-
-                is Event.ProjectCreated -> {
-                    println("Project Created")
-                }
-
-                is Event.HideCreateDialog -> {
-                    println("Hide Create Dialog")
-                }
+                viewModel.closeProjectDialog()
             }
-        }
-    }
-
-    ProjectScreenContent(
-        modifier = modifier,
-        onClick = onClick,
-        projectState = projectState
-    )
-}
-
-@Preview
-@Composable
-private fun ProjectScreenPreview() {
-    DevDashTheme {
-        ProjectScreen(
-            tenantId = 5,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(gradientBackground),
-            onClick = {}
         )
     }
 }

@@ -17,10 +17,10 @@ import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen
 
 @Composable
 fun MainNavigation(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
     onLogout: () -> Unit,
     onProjectDetailsNavigate: (companyId: Int, projectId: Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navController,
@@ -29,6 +29,7 @@ fun MainNavigation(
         composable(route = MainScreen.HomeScreen.route) {
             HomeScreen(modifier = modifier)
         }
+
         navigation(
             startDestination = MainScreen.CompanyScreen.route,
             route = MainScreen.WorkSpaceScreen.route
@@ -47,7 +48,8 @@ fun MainNavigation(
                 ProjectScreen(
                     tenantId = companyId,
                     modifier = modifier,
-                    onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) })
+                    onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) }
+                )
             }
         }
 
@@ -60,7 +62,12 @@ fun MainNavigation(
             route = MainScreen.MoreScreen.route
         ) {
             composable(route = MainScreen.SettingsScreen.route) {
-                MoreScreen(onLogout = onLogout) { navController.navigate(MainScreen.ProfileScreen.route) }
+                MoreScreen(onLogout = onLogout) {
+                    navController.navigate(MainScreen.ProfileScreen.route) {
+                        popUpTo(MainScreen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
             }
 
             composable(route = MainScreen.ProfileScreen.route) {

@@ -1,6 +1,6 @@
 package com.elfeky.domain.usecase.project
 
-import com.elfeky.domain.model.project.ProjectRequest
+import com.elfeky.domain.model.project.UpdateProjectRequest
 import com.elfeky.domain.repo.ProjectRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
@@ -13,10 +13,10 @@ class UpdateProjectUseCase(
     private val repo: ProjectRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(id: Int, requestBody: ProjectRequest): Flow<Resource<Any>> = flow {
+    operator fun invoke(id: Int, requestBody: UpdateProjectRequest): Flow<Resource<Any>> = flow {
         try {
             emit(Resource.Loading())
-            repo.updateProject(accessTokenUseCase.get() ?: "", id, requestBody)
+            repo.updateProject(accessTokenUseCase.get(), id, requestBody)
             emit(Resource.Success())
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))

@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfeky.domain.model.account.ChangePasswordRequest
 import com.elfeky.domain.model.account.UserProfileRequest
-import com.elfeky.domain.usecase.ChangePasswordUseCase
-import com.elfeky.domain.usecase.DeleteAccountUseCase
-import com.elfeky.domain.usecase.GetUserProfileUseCase
-import com.elfeky.domain.usecase.LogoutUseCase
-import com.elfeky.domain.usecase.UpdateProfileUseCase
+import com.elfeky.domain.usecase.account.ChangePasswordUseCase
+import com.elfeky.domain.usecase.account.DeleteAccountUseCase
+import com.elfeky.domain.usecase.account.GetUserProfileUseCase
+import com.elfeky.domain.usecase.account.LogoutUseCase
+import com.elfeky.domain.usecase.account.UpdateProfileUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

@@ -15,7 +15,7 @@ class DeleteProjectUseCase(
     operator fun invoke(id: Int): Flow<Resource<Any>> = flow {
         try {
             emit(Resource.Loading())
-            repo.deleteProject(accessTokenUseCase.get() ?: "", id)
+            repo.deleteProject(accessTokenUseCase.get(), id)
             emit(Resource.Success())
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))

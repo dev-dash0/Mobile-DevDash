@@ -3,6 +3,8 @@ package com.elfeky.devdash.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
+import com.elfeky.domain.usecase.local_storage.IsFirstLoginUseCase
+import com.elfeky.domain.usecase.local_storage.LoginDataUseCase
 import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
 import com.elfeky.domain.util.Constants.USER_DATA_FILE
 import dagger.Module
@@ -14,7 +16,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SharedPreferencesUseCase {
+object SharedPreferencesUseCaseModule {
+
+    @Provides
+    @Singleton
+    fun provideLoginDataUseCase(sharedPreferences: SharedPreferences): LoginDataUseCase =
+        LoginDataUseCase(sharedPreferences)
+
+    @Provides
+    @Singleton
+    fun provideIsFirstLoginUseCase(sharedPreferences: SharedPreferences): IsFirstLoginUseCase =
+        IsFirstLoginUseCase(sharedPreferences)
 
     @Provides
     @Singleton

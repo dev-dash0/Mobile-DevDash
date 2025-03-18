@@ -7,4 +7,5 @@
     <string name="completed">Completed</string>
     <string name="canceled">Canceled</string>
     <string name="postponed">Postponed</string>
+    <string name="working_on">Working on</string>
 </resources>

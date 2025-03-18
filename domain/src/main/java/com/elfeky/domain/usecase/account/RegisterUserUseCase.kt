@@ -1,4 +1,4 @@
-package com.elfeky.domain.usecase
+package com.elfeky.domain.usecase.account
 
 import com.elfeky.domain.model.account.User
 import com.elfeky.domain.repo.AuthenticationRepo

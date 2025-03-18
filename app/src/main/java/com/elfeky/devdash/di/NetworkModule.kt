@@ -1,6 +1,7 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.data.remote.AuthenticationApiService
+import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
 import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.util.Constants.BASE_URL
@@ -55,5 +56,11 @@ object NetworkModule {
     @Singleton
     fun provideProjectApiService(retrofit: Retrofit): ProjectApiService {
         return retrofit.create(ProjectApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePinApiService(retrofit: Retrofit): PinApiService {
+        return retrofit.create(PinApiService::class.java)
     }
 }

@@ -34,11 +34,14 @@ import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableD
 import com.elfeky.devdash.ui.common.dialogs.component.HorizontalItem
 import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
 import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.priorityList
-import com.elfeky.devdash.ui.common.dialogs.statusList
-import com.elfeky.devdash.ui.common.dialogs.typeList
 import com.elfeky.devdash.ui.common.dropdown_menu.MenuSelector
-import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuUiModel
+import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import java.time.LocalDate
 
@@ -49,16 +52,16 @@ fun IssueDialogContent(
     description: String,
     assignees: MutableList<UserUiModel>,
     dateRangeState: DateRangePickerState,
-    selectedPriority: MenuUiModel,
-    selectedType: MenuUiModel,
-    selectedStatus: MenuUiModel,
+    selectedPriority: MenuOption,
+    selectedType: MenuOption,
+    selectedStatus: MenuOption,
     assigneeList: List<UserUiModel>,
     labelList: List<String>,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
-    onPriorityChange: (MenuUiModel) -> Unit,
-    onTypeChange: (MenuUiModel) -> Unit,
-    onStatusChange: (MenuUiModel) -> Unit,
+    onPriorityChange: (MenuOption) -> Unit,
+    onTypeChange: (MenuOption) -> Unit,
+    onStatusChange: (MenuOption) -> Unit,
     onLabelToggle: (String) -> Unit,
     onAssigneeToggle: (UserUiModel) -> Unit,
     modifier: Modifier = Modifier
@@ -123,7 +126,7 @@ fun IssueDialogContent(
 
         HorizontalItem(label = "Status") {
             MenuSelector(
-                items = statusList,
+                items = issueStatusList,
                 selectedItem = selectedStatus,
                 onItemSelected = { onStatusChange(it) },
                 modifier = Modifier.weight(.75f)
@@ -171,7 +174,7 @@ private fun IssueDialogContentPreview() {
 
     var selectedType by remember { mutableStateOf(typeList[0]) }
     var selectedPriority by remember { mutableStateOf(priorityList[0]) }
-    var selectedStatus by remember { mutableStateOf(statusList[0]) }
+    var selectedStatus by remember { mutableStateOf(issueStatusList[0]) }
 
     DevDashTheme {
         IssueDialogContent(
@@ -186,9 +189,9 @@ private fun IssueDialogContentPreview() {
             labelList,
             onTitleChange = { title = it },
             onDescriptionChange = { description = it },
-            onPriorityChange = { selectedPriority = it },
-            onTypeChange = { selectedType = it },
-            onStatusChange = { selectedStatus = it },
+            onPriorityChange = { selectedPriority = it as Priority },
+            onTypeChange = { selectedType = it as Type },
+            onStatusChange = { selectedStatus = it as Status },
             onLabelToggle = { if (!selectedLabels.remove(it)) selectedLabels.add(it) },
             onAssigneeToggle = { if (!assignees.remove(it)) assignees.add(it) },
         )

@@ -1,4 +1,4 @@
-package com.elfeky.domain.usecase
+package com.elfeky.domain.usecase.account
 
 import android.util.Log
 import com.elfeky.domain.model.account.UserProfileRequest
@@ -18,7 +18,7 @@ class UpdateProfileUseCase(
         try {
             emit(Resource.Loading())
             repo.updateProfile(
-                accessTokenUseCase.get() ?: "",
+                accessTokenUseCase.get(),
                 userProfileRequest = userProfileRequest
             )
             Log.i("userProfileRequest",userProfileRequest.toString())
