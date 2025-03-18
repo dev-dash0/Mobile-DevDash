@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elfeky.devdash.ui.utils.cardGradientBackground
-import com.elfeky.domain.model.CalenderIssue
+import com.elfeky.domain.model.dashboard.CalenderIssue
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderViewModel
 import com.elfeky.devdash.ui.theme.Orange
