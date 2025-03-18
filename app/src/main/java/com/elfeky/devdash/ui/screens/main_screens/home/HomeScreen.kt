@@ -16,15 +16,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.card.IssueCard
 import com.elfeky.devdash.ui.common.component.LoadingIndicator
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
 import com.elfeky.devdash.ui.common.dialogs.labelList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.screens.main_screens.home.components.Item
 import com.elfeky.devdash.ui.screens.main_screens.home.components.ProgressRow
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.theme.Red
 
 @Composable
 fun HomeScreen(
@@ -34,8 +34,7 @@ fun HomeScreen(
     val state = viewModel.state.value
     if (state.isLoading) {
         LoadingIndicator()
-    }
-    else if (state.error.isNotEmpty()) {
+    } else if (state.error.isNotEmpty()) {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
@@ -68,11 +67,11 @@ fun HomeScreen(
                 Item(R.drawable.alert_ic, "Urgent Issues") {
                     IssueCard(
                         "12 Feb | 18 Feb",
-                        Status.Canceled,
+                        Status.InProgress,
                         "Issue Title",
                         labelList.take(3),
                         assigneeList,
-                        Red,
+                        Priority.Medium,
                         onClick = { TODO() },
                         onLongClick = { TODO() }
                     )
@@ -83,11 +82,11 @@ fun HomeScreen(
                 Item(R.drawable.ic_pin, "Pinned") {
                     IssueCard(
                         "12 Feb | 18 Feb",
-                        Status.Canceled,
+                        Status.Reviewing,
                         "Issue Title",
                         labelList.take(3),
                         assigneeList,
-                        Red,
+                        Priority.Low,
                         onClick = { TODO() },
                         onLongClick = { TODO() }
                     )

@@ -12,9 +12,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
-import com.elfeky.devdash.ui.common.dialogs.priorityList
 import com.elfeky.devdash.ui.common.dialogs.project.components.ProjectDialogContent
-import com.elfeky.devdash.ui.common.dialogs.projectStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.nowLocalDate
 import com.elfeky.devdash.ui.utils.toEpochMillis
@@ -39,13 +41,8 @@ fun ProjectDialog(
         }
     }
 
-    var selectedPriority by remember {
-        mutableStateOf(priorityList.find { it.text == project?.priority } ?: priorityList[0])
-    }
-    var selectedStatus by remember {
-        mutableStateOf(projectStatusList.find { it.text == project?.status }
-            ?: projectStatusList[0])
-    }
+    var selectedPriority by remember { mutableStateOf(project?.priority.toPriority()) }
+    var selectedStatus by remember { mutableStateOf(project?.status.toProjectStatus()) }
 
     DialogContainer(
         onCancel = onDismiss,
@@ -78,8 +75,8 @@ fun ProjectDialog(
             selectedStatus = selectedStatus,
             onTitleChange = { title = it },
             onDescriptionChange = { description = it },
-            onPriorityChange = { selectedPriority = it },
-            onStatusChange = { selectedStatus = it }
+            onPriorityChange = { selectedPriority = it as Priority },
+            onStatusChange = { selectedStatus = it as Status }
         )
     }
 }

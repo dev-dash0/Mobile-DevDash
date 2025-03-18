@@ -15,8 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.Status
 import com.elfeky.devdash.ui.common.component.StatusIndicator
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 
 @Composable
 fun CardTitle(

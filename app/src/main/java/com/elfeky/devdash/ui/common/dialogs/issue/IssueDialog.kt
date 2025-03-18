@@ -12,17 +12,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.assigneeList
-import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
 import com.elfeky.devdash.ui.common.dialogs.component.FullScreenDialog
 import com.elfeky.devdash.ui.common.dialogs.issue.components.IssueDialogContent
 import com.elfeky.devdash.ui.common.dialogs.issue.model.IssueUiModel
 import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
 import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.priorityList
-import com.elfeky.devdash.ui.common.dialogs.statusList
-import com.elfeky.devdash.ui.common.dialogs.typeList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,16 +38,12 @@ fun IssueDialog(
     var description by remember { mutableStateOf("") }
     val selectedLabels = remember { mutableStateListOf<String>() }
     val assignees = remember { mutableStateListOf<UserUiModel>() }
-    val currentYear = LocalDate.now().year
 
-    val dateRangeState = rememberDateRangePickerState(
-        yearRange = currentYear..(currentYear + 5),
-        selectableDates = ValidRangeSelectableDates.startingFromCurrentDay()
-    )
+    val dateRangeState = rememberDateRangePickerState()
 
     var selectedType by remember { mutableStateOf(typeList[0]) }
     var selectedPriority by remember { mutableStateOf(priorityList[0]) }
-    var selectedStatus by remember { mutableStateOf(statusList[0]) }
+    var selectedStatus by remember { mutableStateOf(issueStatusList[0]) }
 
     FullScreenDialog(
         title = "Create New Issue",
@@ -85,9 +82,9 @@ fun IssueDialog(
             labelList,
             onTitleChange = { title = it },
             onDescriptionChange = { description = it },
-            onPriorityChange = { selectedPriority = it },
-            onTypeChange = { selectedType = it },
-            onStatusChange = { selectedStatus = it },
+            onPriorityChange = { selectedPriority = it as Priority },
+            onTypeChange = { selectedType = it as Type },
+            onStatusChange = { selectedStatus = it as Status },
             onLabelToggle = { if (!selectedLabels.remove(it)) selectedLabels.add(it) },
             onAssigneeToggle = { if (!assignees.remove(it)) assignees.add(it) },
             modifier = Modifier.padding(paddingValues)

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.ScreenContainer
 import com.elfeky.devdash.ui.common.card.ProjectCard
 import com.elfeky.devdash.ui.common.component.SwipeToDismissItem
-import com.elfeky.devdash.ui.common.toStatus
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
 import com.elfeky.devdash.ui.screens.details_screens.project.model.projectList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
@@ -77,7 +77,7 @@ fun ProjectScreenContent(
             SwipeToDismissItem(dismissState, isPinned) {
                 ProjectCard(
                     date = project.endDate,
-                    status = project.status.toStatus(),
+                    status = project.status.toProjectStatus(),
                     issueTitle = project.name,
                     description = project.description,
                     onClick = { onClick(project.id) },

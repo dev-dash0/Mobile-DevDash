@@ -22,15 +22,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.component.IconText
-import com.elfeky.devdash.ui.common.dialogs.typeList
-import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuUiModel
+import com.elfeky.devdash.ui.common.component.StatusIndicator
+import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.projectStatusList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun MenuSelector(
-    items: List<MenuUiModel>,
-    selectedItem: MenuUiModel,
-    onItemSelected: (MenuUiModel) -> Unit,
+    items: List<MenuOption>,
+    selectedItem: MenuOption,
+    onItemSelected: (MenuOption) -> Unit,
     modifier: Modifier = Modifier,
     menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
@@ -46,25 +48,27 @@ fun MenuSelector(
                 contentColor = MaterialTheme.colorScheme.onBackground
             )
         ) {
-            IconText(selectedItem.icon, selectedItem.color, selectedItem.text)
+            IconText(selectedItem)
         }
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier.heightIn(max = itemHeight * 5),
-            offset = DpOffset(0.dp, 0.dp),
+            offset = DpOffset(0.dp, -itemHeight),
             shape = MaterialTheme.shapes.medium,
             containerColor = menuTextColor
         ) {
             items.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     leadingIcon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.text,
-                            tint = item.color
-                        )
+                        if (item is Status) StatusIndicator(item)
+                        else
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.text,
+                                tint = item.color
+                            )
                     },
                     text = {
                         Text(
@@ -72,7 +76,10 @@ fun MenuSelector(
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     },
-                    onClick = { onItemSelected(item); expanded = false },
+                    onClick = {
+                        onItemSelected(item)
+                        expanded = false
+                    },
                     modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
                         if (index == 0) itemHeight =
                             with(local) { layoutCoordinates.size.height.toDp() }
@@ -87,13 +94,13 @@ fun MenuSelector(
 @Preview
 @Composable
 private fun MenuSelectorPreview() {
-    var selectedItem by remember { mutableStateOf(typeList[1]) }
+    var selectedItem by remember { mutableStateOf(projectStatusList[0]) }
 
     DevDashTheme {
         MenuSelector(
-            items = typeList,
+            items = projectStatusList,
             selectedItem = selectedItem,
-            onItemSelected = { selectedItem = it },
+            onItemSelected = { selectedItem = it as Status },
         )
     }
 }
