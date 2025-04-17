@@ -1,9 +1,13 @@
 package com.elfeky.devdash.ui.screens.main_screens.calender
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -22,18 +26,29 @@ fun CalenderScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        var selectedIndex = remember { mutableIntStateOf(0) }
+        if (viewModel.state.value.isCalendarLoading) {
+            CircularProgressIndicator()
+        } else if (viewModel.state.value.calendarError != "") {
+            Text(
+                text = viewModel.state.value.calendarError,
+                color = MaterialTheme.colorScheme.error
+            )
+        } else {
+            var selectedIndex = remember { mutableIntStateOf(0) }
 
-        DaysSection(
-            modifier = Modifier.weight(1f),
-            dates = viewModel.dates,
-            selectedIndex = selectedIndex
-        )
-        CalenderIssuesSection(
-            modifier = Modifier.weight(4f),
-            issues = viewModel.issues[selectedIndex.intValue]
-        )
+            DaysSection(
+                modifier = Modifier.weight(1f),
+                dates = viewModel.dates,
+                selectedIndex = selectedIndex
+            )
+            CalenderIssuesSection(
+                modifier = Modifier.weight(4f),
+                issues = viewModel.issues[selectedIndex.intValue]
+            )
+        }
+
     }
 }

@@ -19,147 +19,146 @@ class CalenderViewModel @Inject constructor(
     private val getCalendarUseCase: GetCalendarUseCase
 ) : ViewModel() {
 
-//    init {
-//        getCalendar()
-//    }
-
     var state = mutableStateOf(CalendarScreenState())
         private set
 
+    var dates = mutableListOf<String>()
+    var issues = mutableListOf<List<CalenderIssue>>()
+//    var issues: List<List<CalenderIssue>> = listOf(
+//        listOf(
+//            CalenderIssue(
+//                title = "Task1",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task1",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task1",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task1",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task1",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task1",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//
+//            ),
+//        listOf(
+//            CalenderIssue(
+//                title = "Task2",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task2",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task2",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//
+//            ),
+//        listOf(
+//            CalenderIssue(
+//                title = "Task3",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task3",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//            CalenderIssue(
+//                title = "Task3",
+//                priority = "High",
+//                startDate = "2025-03-01T00:00:00",
+//                deadline = "2025-03-07T00:00:00",
+//                projectName = "web",
+//                tenantName = "Face",
+//                id = 0,
+//                type = "Epic"
+//            ),
+//
+//            )
+//    )
 
-    val dates = listOf("2025-03-04", "2025-03-05", "2025-03-06")
-    val issues: List<List<CalenderIssue>> = listOf(
-        listOf(
-            CalenderIssue(
-                title = "Task1",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task1",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task1",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task1",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task1",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task1",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-
-            ),
-        listOf(
-            CalenderIssue(
-                title = "Task2",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task2",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task2",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-
-            ),
-        listOf(
-            CalenderIssue(
-                title = "Task3",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task3",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-            CalenderIssue(
-                title = "Task3",
-                priority = "High",
-                startDate = "2025-03-01T00:00:00",
-                deadline = "2025-03-07T00:00:00",
-                projectName = "web",
-                tenantName = "Face",
-                id = 0,
-                type = "Epic"
-            ),
-
-            )
-    )
-
+    init {
+        getCalendar()
+    }
 
     fun getCalendar() {
         getCalendarUseCase().onEach { result ->
@@ -170,8 +169,12 @@ class CalenderViewModel @Inject constructor(
                 }
 
                 is Resource.Success -> {
-//                    state.value =
-//                        CalendarScreenState(calenderList = result.data?.calendarList, isCalendarLoading = false)
+                    for (day in result.data?.result!!){
+                        dates.add(day.date)
+                        issues.add(day.issues)
+                    }
+                    state.value =
+                        CalendarScreenState(calenderList = result.data, isCalendarLoading = false)
                     Log.i("calendarList", result.data.toString())
                 }
 

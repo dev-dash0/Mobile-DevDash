@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elfeky.devdash.ui.utils.cardGradientBackground
@@ -71,7 +72,8 @@ fun CalenderIssueChip(
                             Text(
                                 text = "${calenderIssue.tenantName}: ${calenderIssue.projectName}",
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontStyle = FontStyle.Italic
+                                fontStyle = FontStyle.Italic,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = "${viewModel.formatDate(calenderIssue.startDate)} | ${
