@@ -1,12 +1,15 @@
 package com.elfeky.devdash.ui.common.dropdown_menu
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -16,11 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.component.IconText
 import com.elfeky.devdash.ui.common.component.StatusIndicator
 import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
@@ -28,6 +27,7 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.projectStatusList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuSelector(
     items: List<MenuOption>,
@@ -37,12 +37,15 @@ fun MenuSelector(
     menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var itemHeight by remember { mutableStateOf(48.dp) }
-    val local = LocalDensity.current
 
-    Box(modifier = modifier) {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
         TextButton(
-            onClick = { expanded = !expanded },
+            onClick = { },
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
             colors = ButtonDefaults.textButtonColors(
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onBackground
@@ -51,15 +54,14 @@ fun MenuSelector(
             IconText(selectedItem)
         }
 
-        DropdownMenu(
+        ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.heightIn(max = itemHeight * 5),
-            offset = DpOffset(0.dp, -itemHeight),
+            modifier = Modifier.width(IntrinsicSize.Min),
             shape = MaterialTheme.shapes.medium,
             containerColor = menuTextColor
         ) {
-            items.forEachIndexed { index, item ->
+            items.forEach { item ->
                 DropdownMenuItem(
                     leadingIcon = {
                         if (item is Status) StatusIndicator(item)
@@ -80,16 +82,12 @@ fun MenuSelector(
                         onItemSelected(item)
                         expanded = false
                     },
-                    modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
-                        if (index == 0) itemHeight =
-                            with(local) { layoutCoordinates.size.height.toDp() }
-                    }
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }
     }
 }
-
 
 @Preview
 @Composable
