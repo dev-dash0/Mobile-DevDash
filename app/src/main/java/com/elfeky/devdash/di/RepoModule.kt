@@ -1,16 +1,19 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.data.remote.AuthenticationApiService
+import com.elfeky.data.remote.BacklogApiService
 import com.elfeky.data.remote.DashBoardApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
 import com.elfeky.data.remote.TenantApiService
 import com.elfeky.data.repo.AuthenticationRepoImpl
+import com.elfeky.data.repo.BacklogRepoImpl
 import com.elfeky.data.repo.DashBoardRepoImpl
 import com.elfeky.data.repo.PinRepoImpl
 import com.elfeky.data.repo.ProjectRepoImpl
 import com.elfeky.data.repo.TenantRepoImpl
 import com.elfeky.domain.repo.AuthenticationRepo
+import com.elfeky.domain.repo.BacklogRepo
 import com.elfeky.domain.repo.DashBoardRepo
 import com.elfeky.domain.repo.PinRepo
 import com.elfeky.domain.repo.ProjectRepo
@@ -53,4 +56,11 @@ object RepoModule {
     fun provideDashBoardRepo(dashBoardApiService: DashBoardApiService): DashBoardRepo{
         return DashBoardRepoImpl(dashBoardApiService)
     }
+
+    @Provides
+    @Singleton
+    fun provideBacklogRepo(backlogApiService: BacklogApiService): BacklogRepo{
+        return BacklogRepoImpl(backlogApiService)
+    }
+
 }

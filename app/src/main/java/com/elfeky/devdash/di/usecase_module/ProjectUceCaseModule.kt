@@ -1,4 +1,4 @@
-package com.elfeky.devdash.di
+package com.elfeky.devdash.di.usecase_module
 
 import com.elfeky.domain.repo.ProjectRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase

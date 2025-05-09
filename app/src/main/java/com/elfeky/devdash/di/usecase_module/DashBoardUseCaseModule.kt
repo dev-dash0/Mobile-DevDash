@@ -1,4 +1,4 @@
-package com.elfeky.devdash.di
+package com.elfeky.devdash.di.usecase_module
 
 import com.elfeky.domain.repo.DashBoardRepo
 import com.elfeky.domain.usecase.dashboard.GetCalendarUseCase

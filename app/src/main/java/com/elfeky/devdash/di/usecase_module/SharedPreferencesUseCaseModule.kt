@@ -1,4 +1,4 @@
-package com.elfeky.devdash.di
+package com.elfeky.devdash.di.usecase_module
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,7 +6,7 @@ import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.local_storage.IsFirstLoginUseCase
 import com.elfeky.domain.usecase.local_storage.LoginDataUseCase
 import com.elfeky.domain.usecase.local_storage.RefreshTokenUseCase
-import com.elfeky.domain.util.Constants.USER_DATA_FILE
+import com.elfeky.domain.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,6 +41,6 @@ object SharedPreferencesUseCaseModule {
     @Provides
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return context.getSharedPreferences(USER_DATA_FILE, Context.MODE_PRIVATE)
+        return context.getSharedPreferences(Constants.USER_DATA_FILE, Context.MODE_PRIVATE)
     }
 }

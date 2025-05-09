@@ -1,11 +1,11 @@
-package com.elfeky.devdash.di
+package com.elfeky.devdash.di.usecase_module
 
 import com.elfeky.domain.repo.TenantRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.tenant.AddTenantUseCase
 import com.elfeky.domain.usecase.tenant.DeleteTenantUseCase
-import com.elfeky.domain.usecase.tenant.GetTenantByIdUseCase
 import com.elfeky.domain.usecase.tenant.GetAllTenantsUseCase
+import com.elfeky.domain.usecase.tenant.GetTenantByIdUseCase
 import com.elfeky.domain.usecase.tenant.UpdateTenantUseCase
 import dagger.Module
 import dagger.Provides

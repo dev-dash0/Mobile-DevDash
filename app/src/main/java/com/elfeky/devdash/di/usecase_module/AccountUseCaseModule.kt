@@ -1,4 +1,4 @@
-package com.elfeky.devdash.di
+package com.elfeky.devdash.di.usecase_module
 
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.usecase.account.ChangePasswordUseCase

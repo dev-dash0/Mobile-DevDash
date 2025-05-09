@@ -1,6 +1,7 @@
 package com.elfeky.devdash.di
 
 import com.elfeky.data.remote.AuthenticationApiService
+import com.elfeky.data.remote.BacklogApiService
 import com.elfeky.data.remote.DashBoardApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
@@ -69,5 +70,11 @@ object NetworkModule {
     @Singleton
     fun provideDashBoardApiService(retrofit: Retrofit): DashBoardApiService {
         return retrofit.create(DashBoardApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBacklogApiService(retrofit: Retrofit): BacklogApiService {
+        return retrofit.create(BacklogApiService::class.java)
     }
 }
