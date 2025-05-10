@@ -28,5 +28,4 @@ fun ProjectDetailsNavigation(companyId: Int, projectId: Int, modifier: Modifier 
             }
         }
     }
-
 }

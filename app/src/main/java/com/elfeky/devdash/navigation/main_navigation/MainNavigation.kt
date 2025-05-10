@@ -2,6 +2,7 @@ package com.elfeky.devdash.navigation.main_navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -9,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectScreen
+import com.elfeky.devdash.ui.screens.details_screens.project.ProjectViewModel
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
 import com.elfeky.devdash.ui.screens.main_screens.home.HomeScreen
@@ -46,9 +48,13 @@ fun MainNavigation(
             ) {
                 val companyId = it.arguments?.getInt("id")!!
                 ProjectScreen(
-                    tenantId = companyId,
                     modifier = modifier,
-                    onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) }
+                    onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) },
+                    viewModel = hiltViewModel<ProjectViewModel, ProjectViewModel.Factory>(key = companyId.toString()) {
+                        it.create(
+                            companyId
+                        )
+                    }
                 )
             }
         }

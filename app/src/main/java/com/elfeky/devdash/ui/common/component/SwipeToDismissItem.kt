@@ -1,6 +1,7 @@
 package com.elfeky.devdash.ui.common.component
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -11,7 +12,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,16 +33,39 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable
 fun SwipeToDismissItem(
-    dismissState: SwipeToDismissBoxState,
     isPinned: Boolean,
+    onSwipeToDelete: () -> Unit,
+    onSwipeToPin: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (RowScope.() -> Unit),
 ) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { dismissValue ->
+            when (dismissValue) {
+                SwipeToDismissBoxValue.StartToEnd -> {
+                    onSwipeToPin()
+                    false
+                }
+
+                SwipeToDismissBoxValue.EndToStart -> {
+                    onSwipeToDelete()
+                    true
+                }
+
+                SwipeToDismissBoxValue.Settled -> false
+            }
+        },
+        positionalThreshold = { totalDistance -> totalDistance * .5f }
+    )
+
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
+            val direction = dismissState.dismissDirection
+            val isDismissed = dismissState.targetValue != SwipeToDismissBoxValue.Settled
+            val scale by animateFloatAsState(if (isDismissed) 1f else 0.5f)
             val color by animateColorAsState(
-                when (dismissState.dismissDirection) {
+                when (direction) {
                     SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.surface
                     SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
                     SwipeToDismissBoxValue.Settled -> Color.Transparent
@@ -63,7 +87,8 @@ fun SwipeToDismissItem(
                 derivedStateOf {
                     when (dismissState.dismissDirection) {
                         SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                        else -> Alignment.CenterEnd
+                        SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                        else -> Alignment.Center
                     }
                 }
             }
@@ -78,7 +103,9 @@ fun SwipeToDismissItem(
                     Icon(
                         painter = painterResource(icon!!),
                         contentDescription = "",
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier
+                            .scale(scale)
+                            .size(48.dp),
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -93,18 +120,9 @@ fun SwipeToDismissItem(
 @Composable
 private fun SwipeToDismissItemPreview() {
     val project = projectList[0]
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { state ->
-            when (state) {
-                SwipeToDismissBoxValue.StartToEnd -> true
-                SwipeToDismissBoxValue.EndToStart -> true
-                SwipeToDismissBoxValue.Settled -> true
-            }
-        }
-    )
 
     DevDashTheme {
-        SwipeToDismissItem(dismissState, false) {
+        SwipeToDismissItem(false, {}, {}) {
             ProjectCard(
                 date = project.endDate,
                 status = project.status.toProjectStatus(),

@@ -16,14 +16,13 @@ import com.elfeky.domain.model.project.UpdateProjectRequest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectScreen(
-    tenantId: Int,
     modifier: Modifier = Modifier,
     onClick: (id: Int) -> Unit,
     viewModel: ProjectViewModel = hiltViewModel()
 ) {
     val projectState by viewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) { viewModel.refreshUi(tenantId) }
+    LaunchedEffect(Unit) { viewModel.refreshUi() }
 
     ScreenContainer(
         isLoading = projectState.projects.isEmpty(),
@@ -35,10 +34,7 @@ fun ProjectScreen(
             onClick = onClick,
             projects = projectState.projects,
             pinnedProjects = projectState.pinnedProjects,
-            onSwipeToDelete = {
-                viewModel.deleteProject(it, tenantId)
-                projectState.projectDeleted
-            },
+            onSwipeToDelete = { viewModel.deleteProject(it) },
             onSwipeToPin = { id ->
                 if (viewModel.isPinned(id))
                     viewModel.unpinProject(id)
@@ -65,11 +61,10 @@ fun ProjectScreen(
                             startDate = editedProject.startDate,
                             endDate = editedProject.endDate
                         ),
-                        id = projectState.selectedProject!!.id,
-                        tenantId = tenantId
+                        id = projectState.selectedProject!!.id
                     )
                 } else {
-                    viewModel.addProject(editedProject, tenantId)
+                    viewModel.addProject(editedProject)
                 }
                 viewModel.closeProjectDialog()
             }

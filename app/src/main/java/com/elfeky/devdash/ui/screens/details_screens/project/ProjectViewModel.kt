@@ -13,21 +13,24 @@ import com.elfeky.domain.usecase.project.DeleteProjectUseCase
 import com.elfeky.domain.usecase.project.GetAllProjectsUseCase
 import com.elfeky.domain.usecase.project.UpdateProjectUseCase
 import com.elfeky.domain.util.Resource
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class ProjectViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ProjectViewModel.Factory::class)
+class ProjectViewModel @AssistedInject constructor(
+    @Assisted val tenantId: Int,
     private val addProjectUseCase: AddProjectUseCase,
     private val updateProjectUseCase: UpdateProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
@@ -37,159 +40,225 @@ class ProjectViewModel @Inject constructor(
     private val unpinItemUseCase: UnpinItemUseCase
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ProjectState())
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            tenantId: Int,
+        ): ProjectViewModel
+    }
+
+    private val _state = MutableStateFlow(ProjectState(tenantId))
     val state: StateFlow<ProjectState> = _state.asStateFlow()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ProjectState())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProjectState(tenantId))
 
-    private fun getAllProjects(tenantId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            getAllProjectsUseCase(tenantId).onEach { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
-
-                    is Resource.Success -> _state.update {
-                        it.copy(
-                            projects = result.data ?: emptyList()
-                        )
-                    }
-
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                error = result.message ?: "Un expected error happened"
-                            )
-                        }
-                    }
-                }
-            }.launchIn(viewModelScope)
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _state.update {
+            it.copy(error = throwable.message ?: "An unexpected error occurred")
         }
     }
 
-    fun addProject(project: ProjectRequest, tenantId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            addProjectUseCase(project, tenantId).onEach { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
+    init {
+        refreshUi()
+    }
 
-                    is Resource.Success -> getAllProjects(tenantId)
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                error = result.message ?: "Un expected error happened"
-                            )
+    private fun getAllProjects() {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            getAllProjectsUseCase(tenantId)
+                .catch { throwable ->
+                    _state.update {
+                        it.copy(error = throwable.message ?: "Error fetching projects")
+                    }
+                }
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> {
+                            // Handle loading state if needed
+                        }
+
+                        is Resource.Success -> _state.update {
+                            it.copy(projects = result.data ?: emptyList(), error = null)
+                        }
+
+                        is Resource.Error -> {
+                            _state.update {
+                                it.copy(error = result.message ?: "Error fetching projects")
+                            }
                         }
                     }
                 }
-            }.launchIn(viewModelScope)
         }
     }
 
-    fun deleteProject(id: Int, tenantId: Int) {
-        viewModelScope.launch {
-            deleteProjectUseCase(id).onEach { result ->
-                when (result) {
-                    is Resource.Loading -> _state.update { it.copy(projectDeleted = false) }
-                    is Resource.Success -> refreshUi(tenantId)
+    fun addProject(project: ProjectRequest) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            addProjectUseCase(project, tenantId)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> {
+                            _state.update { it.copy(error = null) }
+                            getAllProjects()
+                        }
 
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            error = result.message ?: "Un expected error happened",
-                            projectDeleted = false
-                        )
-                    }
-                }
-            }.launchIn(viewModelScope)
-        }
-    }
-
-    fun updateProject(editedProject: UpdateProjectRequest, id: Int, tenantId: Int) {
-        viewModelScope.launch {
-            updateProjectUseCase(id, editedProject).onEach { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
-
-                    is Resource.Success -> getAllProjects(tenantId)
-
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(
-                                error = result.message ?: "Un expected error happened"
-                            )
+                        is Resource.Error -> {
+                            _state.update {
+                                it.copy(error = result.message ?: "Error adding project")
+                            }
                         }
                     }
-
                 }
-            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun deleteProject(id: Int) {
+        viewModelScope.launch(exceptionHandler) {
+            _state.update {
+                it.copy(projects = it.projects.filter { project -> project.id != id })
+            }
+
+            deleteProjectUseCase(id)
+                .catch { throwable ->
+                    refreshUi()
+                    _state.update {
+                        it.copy(error = throwable.message ?: "Error deleting project")
+                    }
+                }
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> _state.update { it.copy(error = null) }
+                        is Resource.Error -> {
+                            // Error handled in catch block
+                        }
+                    }
+                }
+        }
+    }
+
+    fun updateProject(editedProject: UpdateProjectRequest, id: Int) {
+        viewModelScope.launch(exceptionHandler) {
+            updateProjectUseCase(id, editedProject)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> {
+                            _state.update { it.copy(error = null) }
+                            getAllProjects()
+                        }
+
+                        is Resource.Error -> {
+                            _state.update {
+                                it.copy(error = result.message ?: "Error updating project")
+                            }
+                        }
+                    }
+                }
         }
     }
 
     private fun getPinnedProjects() {
-        viewModelScope.launch {
-            getPinnedItemsUseCase().onEach { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
-
-                    is Resource.Success -> {
-                        _state.update {
-                            it.copy(
-                                pinnedProjects = result.data?.projects ?: emptyList()
-                            )
-                        }
-                    }
-
-                    is Resource.Error -> _state.update {
-                        it.copy(error = result.message ?: "Un expected error happened")
+        viewModelScope.launch(exceptionHandler) {
+            getPinnedItemsUseCase()
+                .catch { throwable ->
+                    _state.update {
+                        it.copy(error = throwable.message ?: "Error fetching pinned projects")
                     }
                 }
-            }.launchIn(viewModelScope)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> {
+                            _state.update {
+                                it.copy(
+                                    pinnedProjects = result.data?.projects ?: emptyList(),
+                                    error = null
+                                )
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            _state.update {
+                                it.copy(error = result.message ?: "Error fetching pinned projects")
+                            }
+                        }
+                    }
+                }
         }
     }
 
     fun pinProject(id: Int) {
-        viewModelScope.launch {
-            pinItemUseCase(id, "project").onEach { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
+        viewModelScope.launch(exceptionHandler) {
+            _state.update {
+                val projectToPin = it.projects.find { p -> p.id == id }
+                if (projectToPin != null && !it.pinnedProjects.any { p -> p.id == id }) {
+                    it.copy(pinnedProjects = it.pinnedProjects + projectToPin)
+                } else {
+                    it
+                }
+            }
 
-                    is Resource.Success -> getPinnedProjects()
+            pinItemUseCase(id, "project")
+                .catch { throwable ->
+                    getPinnedProjects()
+                    _state.update { it.copy(error = throwable.message ?: "Error pinning project") }
+                }
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> {
+                            _state.update { it.copy(error = null) }
+                        }
 
-                    is Resource.Error -> {
-                        _state.update { it.copy(error = result.message!!) }
+                        is Resource.Error -> {
+                            // Error handled in catch block
+                        }
                     }
                 }
-            }.launchIn(viewModelScope)
         }
     }
 
     fun unpinProject(id: Int) {
-        viewModelScope.launch {
-            unpinItemUseCase(id, "project").onEach { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
+        viewModelScope.launch(exceptionHandler) {
+            _state.update {
+                it.copy(pinnedProjects = it.pinnedProjects.filter { project -> project.id != id })
+            }
 
-                    is Resource.Success -> getPinnedProjects()
-
-                    is Resource.Error -> {
-                        _state.update { it.copy(error = result.message!!) }
+            unpinItemUseCase(id, "project")
+                .catch { throwable ->
+                    getPinnedProjects()
+                    _state.update {
+                        it.copy(
+                            error = throwable.message ?: "Error unpinning project"
+                        )
                     }
-
                 }
-            }.launchIn(viewModelScope)
+                .collect { result ->
+                    when (result) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> {
+                            _state.update { it.copy(error = null) }
+                        }
+
+                        is Resource.Error -> {
+                            // Error handled in catch block
+                        }
+                    }
+                }
         }
     }
 
     fun openProjectDialog(project: Project?) {
-        _state.update { it.copy(showProjectDialog = true, selectedProject = project) }
+        _state.update { it.copy(showProjectDialog = true, selectedProject = project, error = null) }
     }
 
     fun closeProjectDialog() {
-        _state.update { it.copy(showProjectDialog = false, selectedProject = null) }
+        _state.update { it.copy(showProjectDialog = false, selectedProject = null, error = null) }
     }
 
-    fun isPinned(id: Int): Boolean = _state.value.pinnedProjects.map { it.id }.contains(id)
+    fun isPinned(id: Int): Boolean = _state.value.pinnedProjects.any { it.id == id }
 
-    fun refreshUi(tenantId: Int) {
-        getAllProjects(tenantId)
+    fun refreshUi() {
+        getAllProjects()
         getPinnedProjects()
     }
 }

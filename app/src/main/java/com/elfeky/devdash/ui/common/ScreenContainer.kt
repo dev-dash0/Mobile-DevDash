@@ -1,9 +1,10 @@
 package com.elfeky.devdash.ui.common
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.component.LoadingIndicator
@@ -43,7 +45,7 @@ fun ScreenContainer(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            exit = fadeOut(animationSpec = tween(500))
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.TopCenter)
         ) {
             LoadingIndicator()
         }
@@ -51,7 +53,7 @@ fun ScreenContainer(
         AnimatedVisibility(
             visible = !isLoading,
             modifier = Modifier.fillMaxSize(),
-            enter = fadeIn(animationSpec = tween(500))
+            enter = fadeIn() + expandIn(expandFrom = Alignment.TopCenter)
         ) {
             content()
         }
