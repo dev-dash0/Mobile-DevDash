@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class AddProjectUseCase(
+class AddProjectUseCase @Inject constructor(
     private val repo: ProjectRepo, private val accessTokenUseCase: AccessTokenUseCase
 ) {
     operator fun invoke(request: ProjectRequest, tenantId: Int): Flow<Resource<Any>> = flow {

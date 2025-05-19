@@ -7,8 +7,9 @@ import com.elfeky.domain.model.account.LoginResponse
 import com.elfeky.domain.model.account.User
 import com.elfeky.domain.model.account.UserProfileRequest
 import com.elfeky.domain.repo.AuthenticationRepo
+import javax.inject.Inject
 
-class AuthenticationRepoImpl(
+class AuthenticationRepoImpl @Inject constructor(
     private val authApiService: AuthenticationApiService
 ) : AuthenticationRepo {
     override suspend fun login(request: LoginRequest): LoginResponse = authApiService.login(request)

@@ -1,6 +1,6 @@
-package com.elfeky.domain.usecase.tenant
+package com.elfeky.domain.usecase.pin.unpin
 
-import com.elfeky.domain.repo.TenantRepo
+import com.elfeky.domain.repo.PinRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -9,19 +9,19 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetAllTenantsUseCase @Inject constructor(
-    private val repo: TenantRepo,
+class UnpinIssueUseCase @Inject constructor(
+    private val repo: PinRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(): Flow<Resource<Any>> = flow {
+    operator fun invoke(id: Int): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
-            repo.getTenants(accessTokenUseCase.get())
+            repo.unpinIssue(accessTokenUseCase.get(), id)
             emit(Resource.Success())
         } catch (e: IOException) {
-            emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
+            emit(Resource.Error(message = "Couldn't reach server. Check your internet connection\n${e.message}"))
         } catch (e: HttpException) {
-            emit(Resource.Error(message = "Unexpected error occurred"))
+            emit(Resource.Error(message = "Unexpected error occurred\n${e.message()}"))
         }
     }
 }

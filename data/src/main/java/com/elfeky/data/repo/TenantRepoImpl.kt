@@ -4,8 +4,9 @@ import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.model.tenant.Tenant
 import com.elfeky.domain.model.tenant.TenantRequest
 import com.elfeky.domain.repo.TenantRepo
+import javax.inject.Inject
 
-class TenantRepoImpl(
+class TenantRepoImpl @Inject constructor(
     private val tenantApiService: TenantApiService
 ) : TenantRepo {
     override suspend fun createTenant(accessToken: String, request: TenantRequest) =

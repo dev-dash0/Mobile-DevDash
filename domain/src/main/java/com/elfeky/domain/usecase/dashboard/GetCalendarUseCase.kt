@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class GetCalendarUseCase(
+class GetCalendarUseCase @Inject constructor(
     private val repo: DashBoardRepo,
     private val accessTokenUseCase: AccessTokenUseCase,
 ) {

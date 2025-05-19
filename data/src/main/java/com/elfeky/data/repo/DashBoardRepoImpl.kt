@@ -3,8 +3,9 @@ package com.elfeky.data.repo
 import com.elfeky.data.remote.DashBoardApiService
 import com.elfeky.domain.model.dashboard.CalendarResponse
 import com.elfeky.domain.repo.DashBoardRepo
+import javax.inject.Inject
 
-class DashBoardRepoImpl(
+class DashBoardRepoImpl @Inject constructor(
     private val dashBoardApiService: DashBoardApiService
 ) : DashBoardRepo {
     override suspend fun getCalendar(accessToken: String): CalendarResponse =

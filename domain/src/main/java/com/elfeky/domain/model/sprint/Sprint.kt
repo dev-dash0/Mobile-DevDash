@@ -1,11 +1,11 @@
 package com.elfeky.domain.model.sprint
 
-import com.elfeky.domain.model.account.User
+import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.issue.Issue
 
 data class Sprint(
     val createdAt: String,
-    val createdBy: User,
+    val createdBy: UserProfile,
     val createdById: Int,
     val description: String,
     val endDate: String,

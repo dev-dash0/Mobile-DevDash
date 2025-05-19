@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class GetUserProfileUseCase(
+class GetUserProfileUseCase @Inject constructor(
     private val repo: AuthenticationRepo,
     private val accessTokenUseCase: AccessTokenUseCase,
 ) {

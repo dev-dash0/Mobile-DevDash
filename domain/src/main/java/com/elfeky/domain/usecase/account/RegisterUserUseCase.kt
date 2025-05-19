@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class RegisterUserUseCase(private val repo: AuthenticationRepo) {
+class RegisterUserUseCase @Inject constructor(private val repo: AuthenticationRepo) {
     operator fun invoke(user: User): Flow<Resource<Any>> = flow {
         try {
             emit(Resource.Loading())
