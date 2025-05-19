@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HorizontalItem(
+fun LabelledContentHorizontal(
     label: String,
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,

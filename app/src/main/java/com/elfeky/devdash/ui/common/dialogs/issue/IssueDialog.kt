@@ -1,6 +1,6 @@
 package com.elfeky.devdash.ui.common.dialogs.issue
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
@@ -11,12 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.elfeky.devdash.ui.common.dialogs.assigneeList
-import com.elfeky.devdash.ui.common.dialogs.component.FullScreenDialog
+import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
 import com.elfeky.devdash.ui.common.dialogs.issue.components.IssueDialogContent
 import com.elfeky.devdash.ui.common.dialogs.issue.model.IssueUiModel
-import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
 import com.elfeky.devdash.ui.common.dialogs.labelList
+import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
@@ -24,20 +23,21 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueSt
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.domain.model.account.UserProfile
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun IssueDialog(
     onDismiss: () -> Unit,
     onSubmit: (IssueUiModel) -> Unit,
-    assigneeList: List<UserUiModel>,
+    assigneeList: List<UserProfile>,
     labelList: List<String>,
     modifier: Modifier = Modifier
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    val selectedLabels = remember { mutableStateListOf<String>() }
-    val assignees = remember { mutableStateListOf<UserUiModel>() }
+    var selectedLabels = remember { mutableStateOf(emptyList<String>()) }
+    val assignees = remember { mutableStateListOf<UserProfile>() }
 
     val dateRangeState = rememberDateRangePickerState()
 
@@ -45,15 +45,15 @@ fun IssueDialog(
     var selectedPriority by remember { mutableStateOf(priorityList[0]) }
     var selectedStatus by remember { mutableStateOf(issueStatusList[0]) }
 
-    FullScreenDialog(
+    DialogContainer(
         title = "Create New Issue",
         onDismiss = onDismiss,
-        onSubmit = {
+        onConfirm = {
             onSubmit(
                 IssueUiModel(
                     title,
                     description,
-                    selectedLabels,
+                    selectedLabels.value,
                     dateRangeState.selectedStartDateMillis,
                     dateRangeState.selectedEndDateMillis,
                     selectedType.text,
@@ -62,14 +62,12 @@ fun IssueDialog(
                 )
             )
         },
-        submitEnable = (
-                title.isNotEmpty()
-                        && description.isNotEmpty()
-                        && assignees.isNotEmpty()
-                        && dateRangeState.selectedEndDateMillis != null
-                ),
-        modifier = modifier
-    ) { paddingValues ->
+        confirmEnable = title.isNotEmpty()
+                && description.isNotEmpty()
+                && assignees.isNotEmpty()
+                && dateRangeState.selectedEndDateMillis != null,
+        modifier = modifier,
+    ) {
         IssueDialogContent(
             title,
             description,
@@ -85,9 +83,8 @@ fun IssueDialog(
             onPriorityChange = { selectedPriority = it as Priority },
             onTypeChange = { selectedType = it as Type },
             onStatusChange = { selectedStatus = it as Status },
-            onLabelToggle = { if (!selectedLabels.remove(it)) selectedLabels.add(it) },
+            onLabelToggle = { selectedLabels.value = it },
             onAssigneeToggle = { if (!assignees.remove(it)) assignees.add(it) },
-            modifier = Modifier.padding(paddingValues)
         )
     }
 }
@@ -96,6 +93,6 @@ fun IssueDialog(
 @Composable
 private fun IssueScreenPreview() {
     DevDashTheme {
-        IssueDialog({}, {}, assigneeList, labelList)
+        IssueDialog({}, {}, userList, labelList)
     }
 }

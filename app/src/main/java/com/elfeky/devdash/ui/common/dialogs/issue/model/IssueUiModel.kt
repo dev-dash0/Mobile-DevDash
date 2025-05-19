@@ -5,7 +5,7 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
 data class IssueUiModel(
     val title: String,
     val description: String?,
-    val labels: MutableList<String>,
+    val labels: List<String>,
     val startDate: Long?,
     val deadline: Long?,
     val type: String,
