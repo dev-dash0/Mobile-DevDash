@@ -100,6 +100,9 @@ dependencies {
     // Firebase Storage
     implementation (libs.firebase.storage)
 
+    //Gson
+    implementation(libs.gson)
+
     project(path = ":domain")
     project(path = ":data")
 }
