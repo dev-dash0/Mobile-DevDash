@@ -3,7 +3,6 @@ package com.elfeky.devdash.ui.common.dialogs.project.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -19,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.component.InputField
 import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
-import com.elfeky.devdash.ui.common.dialogs.component.HorizontalItem
-import com.elfeky.devdash.ui.common.dialogs.component.VerticalItem
+import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentHorizontal
+import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentVertical
 import com.elfeky.devdash.ui.common.dialogs.issue.components.DateRangeInput
 import com.elfeky.devdash.ui.common.dropdown_menu.MenuSelector
 import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
@@ -46,13 +45,11 @@ fun ProjectDialogContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        VerticalItem("Project name*") {
+        LabelledContentVertical("Project name*") {
             InputField(
                 value = title,
                 onValueChange = onTitleChange,
@@ -61,7 +58,7 @@ fun ProjectDialogContent(
             )
         }
 
-        VerticalItem("Description*") {
+        LabelledContentVertical("Description*") {
             InputField(
                 value = description,
                 onValueChange = onDescriptionChange,
@@ -71,11 +68,11 @@ fun ProjectDialogContent(
             )
         }
 
-        HorizontalItem(label = "Set Date") {
+        LabelledContentHorizontal(label = "Set Date") {
             DateRangeInput(state = dateRangeState, modifier = Modifier.weight(.75f))
         }
 
-        HorizontalItem(label = "Priority") {
+        LabelledContentHorizontal(label = "Priority") {
             MenuSelector(
                 items = priorityList,
                 selectedItem = selectedPriority,
@@ -84,7 +81,7 @@ fun ProjectDialogContent(
             )
         }
 
-        HorizontalItem(label = "Status") {
+        LabelledContentHorizontal(label = "Status") {
             MenuSelector(
                 items = projectStatusList,
                 selectedItem = selectedStatus,

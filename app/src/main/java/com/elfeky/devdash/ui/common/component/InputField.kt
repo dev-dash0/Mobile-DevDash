@@ -35,6 +35,7 @@ fun InputField(
     onValueChange: (String) -> Unit,
     placeholderText: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     isPassword: Boolean = false,
     isEmail: Boolean = false,
     isPhoneNumber: Boolean = false,
@@ -57,6 +58,7 @@ fun InputField(
         placeholder = { Text(text = placeholderText, style = textStyle) },
         singleLine = singleLine,
         modifier = modifier,
+        enabled = enabled,
         textStyle = textStyle,
         visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -87,7 +89,7 @@ fun InputField(
 
 @Preview(showBackground = true)
 @Composable
-fun PasswordTextFieldPreview(modifier: Modifier = Modifier) {
+fun PasswordTextFieldPreview() {
     DevDashTheme {
         var passwordValue by remember { mutableStateOf("") }
         InputField(
@@ -101,7 +103,7 @@ fun PasswordTextFieldPreview(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun EmailTextFieldPreview(modifier: Modifier = Modifier) {
+fun EmailTextFieldPreview() {
     DevDashTheme {
         var emailValue by remember { mutableStateOf("") }
         InputField(
@@ -122,7 +124,7 @@ fun EmailTextFieldPreview(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun NormalTextFieldPreview(modifier: Modifier = Modifier) {
+fun NormalTextFieldPreview() {
     DevDashTheme {
         var normalTextValue by remember { mutableStateOf("") }
         InputField(

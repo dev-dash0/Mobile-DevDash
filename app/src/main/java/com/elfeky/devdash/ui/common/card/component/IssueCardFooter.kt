@@ -7,15 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.elfeky.devdash.ui.common.component.AssigneesRow
 import com.elfeky.devdash.ui.common.component.IconText
-import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
+import com.elfeky.devdash.ui.common.component.avatar.OverlayAvatars
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
+import com.elfeky.domain.model.account.UserProfile
 
 @Composable
 fun IssueCardFooter(
     priority: Priority,
-    assignees: List<UserUiModel>,
+    assignees: List<UserProfile>,
     containerColor: Color
 ) {
     Row(
@@ -24,6 +24,6 @@ fun IssueCardFooter(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconText(priority)
-        AssigneesRow(assignees, containerColor)
+        OverlayAvatars(assignees, containerColor = containerColor) {}
     }
 }

@@ -45,7 +45,7 @@ fun ProjectDialog(
     var selectedStatus by remember { mutableStateOf(project?.status.toProjectStatus()) }
 
     DialogContainer(
-        onCancel = onDismiss,
+        onDismiss = onDismiss,
         onConfirm = {
             onSubmit(
                 ProjectRequest(

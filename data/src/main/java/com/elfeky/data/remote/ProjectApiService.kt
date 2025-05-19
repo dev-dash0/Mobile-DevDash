@@ -23,7 +23,7 @@ interface ProjectApiService {
     ): ServiceResponse<ProjectResult>
 
     @GET("/api/Project")
-    suspend fun getAllProjects(
+    suspend fun getTenantProjects(
         @Header("Authorization") accessToken: String,
         @Query("tenantId") id: Int
     ): ServiceResponse<List<Project>>

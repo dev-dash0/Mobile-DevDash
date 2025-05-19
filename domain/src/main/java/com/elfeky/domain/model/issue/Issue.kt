@@ -1,9 +1,9 @@
 package com.elfeky.domain.model.issue
 
-import com.elfeky.domain.model.account.User
+import com.elfeky.domain.model.account.UserProfile
 
 data class Issue(
-    val assignedUsers: List<User>,
+    val assignedUsers: List<UserProfile>,
     val createdBy: Int,
     val createdById: Int,
     val creationDate: String,

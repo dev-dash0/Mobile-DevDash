@@ -1,6 +1,5 @@
 package com.elfeky.devdash.ui.common.dialogs.company
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,16 +16,17 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 fun CompanyDialog(
     onDismiss: () -> Unit,
     onSubmit: (CompanyUiModel) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    company: CompanyUiModel? = null,
 ) {
-    var title by remember { mutableStateOf("") }
-    var websiteUrl by remember { mutableStateOf("") }
-    var keywords by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var selectedImage by remember { mutableStateOf<Uri?>(null) }
+    var title by remember { mutableStateOf(company?.title ?: "") }
+    var websiteUrl by remember { mutableStateOf(company?.websiteUrl ?: "") }
+    var keywords by remember { mutableStateOf(company?.keywords ?: "") }
+    var description by remember { mutableStateOf(company?.description ?: "") }
+    var selectedImage by remember { mutableStateOf(company?.logoUri) }
 
     DialogContainer(
-        onCancel = onDismiss,
+        onDismiss = onDismiss,
         onConfirm = {
             onSubmit(
                 CompanyUiModel(
@@ -38,17 +38,17 @@ fun CompanyDialog(
                 )
             )
         },
-        title = "Add your company",
-        confirmEnable = (
-                title.isNotEmpty()
-                        && websiteUrl.isNotEmpty()
-                        && keywords.isNotEmpty()
-                        && description.isNotEmpty())
+        title = if (company != null) "Add your company" else "Edit Company",
+        confirmEnable = title.isNotEmpty()
+                && websiteUrl.isNotEmpty()
+                && keywords.isNotEmpty()
+                && description.isNotEmpty()
     ) {
         CompanyDialogContent(
             title = title,
             websiteUrl = websiteUrl,
             keywords = keywords,
+            logo = selectedImage,
             description = description,
             onTitleChange = { title = it },
             onWebsiteUrlChange = { websiteUrl = it },

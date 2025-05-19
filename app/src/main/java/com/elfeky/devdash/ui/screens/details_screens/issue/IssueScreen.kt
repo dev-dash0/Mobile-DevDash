@@ -17,7 +17,9 @@ fun IssueScreen(
     companyId: Int, projectId: Int,
     modifier: Modifier = Modifier
 ) {
-    TabRowContainer(modifier = modifier) { index ->
+    val tabs = listOf("Board", "Sprint", "Timeline")
+
+    TabRowContainer(tabs = tabs, modifier = modifier) { index ->
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

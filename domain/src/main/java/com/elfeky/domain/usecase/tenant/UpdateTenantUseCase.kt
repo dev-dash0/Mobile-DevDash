@@ -8,19 +8,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class UpdateTenantUseCase(
+class UpdateTenantUseCase @Inject constructor(
     private val repo: TenantRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(id: Int, requestBody: TenantRequest): Flow<Resource<Any>> = flow {
+    operator fun invoke(requestBody: TenantRequest, id: Int): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
-            repo.updateTenant(accessTokenUseCase.get() ?: "", id, requestBody)
+            repo.updateTenant(accessTokenUseCase.get(), id, requestBody)
             emit(Resource.Success())
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
-        } catch (e: HttpException) {
+        } catch (_: HttpException) {
             emit(Resource.Error(message = "Unexpected error occurred"))
         }
     }

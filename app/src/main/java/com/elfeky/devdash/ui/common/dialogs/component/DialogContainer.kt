@@ -3,80 +3,103 @@ package com.elfeky.devdash.ui.common.dialogs.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.elfeky.devdash.ui.common.component.CustomButton
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.utils.cancelButtonColor
-import com.elfeky.devdash.ui.utils.secondaryButtonColor
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DialogContainer(
-    onCancel: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     confirmEnable: Boolean,
     modifier: Modifier = Modifier,
     title: String? = null,
     properties: DialogProperties = DialogProperties(usePlatformDefaultWidth = false),
-    content: @Composable (ColumnScope.() -> Unit),
+    content: @Composable (LazyItemScope.() -> Unit),
 ) {
     Dialog(
-        onDismissRequest = onCancel,
+        onDismissRequest = onDismiss,
         properties = properties
     ) {
-        Column(
+        LazyColumn(
             modifier = modifier
-                .fillMaxWidth()
+                .fillMaxWidth(.9f)
                 .imePadding()
-                .background(
-                    MaterialTheme.colorScheme.surfaceContainer,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .padding(vertical = 16.dp),
+                .imeNestedScroll()
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.onSecondary)
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.tertiary
-                )
+            item {
+                Row(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onDismiss,
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.outlineVariant),
+                    ) {
+                        Icon(Icons.Default.Close, "close")
+                    }
+
+                    title?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    IconButton(
+                        onConfirm,
+                        enabled = confirmEnable,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.tertiary,
+                            disabledContentColor = MaterialTheme.colorScheme.outline
+                        ),
+                    ) {
+                        Icon(Icons.Default.Done, "done")
+                    }
+
+                }
             }
 
-            content()
-
-            Row(
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp, top = 8.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                CustomButton(
-                    text = "Cancel",
-                    onClick = onCancel,
-                    buttonColor = cancelButtonColor,
-                    modifier = Modifier.weight(1f)
-                )
-                CustomButton(
-                    text = "Create",
-                    onClick = onConfirm,
-                    buttonColor = secondaryButtonColor,
-                    enabled = confirmEnable,
-                    modifier = Modifier.weight(1f)
-                )
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(16.dp)
+                ) {
+                    content()
+                }
             }
         }
     }
@@ -89,7 +112,7 @@ private fun DialogPreview() {
     DevDashTheme {
         DialogContainer(
             title = "Title",
-            onCancel = {},
+            onDismiss = {},
             onConfirm = {},
             confirmEnable = true,
             content = {}

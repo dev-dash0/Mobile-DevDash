@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class DeleteProjectUseCase(
+class DeleteProjectUseCase @Inject constructor(
     private val repo: ProjectRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {

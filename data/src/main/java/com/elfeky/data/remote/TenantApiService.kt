@@ -20,23 +20,23 @@ interface TenantApiService {
     ): ServiceResponse<TenantResult>
 
     @GET("/api/Tenant")
-    fun getCompanies(@Header("Authorization") accessToken: String): ServiceResponse<List<Tenant>>
+    suspend fun getCompanies(@Header("Authorization") accessToken: String): ServiceResponse<List<Tenant>>
 
     @GET("/api/Tenant/{tenantId}")
-    fun getCompanyById(
+    suspend fun getCompanyById(
         @Header("Authorization") accessToken: String,
         @Path("tenantId") tenantId: Int
     ): ServiceResponse<Tenant>
 
     @PUT("/api/Tenant/{tenantId}")
-    fun updateCompany(
+    suspend fun updateCompany(
         @Header("Authorization") accessToken: String,
         @Path("tenantId") tenantId: Int,
         @Body request: TenantRequest
     ): ServiceResponse<Unit>
 
     @DELETE("/api/Tenant/{tenantId}")
-    fun deleteCompany(
+    suspend fun deleteCompany(
         @Header("Authorization") accessToken: String,
         @Path("tenantId") tenantId: Int
     ): ServiceResponse<Unit>

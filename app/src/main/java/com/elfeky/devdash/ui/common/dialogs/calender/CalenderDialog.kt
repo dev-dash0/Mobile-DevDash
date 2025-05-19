@@ -35,7 +35,7 @@ fun CalenderDialog(
     }
 
     DialogContainer(
-        onCancel = {
+        onDismiss = {
             state.setSelection(null, null)
             onDismiss()
         },

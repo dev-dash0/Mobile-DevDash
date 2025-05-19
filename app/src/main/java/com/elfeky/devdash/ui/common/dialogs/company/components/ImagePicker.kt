@@ -1,11 +1,10 @@
 package com.elfeky.devdash.ui.common.dialogs.company.components
 
-import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +12,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -32,18 +34,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import coil.compose.rememberAsyncImagePainter
 import com.elfeky.devdash.R
+import com.elfeky.devdash.ui.screens.details_screens.company.components.CompanyLogo
 import com.elfeky.devdash.ui.theme.DarkBlue
-import com.elfeky.devdash.ui.theme.Gray
+import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.White
 
 @Composable
-fun ImagePicker(onImageSelected: (Uri) -> Unit) {
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var showDialog by remember { mutableStateOf(false) }
+fun ImagePicker(onImageSelected: (Any?) -> Unit, image: Any? = null) {
+    var selectedImageUri by remember { mutableStateOf<Any?>(image) }
 
     val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -58,19 +59,41 @@ fun ImagePicker(onImageSelected: (Uri) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = selectedImageUri?.let { rememberAsyncImagePainter(it) }
-                ?: painterResource(R.drawable.image_placeholder),
-            contentDescription = "Selected or Placeholder Image",
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
-                .border(2.dp, Gray, CircleShape)
-                .clickable {
-                    if (selectedImageUri != null) showDialog = true
-                    else pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+        Box {
+            CompanyLogo(
+                selectedImageUri,
+                modifier = Modifier.size(64.dp),
+                onImageChanged = {
+                    onImageSelected(it)
+                    selectedImageUri = it
                 }
-        )
+            )
+
+            if (selectedImageUri != null) {
+                Icon(
+                    Icons.Default.Close,
+                    "delete image",
+                    Modifier
+                        .size(24.dp)
+                        .align(Alignment.TopEnd)
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.onSecondary.copy(alpha = .5f),
+                            CircleShape
+                        )
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onSecondary.copy(alpha = .7f))
+                        .aspectRatio(1f)
+                        .clickable {
+                            onImageSelected(null)
+                            selectedImageUri = null
+                        }
+                        .padding(4.dp),
+                    MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+        }
 
         Button(
             onClick = { pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
@@ -86,23 +109,12 @@ fun ImagePicker(onImageSelected: (Uri) -> Unit) {
             Text("Upload Photo")
         }
     }
+}
 
-    if (showDialog) {
-        Dialog(onDismissRequest = { showDialog = false }) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable { showDialog = false }
-            ) {
-                selectedImageUri?.let { uri ->
-                    Image(
-                        painter = rememberAsyncImagePainter(uri),
-                        contentDescription = "Full Image",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-            }
-        }
+@Preview
+@Composable
+private fun ImagePickerPreview() {
+    DevDashTheme {
+        ImagePicker({})
     }
 }

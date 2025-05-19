@@ -17,8 +17,8 @@ import com.elfeky.devdash.ui.common.bottom_bar.MainNavigationBar
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    onLogout: () -> Unit,
-    onProjectDetailsNavigate: (companyId: Int, projectId: Int) -> Unit,
+    onCompanyDetailsNavigation: (id: Int) -> Unit,
+    onLogout: () -> Unit
 ) {
     val mainNavController = rememberNavController()
     val navBackStackEntry by mainNavController.currentBackStackEntryAsState()
@@ -38,10 +38,12 @@ fun MainScreen(
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
         MainNavigation(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             navController = mainNavController,
-            onLogout = onLogout,
-            onProjectDetailsNavigate = onProjectDetailsNavigate
+            onCompanyDetailsNavigation = onCompanyDetailsNavigation,
+            onLogout = onLogout
         )
     }
 }

@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class LogoutUseCase(
+class LogoutUseCase @Inject constructor(
     private val repo: AuthenticationRepo,
     private val accessTokenUseCase: AccessTokenUseCase,
     private val refreshTokenUseCase: RefreshTokenUseCase

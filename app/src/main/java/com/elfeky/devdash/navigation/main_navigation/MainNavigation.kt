@@ -3,12 +3,9 @@ package com.elfeky.devdash.navigation.main_navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.elfeky.devdash.ui.screens.details_screens.project.ProjectScreen
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
 import com.elfeky.devdash.ui.screens.main_screens.home.HomeScreen
@@ -18,8 +15,8 @@ import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen
 @Composable
 fun MainNavigation(
     navController: NavHostController,
+    onCompanyDetailsNavigation: (id: Int) -> Unit,
     onLogout: () -> Unit,
-    onProjectDetailsNavigate: (companyId: Int, projectId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -30,27 +27,11 @@ fun MainNavigation(
             HomeScreen(modifier = modifier)
         }
 
-        navigation(
-            startDestination = MainScreen.CompanyScreen.route,
-            route = MainScreen.WorkSpaceScreen.route
-        ) {
-            composable(route = MainScreen.CompanyScreen.route) {
-                CompanyScreen(modifier = modifier) {
-                    navController.navigate(MainScreen.ProjectScreen.route + "/$it")
-                }
-            }
-
-            composable(
-                route = MainScreen.ProjectScreen.route + "/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.IntType })
-            ) {
-                val companyId = it.arguments?.getInt("id")!!
-                ProjectScreen(
-                    tenantId = companyId,
-                    modifier = modifier,
-                    onClick = { projectId -> onProjectDetailsNavigate(companyId, projectId) }
-                )
-            }
+        composable(route = MainScreen.CompanyScreen.route) {
+            CompanyScreen(
+                modifier = modifier,
+                onCompanyClick = onCompanyDetailsNavigation
+            )
         }
 
         composable(route = MainScreen.CalenderScreen.route) {

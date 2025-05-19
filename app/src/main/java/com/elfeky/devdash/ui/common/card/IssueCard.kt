@@ -9,12 +9,12 @@ import com.elfeky.devdash.ui.common.card.component.CardContainer
 import com.elfeky.devdash.ui.common.card.component.CardTitle
 import com.elfeky.devdash.ui.common.card.component.IssueCardFooter
 import com.elfeky.devdash.ui.common.card.component.IssueCardLabels
-import com.elfeky.devdash.ui.common.dialogs.assigneeList
-import com.elfeky.devdash.ui.common.dialogs.issue.model.UserUiModel
 import com.elfeky.devdash.ui.common.dialogs.labelList
+import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.domain.model.account.UserProfile
 
 @Composable
 fun IssueCard(
@@ -22,7 +22,7 @@ fun IssueCard(
     status: Status,
     issueTitle: String,
     labels: List<String>,
-    assignees: List<UserUiModel>,
+    assignees: List<UserProfile>,
     priority: Priority,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
@@ -59,7 +59,7 @@ private fun IssueCardPreview() {
             status = Status.ToDo,
             issueTitle = "Issue Title",
             labels = labelList.take(3),
-            assignees = assigneeList,
+            assignees = userList,
             priority = Priority.High,
             onClick = {},
             onLongClick = {}
