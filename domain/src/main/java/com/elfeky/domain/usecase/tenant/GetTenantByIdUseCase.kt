@@ -1,5 +1,6 @@
 package com.elfeky.domain.usecase.tenant
 
+import com.elfeky.domain.model.tenant.Tenant
 import com.elfeky.domain.repo.TenantRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
@@ -13,11 +14,11 @@ class GetTenantByIdUseCase @Inject constructor(
     private val repo: TenantRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(id: Int): Flow<Resource<Any>> = flow {
+    operator fun invoke(id: Int): Flow<Resource<Tenant>> = flow {
         try {
             emit(Resource.Loading())
-            repo.getTenantById(accessTokenUseCase.get(), id)
-            emit(Resource.Success())
+            val response = repo.getTenantById(accessTokenUseCase.get(), id)
+            emit(Resource.Success(response))
         } catch (_: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
         } catch (_: HttpException) {

@@ -18,8 +18,8 @@ class ProjectRepoImpl @Inject constructor(
     ): Project =
         projectApiService.createProject("Bearer $accessToken", tenantId, request).result.project
 
-    override suspend fun getAllProjects(accessToken: String, tenantId: Int): List<Project> =
-        projectApiService.getAllProjects("Bearer $accessToken", tenantId).result
+    override suspend fun getTenantProjects(accessToken: String, tenantId: Int): List<Project> =
+        projectApiService.getTenantProjects("Bearer $accessToken", tenantId).result
 
     override suspend fun getProjectById(accessToken: String, id: Int): Project =
         projectApiService.getProjectById("Bearer $accessToken", id).result

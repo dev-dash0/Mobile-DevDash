@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.card.ProjectCard
 import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
-import com.elfeky.devdash.ui.screens.details_screens.project.model.projectList
+import com.elfeky.devdash.ui.screens.details_screens.components.projectList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @Composable

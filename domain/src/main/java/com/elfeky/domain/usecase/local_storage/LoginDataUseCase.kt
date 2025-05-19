@@ -12,9 +12,7 @@ class LoginDataUseCase @Inject constructor(private val sharedPref: SharedPrefere
     SharedPreferencesRepo<LoginRequest> {
     private val gson = Gson()
     override fun save(data: LoginRequest) =
-        sharedPref.edit {
-            putString(LOGIN_REQUEST, gson.toJson(data))
-        }
+        sharedPref.edit { putString(LOGIN_REQUEST, gson.toJson(data)) }
 
     override fun get(): LoginRequest =
         gson.fromJson(sharedPref.getString(LOGIN_REQUEST, ""), LoginRequest::class.java)

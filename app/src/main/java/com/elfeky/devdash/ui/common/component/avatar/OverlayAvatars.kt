@@ -1,7 +1,6 @@
 package com.elfeky.devdash.ui.common.component.avatar
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -36,31 +35,34 @@ fun OverlayAvatars(
     val overlap by remember(users.size) {
         derivedStateOf {
             when (users.size) {
-                in 0..4 -> -16
+                1 -> 0
+                in 2..4 -> -16
                 in 5..10 -> -24
                 else -> -30
             }.dp
         }
     }
-
     Row(
-        modifier = modifier
-            .padding(4.dp)
-            .then(reverseRotationModifier),
-        horizontalArrangement = Arrangement.spacedBy(overlap),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = reverseRotationModifier) {
-            content()
-        }
+        Row(
+            modifier = Modifier
+                .padding(4.dp)
+                .then(reverseRotationModifier),
+            horizontalArrangement = Arrangement.spacedBy(overlap),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-        users.forEach { user ->
-            Avatar(
-                user,
-                reverseRotationModifier,
-                containerColor
-            )
+            users.forEach { user ->
+                Avatar(
+                    user,
+                    reverseRotationModifier,
+                    containerColor
+                )
+            }
         }
+        content()
     }
 }
 

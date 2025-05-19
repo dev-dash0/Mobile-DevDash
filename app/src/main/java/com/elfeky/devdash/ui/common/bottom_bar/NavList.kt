@@ -13,7 +13,7 @@ val navigationItems = listOf(
     BottomNavigationItem(
         title = "Company",
         icon = R.drawable.company_ic,
-        route = MainScreen.WorkSpaceScreen.route
+        route = MainScreen.CompanyScreen.route
     ),
     BottomNavigationItem(
         title = "Calender",

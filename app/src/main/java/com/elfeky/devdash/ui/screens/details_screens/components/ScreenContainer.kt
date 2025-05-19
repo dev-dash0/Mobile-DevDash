@@ -1,7 +1,7 @@
-package com.elfeky.devdash.ui.screens.components
+package com.elfeky.devdash.ui.screens.details_screens.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -33,7 +33,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.component.LoadingIndicator
-import com.elfeky.devdash.ui.screens.details_screens.company.components.DetailsScreenAppBar
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 
@@ -43,6 +42,7 @@ fun ScreenContainer(
     title: String,
     isPinned: Boolean,
     isLoading: Boolean,
+    isOwner: Boolean,
     onDeleteClick: () -> Unit,
     onPinClick: () -> Unit,
     onEditClick: () -> Unit,
@@ -50,6 +50,7 @@ fun ScreenContainer(
     onCreateClick: () -> Unit,
     modifier: Modifier = Modifier,
     image: Any? = null,
+    hasImageBackground: Boolean = false,
     content: @Composable (paddingValues: PaddingValues, scrollBehavior: TopAppBarScrollBehavior) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -83,12 +84,14 @@ fun ScreenContainer(
             DetailsScreenAppBar(
                 title = title,
                 isPinned = isPinned,
+                isOwner = isOwner,
                 onDeleteClick = onDeleteClick,
                 onPinClick = onPinClick,
                 onEditClick = onEditClick,
                 onBackClick = onBackClick,
                 scrollBehavior = scrollBehavior,
-                image = image
+                image = image,
+                hasImageBackground = hasImageBackground
             )
         },
         floatingActionButton = {
@@ -106,19 +109,18 @@ fun ScreenContainer(
             }
         }
     ) { padding ->
-        Crossfade(
+        AnimatedContent(
             targetState = isLoading,
-            animationSpec = tween(300),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding) // Apply the padding to the content
+                .padding(padding)
         ) { state ->
             when (state) {
                 true -> LoadingIndicator()
                 false -> content(
                     PaddingValues(),
                     scrollBehavior
-                ) // Pass PaddingValues(), content will use the Scaffold's padding
+                )
             }
         }
     }
@@ -133,6 +135,7 @@ private fun ScreenContainerPreview() {
             title = "Company A",
             isPinned = false,
             isLoading = true,
+            isOwner = true,
             onDeleteClick = {},
             onPinClick = {},
             onEditClick = {},

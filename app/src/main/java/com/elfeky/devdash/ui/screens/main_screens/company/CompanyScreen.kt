@@ -19,7 +19,7 @@ fun CompanyScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val tenantId = 6
+        val tenantId = 101
 
         Text("Company ID : $tenantId")
         Button(onClick = { onCompanyClick(tenantId) }) {

@@ -17,13 +17,13 @@ fun CompanyDialog(
     onDismiss: () -> Unit,
     onSubmit: (CompanyUiModel) -> Unit,
     modifier: Modifier = Modifier,
-    state: CompanyUiModel = CompanyUiModel("", "", "", ""),
+    company: CompanyUiModel? = null,
 ) {
-    var title by remember { mutableStateOf(state.title) }
-    var websiteUrl by remember { mutableStateOf(state.websiteUrl) }
-    var keywords by remember { mutableStateOf(state.keywords) }
-    var description by remember { mutableStateOf(state.description) }
-    var selectedImage by remember { mutableStateOf(state.logoUri) }
+    var title by remember { mutableStateOf(company?.title ?: "") }
+    var websiteUrl by remember { mutableStateOf(company?.websiteUrl ?: "") }
+    var keywords by remember { mutableStateOf(company?.keywords ?: "") }
+    var description by remember { mutableStateOf(company?.description ?: "") }
+    var selectedImage by remember { mutableStateOf(company?.logoUri) }
 
     DialogContainer(
         onDismiss = onDismiss,
@@ -38,7 +38,7 @@ fun CompanyDialog(
                 )
             )
         },
-        title = "Add your company",
+        title = if (company != null) "Add your company" else "Edit Company",
         confirmEnable = title.isNotEmpty()
                 && websiteUrl.isNotEmpty()
                 && keywords.isNotEmpty()

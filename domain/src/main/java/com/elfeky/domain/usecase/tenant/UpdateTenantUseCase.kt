@@ -14,7 +14,7 @@ class UpdateTenantUseCase @Inject constructor(
     private val repo: TenantRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(id: Int, requestBody: TenantRequest): Flow<Resource<Any>> = flow {
+    operator fun invoke(requestBody: TenantRequest, id: Int): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
             repo.updateTenant(accessTokenUseCase.get(), id, requestBody)

@@ -11,6 +11,7 @@ data class Tenant(
     val name: String,
     val owner: UserProfile,
     val ownerID: Int,
+    val role: Any?,
     val tenantCode: String,
     val tenantUrl: String
 )

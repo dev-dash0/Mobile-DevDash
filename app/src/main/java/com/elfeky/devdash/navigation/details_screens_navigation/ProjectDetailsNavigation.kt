@@ -1,4 +1,4 @@
-package com.elfeky.devdash.navigation.project_details_navigation
+package com.elfeky.devdash.navigation.details_screens_navigation
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize

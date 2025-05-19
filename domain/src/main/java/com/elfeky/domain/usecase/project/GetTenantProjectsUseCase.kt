@@ -10,18 +10,18 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetAllProjectsUseCase @Inject constructor(
+class GetTenantProjectsUseCase @Inject constructor(
     private val repo: ProjectRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
     operator fun invoke(id: Int): Flow<Resource<List<Project>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = repo.getAllProjects(accessTokenUseCase.get(), id)
+            val response = repo.getTenantProjects(accessTokenUseCase.get(), id)
             emit(Resource.Success(data = response))
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
-        } catch (e: HttpException) {
+        } catch (_: HttpException) {
             emit(Resource.Error(message = "Unexpected error occurred"))
         }
     }

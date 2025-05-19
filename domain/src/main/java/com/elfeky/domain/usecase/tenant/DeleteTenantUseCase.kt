@@ -18,9 +18,9 @@ class DeleteTenantUseCase @Inject constructor(
             emit(Resource.Loading())
             repo.deleteTenant(accessTokenUseCase.get(), id)
             emit(Resource.Success())
-        } catch (e: IOException) {
+        } catch (_: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
-        } catch (e: HttpException) {
+        } catch (_: HttpException) {
             emit(Resource.Error(message = "Unexpected error occurred"))
         }
     }
