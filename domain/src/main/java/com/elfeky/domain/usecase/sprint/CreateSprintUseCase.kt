@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class CreateSprintUseCase(
+class CreateSprintUseCase @Inject constructor(
     private val repo: SprintRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(uiState) {
                 if (uiState is AuthState.Unauthorized) {
-                    startDestination = AppScreen.SignInScreen.route
+                    startDestination = AppScreen.AuthScreens.route
                 }
             }
 

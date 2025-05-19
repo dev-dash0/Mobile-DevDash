@@ -25,18 +25,20 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<AuthState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            loginUseCase(loginDataUseCase.get()).collect {
-                _uiState.value = when (it) {
-                    is Resource.Success -> AuthState.Success(it.data!!.accessToken)
-                    is Resource.Error -> AuthState.Unauthorized
-                    is Resource.Loading -> AuthState.Loading
+        if (!isFirstLogin)
+            viewModelScope.launch {
+                loginUseCase(loginDataUseCase.get()).collect {
+                    _uiState.value = when (it) {
+                        is Resource.Loading -> AuthState.Loading
+                        is Resource.Success -> AuthState.Success(it.data!!.accessToken)
+                        is Resource.Error -> AuthState.Unauthorized
+                    }
                 }
             }
-        }
+        else _uiState.value = AuthState.Unauthorized
     }
 
     fun getStartDestination(): String =
-        if (isFirstLogin) AppScreen.SignInScreen.route
+        if (isFirstLogin) AppScreen.AuthScreens.route
         else AppScreen.MainScreen.route
 }

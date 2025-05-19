@@ -32,7 +32,7 @@ fun AppNavigation(
             MainScreen(
                 onCompanyDetailsNavigation = { navController.navigate(MainScreen.CompanyDetails.route + "/$it") },
                 onLogout = {
-                    navController.navigate(AppScreen.SignInScreen.route) {
+                    navController.navigate(AppScreen.AuthScreens.route) {
                         popUpTo(0) { inclusive = true }
                     }
                 }

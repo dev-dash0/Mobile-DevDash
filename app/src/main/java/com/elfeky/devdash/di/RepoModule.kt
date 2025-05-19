@@ -59,11 +59,11 @@ abstract class RepoModule {
         backlogRepoImpl: BacklogRepoImpl
     ): BacklogRepo
 
-    @Provides
-    @Singleton
-    fun provideSprintRepo(sprintApiService: SprintApiService): SprintRepo{
-        return SprintRepoImpl(sprintApiService)
-    }
 
+    @Binds
+    @Singleton
+    abstract fun bindSprintRepo(
+        sprintRepoImpl: SprintRepoImpl
+    ): SprintRepo
 
 }
