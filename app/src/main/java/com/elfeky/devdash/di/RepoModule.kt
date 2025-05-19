@@ -1,11 +1,5 @@
 package com.elfeky.devdash.di
 
-import com.elfeky.data.remote.AuthenticationApiService
-import com.elfeky.data.remote.BacklogApiService
-import com.elfeky.data.remote.DashBoardApiService
-import com.elfeky.data.remote.PinApiService
-import com.elfeky.data.remote.ProjectApiService
-import com.elfeky.data.remote.TenantApiService
 import com.elfeky.data.repo.AuthenticationRepoImpl
 import com.elfeky.data.repo.BacklogRepoImpl
 import com.elfeky.data.repo.DashBoardRepoImpl
@@ -18,49 +12,49 @@ import com.elfeky.domain.repo.DashBoardRepo
 import com.elfeky.domain.repo.PinRepo
 import com.elfeky.domain.repo.ProjectRepo
 import com.elfeky.domain.repo.TenantRepo
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RepoModule {
-    @Provides
+abstract class RepoModule {
+    @Binds
     @Singleton
-    fun provideAuthenticationRepo(authenticationApiService: AuthenticationApiService): AuthenticationRepo {
-        return AuthenticationRepoImpl(authenticationApiService)
-    }
+    abstract fun bindAuthenticationRepo(
+        authenticationRepoImpl: AuthenticationRepoImpl
+    ): AuthenticationRepo
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideTenantRepo(tenantApiService: TenantApiService): TenantRepo {
-        return TenantRepoImpl(tenantApiService)
-    }
+    abstract fun bindTenantRepo(
+        tenantRepoImpl: TenantRepoImpl
+    ): TenantRepo
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideProductRepo(projectApiService: ProjectApiService): ProjectRepo {
-        return ProjectRepoImpl(projectApiService)
-    }
+    abstract fun bindProjectRepo(
+        projectRepoImpl: ProjectRepoImpl
+    ): ProjectRepo
 
-    @Provides
+    @Binds
     @Singleton
-    fun providePinRepo(pinApiService: PinApiService): PinRepo {
-        return PinRepoImpl(pinApiService)
-    }
+    abstract fun bindPinRepo(
+        pinRepoImpl: PinRepoImpl
+    ): PinRepo
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideDashBoardRepo(dashBoardApiService: DashBoardApiService): DashBoardRepo{
-        return DashBoardRepoImpl(dashBoardApiService)
-    }
+    abstract fun bindDashBoardRepo(
+        dashBoardRepoImpl: DashBoardRepoImpl
+    ): DashBoardRepo
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideBacklogRepo(backlogApiService: BacklogApiService): BacklogRepo{
-        return BacklogRepoImpl(backlogApiService)
-    }
+    abstract fun bindBacklogRepo(
+        backlogRepoImpl: BacklogRepoImpl
+    ): BacklogRepo
 
 }

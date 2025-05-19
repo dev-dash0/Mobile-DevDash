@@ -1,4 +1,4 @@
-package com.elfeky.devdash.di.usecase_module
+package com.elfeky.devdash.di
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SharedPreferencesUseCaseModule {
+object SharedPreferencesModule {
 
     @Provides
     @Singleton
