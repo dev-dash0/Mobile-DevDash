@@ -1,18 +1,11 @@
 package com.elfeky.devdash.ui.screens.details_screens.company
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -70,7 +63,7 @@ fun CompanyDetailsContent(
     val choices = listOf("All", "Owned", "Joined")
     val scope = rememberCoroutineScope()
 
-    val companyTabsPagerState = rememberPagerState(pageCount = { tabs.size }, initialPage = 0)
+    val companyTabsPagerState = rememberPagerState(pageCount = { tabs.size })
     val projectPagerState = rememberPagerState(pageCount = { choices.size })
 
     var isShowEditDialog by remember { mutableStateOf(false) }
@@ -93,7 +86,7 @@ fun CompanyDetailsContent(
     }
 
     ScreenContainer(
-        title = state.tenant?.name ?: "Loading...",
+        title = state.tenant?.name ?: "",
         isPinned = state.isPinned,
         isOwner = isOwner,
         onPinClick = onPinClick,
@@ -135,7 +128,7 @@ fun CompanyDetailsContent(
                     state = companyTabsPagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 400.dp)
+                        .fillParentMaxSize()
                 ) { page ->
                     when (page) {
                         0 -> CompanyInfoPage(
@@ -146,10 +139,7 @@ fun CompanyDetailsContent(
                         )
 
                         1 -> {
-                            Column(
-                                Modifier
-                                    .fillMaxSize()
-                            ) {
+                            Column(Modifier.fillMaxSize()) {
                                 SingleSelectChipRow(
                                     choices = choices,
                                     initialSelectedIndex = projectPagerState.currentPage,
@@ -157,11 +147,12 @@ fun CompanyDetailsContent(
                                         scope.launch { projectPagerState.animateScrollToPage(index) }
                                     }
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+
                                 HorizontalPager(
                                     state = projectPagerState,
-                                    userScrollEnabled = false
-                                ) { projectPageIdx ->
+                                    userScrollEnabled = false,
+                                    key = { choices[it] },
+                                ) {
                                     ProjectList(
                                         projects = projectsToShow,
                                         pinnedProjects = state.pinnedProjects,
@@ -179,11 +170,7 @@ fun CompanyDetailsContent(
         }
     }
 
-    AnimatedVisibility(
-        visible = isShowEditDialog,
-        enter = fadeIn(animationSpec = tween(durationMillis = 300)),
-        exit = fadeOut(animationSpec = tween(durationMillis = 300))
-    ) {
+    if (isShowEditDialog) {
         CompanyDialog(
             onDismiss = { isShowEditDialog = false },
             onSubmit = { updatedCompanyUiModel ->
