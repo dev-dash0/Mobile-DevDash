@@ -4,20 +4,27 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,15 +51,15 @@ import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.tenant.Tenant
 import kotlinx.coroutines.launch
 
-@Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@Composable
 fun CompanyDetailsContent(
     state: CompanyDetailsUiState,
     onRemoveMemberClick: (Int) -> Unit,
     onDeleteClick: () -> Unit,
     onPinClick: () -> Unit,
     onBackClick: () -> Unit,
-    onEditConfirm: (state: CompanyDetailsUiState) -> Unit,
+    onEditConfirm: (companyUiModel: CompanyUiModel) -> Unit,
     onCreateProject: (project: ProjectRequest) -> Unit,
     onProjectClick: (id: Int) -> Unit,
     onProjectSwipeToDelete: (id: Int) -> Unit,
@@ -62,17 +69,20 @@ fun CompanyDetailsContent(
     val tabs = listOf("Info", "Projects")
     val choices = listOf("All", "Owned", "Joined")
     val scope = rememberCoroutineScope()
+
     val companyTabsPagerState = rememberPagerState(pageCount = { tabs.size }, initialPage = 0)
     val projectPagerState = rememberPagerState(pageCount = { choices.size })
+
     var isShowEditDialog by remember { mutableStateOf(false) }
     var isShowCreateProject by remember { mutableStateOf(false) }
-    val isOwner by remember(
-        state.userId,
-        state.tenant
-    ) { mutableStateOf(state.userId == state.tenant?.owner?.id) }
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
-    val projectsToShow =
-        remember(state.projects, projectPagerState.currentPage) {
+    val isOwner by remember(state.userId, state.tenant) {
+        mutableStateOf(state.userId != null && state.userId == state.tenant?.owner?.id)
+    }
+
+    val projectsToShow by remember(state.projects, projectPagerState.currentPage, state.userId) {
+        derivedStateOf {
             when (projectPagerState.currentPage) {
                 0 -> state.projects
                 1 -> state.projects.filter { it.creatorId == state.userId }
@@ -80,17 +90,18 @@ fun CompanyDetailsContent(
                 else -> emptyList()
             }
         }
+    }
 
     ScreenContainer(
-        title = state.tenant?.name ?: "",
+        title = state.tenant?.name ?: "Loading...",
         isPinned = state.isPinned,
         isOwner = isOwner,
         onPinClick = onPinClick,
-        onDeleteClick = onDeleteClick,
+        onDeleteClick = { showDeleteConfirmationDialog = true },
         onEditClick = { isShowEditDialog = true },
         onBackClick = onBackClick,
         modifier = modifier,
-        isLoading = state.isLoading,
+        isLoading = state.isLoading && state.tenant == null,
         image = state.tenant?.image,
         hasImageBackground = true,
         onCreateClick = { isShowCreateProject = true }
@@ -100,53 +111,57 @@ fun CompanyDetailsContent(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentPadding = PaddingValues(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             stickyHeader {
-                CustomTabRow(
-                    tabs = tabs,
-                    selectedTabIndex = companyTabsPagerState.currentPage,
-                    onTabClick = { index ->
-                        scope.launch { companyTabsPagerState.animateScrollToPage(index) }
-                    }
-                )
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shadowElevation = 2.dp
+                ) {
+                    CustomTabRow(
+                        tabs = tabs,
+                        selectedTabIndex = companyTabsPagerState.currentPage,
+                        onTabClick = { index ->
+                            scope.launch { companyTabsPagerState.animateScrollToPage(index) }
+                        }
+                    )
+                }
             }
 
             item {
                 HorizontalPager(
                     state = companyTabsPagerState,
                     modifier = Modifier
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
                         .fillMaxWidth()
-                        .fillParentMaxSize()
+                        .heightIn(min = 400.dp)
                 ) { page ->
                     when (page) {
                         0 -> CompanyInfoPage(
                             state,
                             isOwner,
-                            Modifier.fillParentMaxSize(),
+                            Modifier.fillMaxSize(),
                             onRemoveMemberClick
                         )
 
                         1 -> {
                             Column(
                                 Modifier
-                                    .fillMaxWidth()
-                                    .fillParentMaxSize()
+                                    .fillMaxSize()
                             ) {
                                 SingleSelectChipRow(
                                     choices = choices,
                                     initialSelectedIndex = projectPagerState.currentPage,
-                                    onChoiceSelected = {
-                                        scope.launch {
-                                            projectPagerState.animateScrollToPage(
-                                                it
-                                            )
-                                        }
-                                    })
-                                HorizontalPager(projectPagerState, userScrollEnabled = false) {
+                                    onChoiceSelected = { index ->
+                                        scope.launch { projectPagerState.animateScrollToPage(index) }
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                HorizontalPager(
+                                    state = projectPagerState,
+                                    userScrollEnabled = false
+                                ) { projectPageIdx ->
                                     ProjectList(
                                         projects = projectsToShow,
                                         pinnedProjects = state.pinnedProjects,
@@ -171,43 +186,62 @@ fun CompanyDetailsContent(
     ) {
         CompanyDialog(
             onDismiss = { isShowEditDialog = false },
-            onSubmit = {
-                onEditConfirm(
-                    state.copy(
-                        tenant = state.tenant?.copy(
-                            name = it.title,
-                            tenantUrl = it.websiteUrl,
-                            keywords = it.keywords,
-                            description = it.description,
-                            image = it.logoUri.toString()
-                        ),
-                    )
-                )
+            onSubmit = { updatedCompanyUiModel ->
+                onEditConfirm(updatedCompanyUiModel)
                 isShowEditDialog = false
             },
             company = state.tenant?.let {
                 CompanyUiModel(
-                    it.name,
-                    it.tenantUrl,
-                    it.keywords,
-                    it.description,
-                    it.image
+                    title = it.name,
+                    websiteUrl = it.tenantUrl,
+                    keywords = it.keywords,
+                    description = it.description,
+                    logoUri = it.image
                 )
             }
         )
     }
 
-    AnimatedVisibility(
-        visible = isShowCreateProject,
-        enter = fadeIn(animationSpec = tween(300)) + scaleIn(),
-        exit = fadeOut(animationSpec = tween(300)) + scaleOut()
-    ) {
+    if (isShowCreateProject) {
         ProjectDialog(
             onDismiss = { isShowCreateProject = false },
-            onSubmit = {
-                onCreateProject(it)
+            onSubmit = { projectRequest ->
+                onCreateProject(projectRequest)
                 isShowCreateProject = false
             },
+        )
+    }
+
+    if (showDeleteConfirmationDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmationDialog = false },
+            title = {
+                Text(
+                    text = "Delete Company",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete this company? This action cannot be undone.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDeleteClick()
+                    showDeleteConfirmationDialog = false
+                }) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmationDialog = false }) {
+                    Text("Cancel", color = MaterialTheme.colorScheme.onBackground)
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     }
 }
@@ -260,7 +294,7 @@ fun CompanyDetailsContentPreview() {
             onRemoveMemberClick = { },
             onDeleteClick = { },
             onPinClick = { uiState = uiState.copy(isPinned = !uiState.isPinned) },
-            onEditConfirm = { uiState = it },
+            onEditConfirm = { },
             onBackClick = { },
             onCreateProject = { },
             onProjectClick = { id -> println("Project $id clicked") },

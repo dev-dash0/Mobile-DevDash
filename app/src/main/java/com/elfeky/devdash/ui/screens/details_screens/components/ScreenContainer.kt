@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -36,8 +38,8 @@ import com.elfeky.devdash.ui.common.component.LoadingIndicator
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.gradientBackground
 
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun ScreenContainer(
     title: String,
     isPinned: Boolean,
@@ -54,21 +56,15 @@ fun ScreenContainer(
     content: @Composable (paddingValues: PaddingValues, scrollBehavior: TopAppBarScrollBehavior) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
     var fabVisible by remember { mutableStateOf(true) }
 
     val fabScrollConnection = remember {
         object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource
-            ): Offset {
-                if (consumed.y < 0 && fabVisible) {
-                    fabVisible = false
-                }
-                if (consumed.y > 0 && !fabVisible) {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (available.y < 0 && !fabVisible) {
                     fabVisible = true
+                } else if (available.y > 0 && fabVisible) {
+                    fabVisible = false
                 }
                 return Offset.Zero
             }
@@ -97,30 +93,37 @@ fun ScreenContainer(
         floatingActionButton = {
             AnimatedVisibility(
                 visible = fabVisible,
-                enter = fadeIn() + expandIn(),
-                exit = fadeOut() + shrinkOut(animationSpec = tween(durationMillis = 150))
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                exit = fadeOut() + shrinkOut(
+                    shrinkTowards = Alignment.Center,
+                    animationSpec = tween(durationMillis = 150)
+                )
             ) {
                 FloatingActionButton(
                     onClick = onCreateClick,
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Create")
                 }
             }
         }
-    ) { padding ->
+    ) { paddingValues ->
         AnimatedContent(
             targetState = isLoading,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) { state ->
-            when (state) {
-                true -> LoadingIndicator()
-                false -> content(
-                    PaddingValues(),
-                    scrollBehavior
-                )
+            modifier = Modifier.fillMaxSize()
+        ) { targetIsLoading ->
+            if (targetIsLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingIndicator()
+                }
+            } else {
+                content(paddingValues, scrollBehavior)
             }
         }
     }

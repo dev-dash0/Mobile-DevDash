@@ -2,6 +2,7 @@ package com.elfeky.devdash.ui.screens.details_screens.company
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
 import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.tenant.TenantRequest
 import com.elfeky.domain.usecase.account.GetUserProfileUseCase
@@ -22,12 +23,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,9 +51,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            tenantId: Int,
-        ): CompanyDetailsViewModel
+        fun create(tenantId: Int): CompanyDetailsViewModel
     }
 
     private val _state = MutableStateFlow(CompanyDetailsUiState(companyId))
@@ -70,30 +67,28 @@ class CompanyDetailsViewModel @AssistedInject constructor(
     }
 
     private fun getTenantData() {
-        viewModelScope
-            .launch {
-                getTenantByIdUseCase(companyId).collect { result ->
-                    when (result) {
-                        is Resource.Loading -> _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            getTenantByIdUseCase(companyId).collect { result ->
+                when (result) {
+                    is Resource.Loading -> _state.update { it.copy(isLoading = true) }
+                    is Resource.Success -> _state.update {
+                        result.data?.let { data ->
+                            it.copy(tenant = data, isLoading = false, error = null)
+                        } ?: it.copy(
+                            isLoading = false,
+                            error = "Unexpected error occurred loading tenant data"
+                        )
+                    }
 
-                        is Resource.Success -> _state.update {
-                            result.data?.let { result ->
-                                it.copy(
-                                    tenant = result,
-                                    isLoading = false,
-                                    error = null
-                                )
-                            } ?: it.copy(isLoading = false, error = "Unexpected error occurred")
-                        }
-
-                        is Resource.Error -> {
-                            _state.update {
-                                it.copy(error = result.message)
-                            }
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.message ?: "Failed to load tenant data"
+                        )
                     }
                 }
             }
+        }
     }
 
     private fun isPinnedTenant() {
@@ -101,15 +96,13 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             getPinnedTenantsUseCase().collect { result ->
                 when (result) {
                     is Resource.Loading -> {}
-
                     is Resource.Success -> _state.update {
-                        it.copy(isPinned = result.data?.any { it.id == companyId } == true)
+                        it.copy(isPinned = result.data?.any { tenant -> tenant.id == companyId } == true,
+                            error = null)
                     }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(error = result.message)
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(error = result.message ?: "Failed to check if tenant is pinned")
                     }
                 }
             }
@@ -121,16 +114,13 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             getUserProfileUseCase().collect { result ->
                 when (result) {
                     is Resource.Loading -> {}
-
                     is Resource.Success -> _state.update {
-                        result.data?.let { result -> it.copy(userId = result.id, error = null) }
-                            ?: it.copy(error = "Unexpected error occurred")
+                        result.data?.let { user -> it.copy(userId = user.id, error = null) }
+                            ?: it.copy(error = "Unexpected error occurred loading user profile")
                     }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(error = result.message)
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(error = result.message ?: "Failed to load user profile")
                     }
                 }
             }
@@ -141,10 +131,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             getTenantProjectsUseCase(companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> _state.update {
-                        it.copy(projectsLoading = true)
-                    }
-
+                    is Resource.Loading -> _state.update { it.copy(projectsLoading = true) }
                     is Resource.Success -> _state.update {
                         it.copy(
                             projects = result.data ?: emptyList(),
@@ -153,10 +140,11 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                         )
                     }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(projectsLoading = false, error = result.message)
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            projectsLoading = false,
+                            error = result.message ?: "Failed to load projects"
+                        )
                     }
                 }
             }
@@ -168,54 +156,72 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             getPinnedProjectsUseCase().collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> {
-                        _state.update {
-                            it.copy(
-                                pinnedProjects = result.data ?: emptyList(),
-                                error = null
-                            )
-                        }
+                    is Resource.Success -> _state.update {
+                        it.copy(pinnedProjects = result.data ?: emptyList(), error = null)
                     }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(error = result.message ?: "Error fetching pinned projects")
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(error = result.message ?: "Error fetching pinned projects")
                     }
                 }
             }
         }
     }
 
-    fun deleteCompany(): Flow<Boolean> = flow {
+    fun deleteCompany() {
         viewModelScope.launch {
             deleteTenantUseCase(companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> Unit
-                    is Resource.Success -> emit(true)
-                    is Resource.Error -> {
-                        _state.update { it.copy(error = result.message ?: "Error adding project") }
-                        emit(false)
+                    is Resource.Loading -> _state.update {
+                        it.copy(
+                            isLoading = true,
+                            deleteErrorMessage = null
+                        )
+                    }
+
+                    is Resource.Success -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                            isDeleted = true,
+                            error = null
+                        )
+                    }
+
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.message ?: "Error deleting company",
+                            deleteErrorMessage = result.message ?: "Error deleting company",
+                            isDeleted = false
+                        )
                     }
                 }
             }
         }
     }
 
-    fun updateCompany(request: TenantRequest) {
+    fun updateCompany(companyUiModel: CompanyUiModel) {
+        val request = TenantRequest(
+            description = companyUiModel.description,
+            image = companyUiModel.logoUri?.toString(),
+            keywords = companyUiModel.keywords,
+            name = companyUiModel.title,
+            tenantUrl = companyUiModel.websiteUrl
+        )
         viewModelScope.launch {
             updateTenantUseCase(request, companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> Unit
+                    is Resource.Loading -> _state.update { it.copy(isLoading = true) }
                     is Resource.Success -> {
-                        _state.update { it.copy(error = null) }
+                        _state.update { it.copy(isLoading = false, error = null) }
                         getTenantData()
                     }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(error = result.message ?: "Error adding project")
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.message ?: "Error updating company"
+                        )
                     }
                 }
             }
@@ -228,48 +234,51 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                 unpinTenantUseCase(companyId).collect { result ->
                     when (result) {
                         is Resource.Loading -> Unit
-                        is Resource.Success -> _state.update {
-                            it.copy(
-                                isPinned = false,
-                                error = null
-                            )
+                        is Resource.Success -> {
+                            _state.update { it.copy(isPinned = false, error = null) }
                         }
 
-                        is Resource.Error -> _state.update { it.copy(error = "Unexpected error occurred") }
+                        is Resource.Error -> _state.update {
+                            it.copy(
+                                error = result.message ?: "Error unpinning company"
+                            )
+                        }
                     }
                 }
             } else {
                 pinTenantUseCase(companyId).collect { result ->
                     when (result) {
                         is Resource.Loading -> Unit
-                        is Resource.Success -> _state.update {
-                            it.copy(
-                                isPinned = true,
-                                error = null
-                            )
+                        is Resource.Success -> {
+                            _state.update { it.copy(isPinned = true, error = null) }
                         }
 
-                        is Resource.Error -> _state.update { it.copy(error = "Unexpected error occurred") }
+                        is Resource.Error -> _state.update {
+                            it.copy(
+                                error = result.message ?: "Error pinning company"
+                            )
+                        }
                     }
                 }
             }
         }
     }
 
-    fun addProject(project: ProjectRequest) {
+    fun addProject(projectRequest: ProjectRequest) {
         viewModelScope.launch {
-            addProjectUseCase(project, companyId).collect { result ->
+            addProjectUseCase(projectRequest, companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> Unit
+                    is Resource.Loading -> _state.update { it.copy(projectsLoading = true) }
                     is Resource.Success -> {
-                        _state.update { it.copy(error = null) }
+                        _state.update { it.copy(projectsLoading = false, error = null) }
                         getProjects()
                     }
 
-                    is Resource.Error -> {
-                        _state.update {
-                            it.copy(error = result.message ?: "Error adding project")
-                        }
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            projectsLoading = false,
+                            error = result.message ?: "Error adding project"
+                        )
                     }
                 }
             }
@@ -280,16 +289,18 @@ class CompanyDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             deleteProjectUseCase(id).collect { result ->
                 when (result) {
-                    is Resource.Loading -> Unit
-                    is Resource.Success -> _state.update {
-                        it.copy(
-                            projects = it.projects.filter { project -> project.id != id },
-                            error = null
-                        )
+                    is Resource.Loading -> _state.update { it.copy(projectsLoading = true) }
+                    is Resource.Success -> {
+                        _state.update { it.copy(projectsLoading = false, error = null) }
+                        getProjects()
+                        getPinnedProjects()
                     }
 
-                    is Resource.Error -> {
-                        _state.update { it.copy(error = result.message) }
+                    is Resource.Error -> _state.update {
+                        it.copy(
+                            projectsLoading = false,
+                            error = result.message ?: "Error deleting project"
+                        )
                     }
                 }
             }
@@ -298,20 +309,21 @@ class CompanyDetailsViewModel @AssistedInject constructor(
 
     fun pinProject(id: Int) {
         viewModelScope.launch {
-            if (_state.value.pinnedProjects.any { it.id == id }) {
+            val isCurrentlyPinned = _state.value.pinnedProjects.any { it.id == id }
+            if (isCurrentlyPinned) {
                 unpinProjectUseCase(id).collect { result ->
                     when (result) {
                         is Resource.Loading -> Unit
                         is Resource.Success -> {
-                            _state.update {
-                                it.copy(
-                                    pinnedProjects = it.pinnedProjects.filterNot { it.id == id },
-                                    error = null
-                                )
-                            }
+                            _state.update { it.copy(error = null) }
+                            getPinnedProjects()
                         }
 
-                        is Resource.Error -> _state.update { it.copy(error = result.message) }
+                        is Resource.Error -> _state.update {
+                            it.copy(
+                                error = result.message ?: "Error unpinning project"
+                            )
+                        }
                     }
                 }
             } else {
@@ -319,22 +331,24 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                     when (result) {
                         is Resource.Loading -> Unit
                         is Resource.Success -> {
-                            _state.update {
-                                it.copy(
-                                    pinnedProjects = it.pinnedProjects + it.projects.findLast { it.id == id }!!,
-                                    error = null
-                                )
-                            }
+                            _state.update { it.copy(error = null) }
+                            getPinnedProjects()
                         }
 
-                        is Resource.Error -> _state.update { it.copy(error = result.message) }
+                        is Resource.Error -> _state.update {
+                            it.copy(
+                                error = result.message ?: "Error pinning project"
+                            )
+                        }
                     }
                 }
             }
         }
     }
 
-    fun removeMember(id: Int) {}
+    fun removeMember(id: Int) {
+        // TODO: Implement member removal logic
+    }
 
     fun refreshUi() {
         getTenantData()
@@ -342,5 +356,9 @@ class CompanyDetailsViewModel @AssistedInject constructor(
         getProjects()
         getPinnedProjects()
         getUserId()
+    }
+
+    fun clearError() {
+        _state.update { it.copy(error = null, deleteErrorMessage = null) }
     }
 }

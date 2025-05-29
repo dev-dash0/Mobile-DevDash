@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elfeky.devdash.ui.common.component.TagFlowLayout
-import com.elfeky.devdash.ui.common.component.avatar.Avatar
 import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentHorizontal
 import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentVertical
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsUiState
@@ -39,16 +38,6 @@ fun CompanyInfoPage(
         LabelledContentHorizontal("Members:") {
             Row(modifier = Modifier.weight(.75f), horizontalArrangement = Arrangement.End) {
                 MembersMenu(state.tenant?.joinedUsers ?: emptyList(), isOwner, onRemoveMemberClick)
-            }
-        }
-
-        state.tenant?.let {
-            LabelledContentHorizontal("Owner:") {
-                Row(modifier = Modifier.weight(.75f), horizontalArrangement = Arrangement.End) {
-//                    IconButton({ }) {
-                    Avatar(user = it.owner)
-//                    }
-                }
             }
         }
 

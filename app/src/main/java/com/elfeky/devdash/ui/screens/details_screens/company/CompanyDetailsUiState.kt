@@ -12,5 +12,7 @@ data class CompanyDetailsUiState(
     val projectsLoading: Boolean = true,
     val projects: List<Project> = emptyList(),
     val pinnedProjects: List<Project> = emptyList(),
+    val isDeleted: Boolean = false,
+    val deleteErrorMessage: String? = null,
     val error: String? = null
 )

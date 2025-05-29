@@ -1,17 +1,14 @@
 package com.elfeky.devdash.ui.screens.details_screens.company
 
+import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.elfeky.domain.model.tenant.TenantRequest
-import kotlinx.coroutines.flow.last
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,33 +19,34 @@ fun CompanyDetailsScreen(
     onNavigateToProject: (id: Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var isDelete by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    LaunchedEffect(isDelete) {
-        if (isDelete) {
-            if (viewModel.deleteCompany().last())
-                onBackClick()
-            else isDelete = false
+    LaunchedEffect(state.isDeleted) {
+        if (state.isDeleted) {
+            onBackClick()
+        }
+    }
+
+    LaunchedEffect(state.error) {
+        state.error?.let { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            viewModel.clearError()
+        }
+    }
+    LaunchedEffect(state.deleteErrorMessage) {
+        state.deleteErrorMessage?.let { errorMessage ->
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            viewModel.clearError()
         }
     }
 
     CompanyDetailsContent(
         state = state,
         onRemoveMemberClick = viewModel::removeMember,
-        onDeleteClick = { isDelete = true },
+        onDeleteClick = viewModel::deleteCompany,
         onPinClick = viewModel::pinTenant,
         onBackClick = onBackClick,
-        onEditConfirm = {
-            viewModel.updateCompany(
-                TenantRequest(
-                    it.tenant!!.description,
-                    it.tenant.image,
-                    it.tenant.keywords,
-                    it.tenant.name,
-                    it.tenant.tenantUrl
-                )
-            )
-        },
+        onEditConfirm = viewModel::updateCompany,
         onCreateProject = viewModel::addProject,
         onProjectClick = onNavigateToProject,
         onProjectSwipeToDelete = viewModel::deleteProject,
