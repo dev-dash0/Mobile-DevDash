@@ -1,6 +1,6 @@
 package com.elfeky.domain.model.backlog
 
-data class Issue(
+data class RequestIssueBacklog(
     val title: String,
     val priority: String,
     val startDate: String,
