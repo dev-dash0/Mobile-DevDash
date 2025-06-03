@@ -1,7 +1,7 @@
 package com.elfeky.devdash.ui.screens.details_screens.company
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.elfeky.devdash.ui.base.BaseViewModel
 import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
 import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.tenant.TenantRequest
@@ -23,17 +23,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = CompanyDetailsViewModel.Factory::class)
 class CompanyDetailsViewModel @AssistedInject constructor(
-    @Assisted val companyId: Int,
+    @Assisted private val companyId: Int,
     private val getTenantByIdUseCase: GetTenantByIdUseCase,
     private val deleteTenantUseCase: DeleteTenantUseCase,
     private val updateTenantUseCase: UpdateTenantUseCase,
@@ -47,160 +41,185 @@ class CompanyDetailsViewModel @AssistedInject constructor(
     private val unpinTenantUseCase: UnpinTenantUseCase,
     private val pinProjectUseCase: PinProjectUseCase,
     private val unpinProjectUseCase: UnpinProjectUseCase,
-) : ViewModel() {
+) : BaseViewModel<CompanyDetailsReducer.State, CompanyDetailsReducer.Event, CompanyDetailsReducer.Effect>(
+    CompanyDetailsReducer.initialState(),
+    CompanyDetailsReducer()
+) {
 
     @AssistedFactory
     interface Factory {
         fun create(tenantId: Int): CompanyDetailsViewModel
     }
 
-    private val _state = MutableStateFlow(CompanyDetailsUiState(companyId))
-    val state: StateFlow<CompanyDetailsUiState> = _state.asStateFlow()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            CompanyDetailsUiState(companyId)
-        )
-
     init {
-        refreshUi()
+        observeEffects()
+        loadAllCompanyData()
     }
 
-    private fun getTenantData() {
-        viewModelScope.launch {
-            getTenantByIdUseCase(companyId).collect { result ->
-                when (result) {
-                    is Resource.Loading -> _state.update { it.copy(isLoading = true) }
-                    is Resource.Success -> _state.update {
-                        result.data?.let { data ->
-                            it.copy(tenant = data, isLoading = false, error = null)
-                        } ?: it.copy(
-                            isLoading = false,
-                            error = "Unexpected error occurred loading tenant data"
-                        )
-                    }
+    fun onEvent(event: CompanyDetailsReducer.Event) {
+        when (event) {
+            is CompanyDetailsReducer.Event.UpdateIsLoading,
+            is CompanyDetailsReducer.Event.DismissDialogClicked,
+            is CompanyDetailsReducer.Event.UpdateCompany,
+            is CompanyDetailsReducer.Event.UpdatePinnedStatus,
+            is CompanyDetailsReducer.Event.UpdateUserId,
+            is CompanyDetailsReducer.Event.UpdateProjects,
+            is CompanyDetailsReducer.Event.UpdatePinnedProjects,
+            is CompanyDetailsReducer.Event.SetProjectsLoading -> sendEvent(event)
 
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Failed to load tenant data"
-                        )
-                    }
+            else -> sendEventForEffect(event)
+        }
+    }
+
+    private fun observeEffects() {
+        viewModelScope.launch {
+            internalEffect.collect { effect ->
+                when (effect) {
+                    CompanyDetailsReducer.Effect.TriggerReloadAllData -> loadAllCompanyData()
+                    CompanyDetailsReducer.Effect.TriggerDeleteCompany -> deleteCompany()
+                    is CompanyDetailsReducer.Effect.TriggerUpdateCompany -> updateCompany(
+                        effect.companyUiModel
+                    )
+
+                    CompanyDetailsReducer.Effect.TriggerToggleCompanyPin -> toggleTenantPin()
+                    is CompanyDetailsReducer.Effect.TriggerAddProject -> addProject(effect.projectRequest)
+                    is CompanyDetailsReducer.Effect.TriggerDeleteProject -> deleteProject(
+                        effect.projectId
+                    )
+
+                    is CompanyDetailsReducer.Effect.TriggerToggleProjectPin -> toggleProjectPin(
+                        effect.projectId
+                    )
+
+                    is CompanyDetailsReducer.Effect.ShowSnackbar,
+                    is CompanyDetailsReducer.Effect.ShowDialog,
+                    CompanyDetailsReducer.Effect.NavigateBack,
+                    is CompanyDetailsReducer.Effect.NavigateToProjectDetails -> sendUiEffect(effect)
                 }
             }
         }
     }
 
-    private fun isPinnedTenant() {
+    private fun loadAllCompanyData() {
         viewModelScope.launch {
-            getPinnedTenantsUseCase().collect { result ->
-                when (result) {
-                    is Resource.Loading -> {}
-                    is Resource.Success -> _state.update {
-                        it.copy(isPinned = result.data?.any { tenant -> tenant.id == companyId } == true,
-                            error = null)
-                    }
+            sendEvent(CompanyDetailsReducer.Event.UpdateIsLoading(true))
+            loadCompany()
+            loadPinnedStatus()
+            loadUserProfile()
+            sendEvent(CompanyDetailsReducer.Event.UpdateIsLoading(false))
 
-                    is Resource.Error -> _state.update {
-                        it.copy(error = result.message ?: "Failed to check if tenant is pinned")
-                    }
-                }
+            sendEvent(CompanyDetailsReducer.Event.SetProjectsLoading(true))
+            loadCompanyProjects()
+            loadPinnedProjects()
+            sendEvent(CompanyDetailsReducer.Event.SetProjectsLoading(false))
+        }
+    }
+
+    private suspend fun loadCompany() {
+        getTenantByIdUseCase(companyId).collect { result ->
+            when (result) {
+                is Resource.Success -> sendEvent(
+                    CompanyDetailsReducer.Event.UpdateCompany(
+                        result.data!!
+                    )
+                )
+
+                is Resource.Error -> sendEventForEffect(
+                    CompanyDetailsReducer.Event.Error.CompanyLoadError
+                )
+
+                is Resource.Loading -> Unit
             }
         }
     }
 
-    private fun getUserId() {
-        viewModelScope.launch {
-            getUserProfileUseCase().collect { result ->
-                when (result) {
-                    is Resource.Loading -> {}
-                    is Resource.Success -> _state.update {
-                        result.data?.let { user -> it.copy(userId = user.id, error = null) }
-                            ?: it.copy(error = "Unexpected error occurred loading user profile")
-                    }
+    private suspend fun loadPinnedStatus() {
+        getPinnedTenantsUseCase().collect { result ->
+            when (result) {
+                is Resource.Success -> sendEvent(
+                    CompanyDetailsReducer.Event.UpdatePinnedStatus(
+                        result.data?.any { tenant -> tenant.id == companyId } == true
+                    )
+                )
 
-                    is Resource.Error -> _state.update {
-                        it.copy(error = result.message ?: "Failed to load user profile")
-                    }
-                }
+                is Resource.Error -> sendEventForEffect(
+                    CompanyDetailsReducer.Event.Error.PinnedTenantsLoadError
+                )
+
+                else -> Unit
             }
         }
     }
 
-    private fun getProjects() {
-        viewModelScope.launch {
-            getTenantProjectsUseCase(companyId).collect { result ->
-                when (result) {
-                    is Resource.Loading -> _state.update { it.copy(projectsLoading = true) }
-                    is Resource.Success -> _state.update {
-                        it.copy(
-                            projects = result.data ?: emptyList(),
-                            projectsLoading = false,
-                            error = null
-                        )
-                    }
+    private suspend fun loadUserProfile() {
+        getUserProfileUseCase().collect { result ->
+            when (result) {
+                is Resource.Success -> sendEvent(
+                    CompanyDetailsReducer.Event.UpdateUserId(
+                        result.data?.id!!
+                    )
+                )
 
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            projectsLoading = false,
-                            error = result.message ?: "Failed to load projects"
-                        )
-                    }
-                }
+                is Resource.Error -> sendEventForEffect(
+                    CompanyDetailsReducer.Event.Error.UserProfileLoadError
+                )
+
+                is Resource.Loading -> Unit
             }
         }
     }
 
-    private fun getPinnedProjects() {
-        viewModelScope.launch {
-            getPinnedProjectsUseCase().collect { result ->
-                when (result) {
-                    is Resource.Loading -> Unit
-                    is Resource.Success -> _state.update {
-                        it.copy(pinnedProjects = result.data ?: emptyList(), error = null)
-                    }
+    private suspend fun loadCompanyProjects() {
+        getTenantProjectsUseCase(companyId).collect { result ->
+            when (result) {
+                is Resource.Success -> sendEvent(
+                    CompanyDetailsReducer.Event.UpdateProjects(
+                        result.data ?: emptyList()
+                    )
+                )
 
-                    is Resource.Error -> _state.update {
-                        it.copy(error = result.message ?: "Error fetching pinned projects")
-                    }
-                }
+                is Resource.Error -> sendEventForEffect(
+                    CompanyDetailsReducer.Event.Error.ProjectsLoadError
+                )
+
+                is Resource.Loading -> Unit
             }
         }
     }
 
-    fun deleteCompany() {
+    private suspend fun loadPinnedProjects() {
+        getPinnedProjectsUseCase().collect { result ->
+            when (result) {
+                is Resource.Success -> sendEvent(
+                    CompanyDetailsReducer.Event.UpdatePinnedProjects(
+                        result.data ?: emptyList()
+                    )
+                )
+
+                is Resource.Error -> sendEventForEffect(
+                    CompanyDetailsReducer.Event.Error.PinnedProjectsLoadError
+                )
+
+                is Resource.Loading -> Unit
+            }
+        }
+    }
+
+    private fun deleteCompany() {
         viewModelScope.launch {
             deleteTenantUseCase(companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> _state.update {
-                        it.copy(
-                            isLoading = true,
-                            deleteErrorMessage = null
-                        )
-                    }
-
-                    is Resource.Success -> _state.update {
-                        it.copy(
-                            isLoading = false,
-                            isDeleted = true,
-                            error = null
-                        )
-                    }
-
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Error deleting company",
-                            deleteErrorMessage = result.message ?: "Error deleting company",
-                            isDeleted = false
-                        )
-                    }
+                    is Resource.Loading -> Unit
+                    is Resource.Success -> sendEventForEffect(CompanyDetailsReducer.Event.CompanyDeletionCompleted)
+                    is Resource.Error -> sendEventForEffect(
+                        CompanyDetailsReducer.Event.Error.CompanyDeleteError
+                    )
                 }
             }
         }
     }
 
-    fun updateCompany(companyUiModel: CompanyUiModel) {
+    private fun updateCompany(companyUiModel: CompanyUiModel) {
         val request = TenantRequest(
             description = companyUiModel.description,
             image = companyUiModel.logoUri?.toString(),
@@ -211,154 +230,104 @@ class CompanyDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             updateTenantUseCase(request, companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> _state.update { it.copy(isLoading = true) }
-                    is Resource.Success -> {
-                        _state.update { it.copy(isLoading = false, error = null) }
-                        getTenantData()
-                    }
-
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message ?: "Error updating company"
-                        )
-                    }
+                    is Resource.Loading -> Unit
+                    is Resource.Success -> sendEventForEffect(CompanyDetailsReducer.Event.CompanyUpdateCompleted)
+                    is Resource.Error -> sendEventForEffect(
+                        CompanyDetailsReducer.Event.Error.CompanyUpdateError
+                    )
                 }
             }
         }
     }
 
-    fun pinTenant() {
+    private fun toggleTenantPin() {
         viewModelScope.launch {
-            if (_state.value.isPinned) {
-                unpinTenantUseCase(companyId).collect { result ->
-                    when (result) {
-                        is Resource.Loading -> Unit
-                        is Resource.Success -> {
-                            _state.update { it.copy(isPinned = false, error = null) }
-                        }
-
-                        is Resource.Error -> _state.update {
-                            it.copy(
-                                error = result.message ?: "Error unpinning company"
-                            )
-                        }
+            val isCurrentlyPinned = state.value.isPinned
+            val operation =
+                if (isCurrentlyPinned) unpinTenantUseCase(companyId) else pinTenantUseCase(
+                    companyId
+                )
+            operation.collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        sendEventForEffect(
+                            CompanyDetailsReducer.Event.UpdatePinnedStatus(!isCurrentlyPinned)
+                        )
+                        sendEventForEffect(CompanyDetailsReducer.Event.PinOperationCompleted)
                     }
-                }
-            } else {
-                pinTenantUseCase(companyId).collect { result ->
-                    when (result) {
-                        is Resource.Loading -> Unit
-                        is Resource.Success -> {
-                            _state.update { it.copy(isPinned = true, error = null) }
-                        }
 
-                        is Resource.Error -> _state.update {
-                            it.copy(
-                                error = result.message ?: "Error pinning company"
-                            )
-                        }
-                    }
+                    is Resource.Error -> sendEventForEffect(
+                        CompanyDetailsReducer.Event.Error.CompanyPinError
+                    )
+
+                    is Resource.Loading -> Unit
                 }
             }
         }
     }
 
-    fun addProject(projectRequest: ProjectRequest) {
+    private fun addProject(projectRequest: ProjectRequest) {
         viewModelScope.launch {
             addProjectUseCase(projectRequest, companyId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> _state.update { it.copy(projectsLoading = true) }
-                    is Resource.Success -> {
-                        _state.update { it.copy(projectsLoading = false, error = null) }
-                        getProjects()
-                    }
-
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            projectsLoading = false,
-                            error = result.message ?: "Error adding project"
+                    is Resource.Success -> result.data?.let {
+                        sendEventForEffect(
+                            CompanyDetailsReducer.Event.ProjectAdded(
+                                it
+                            )
                         )
                     }
+
+                    is Resource.Error -> sendEventForEffect(
+                        CompanyDetailsReducer.Event.Error.ProjectAddError
+                    )
+
+                    is Resource.Loading -> Unit
                 }
             }
         }
     }
 
-    fun deleteProject(id: Int) {
+    private fun deleteProject(projectId: Int) {
         viewModelScope.launch {
-            deleteProjectUseCase(id).collect { result ->
+            deleteProjectUseCase(projectId).collect { result ->
                 when (result) {
-                    is Resource.Loading -> _state.update { it.copy(projectsLoading = true) }
-                    is Resource.Success -> {
-                        _state.update { it.copy(projectsLoading = false, error = null) }
-                        getProjects()
-                        getPinnedProjects()
-                    }
-
-                    is Resource.Error -> _state.update {
-                        it.copy(
-                            projectsLoading = false,
-                            error = result.message ?: "Error deleting project"
+                    is Resource.Loading -> sendEvent(
+                        CompanyDetailsReducer.Event.SetProjectsLoading(
+                            true
                         )
-                    }
+                    )
+
+                    is Resource.Success -> sendEventForEffect(CompanyDetailsReducer.Event.ProjectDeletionCompleted)
+                    is Resource.Error -> sendEventForEffect(
+                        CompanyDetailsReducer.Event.Error.ProjectDeleteError
+                    )
                 }
             }
         }
     }
 
-    fun pinProject(id: Int) {
+    private fun toggleProjectPin(projectId: Int) {
         viewModelScope.launch {
-            val isCurrentlyPinned = _state.value.pinnedProjects.any { it.id == id }
-            if (isCurrentlyPinned) {
-                unpinProjectUseCase(id).collect { result ->
-                    when (result) {
-                        is Resource.Loading -> Unit
-                        is Resource.Success -> {
-                            _state.update { it.copy(error = null) }
-                            getPinnedProjects()
-                        }
-
-                        is Resource.Error -> _state.update {
-                            it.copy(
-                                error = result.message ?: "Error unpinning project"
-                            )
-                        }
+            val isCurrentlyPinned = state.value.pinnedProjects.any { it.id == projectId }
+            val operation =
+                if (isCurrentlyPinned) unpinProjectUseCase(projectId) else pinProjectUseCase(
+                    projectId
+                )
+            operation.collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        loadPinnedProjects()
+                        sendEventForEffect(CompanyDetailsReducer.Event.PinOperationCompleted)
                     }
-                }
-            } else {
-                pinProjectUseCase(id).collect { result ->
-                    when (result) {
-                        is Resource.Loading -> Unit
-                        is Resource.Success -> {
-                            _state.update { it.copy(error = null) }
-                            getPinnedProjects()
-                        }
 
-                        is Resource.Error -> _state.update {
-                            it.copy(
-                                error = result.message ?: "Error pinning project"
-                            )
-                        }
-                    }
+                    is Resource.Error -> sendEventForEffect(
+                        CompanyDetailsReducer.Event.Error.ProjectPinError
+                    )
+
+                    is Resource.Loading -> Unit
                 }
             }
         }
-    }
-
-    fun removeMember(id: Int) {
-        // TODO: Implement member removal logic
-    }
-
-    fun refreshUi() {
-        getTenantData()
-        isPinnedTenant()
-        getProjects()
-        getPinnedProjects()
-        getUserId()
-    }
-
-    fun clearError() {
-        _state.update { it.copy(error = null, deleteErrorMessage = null) }
     }
 }

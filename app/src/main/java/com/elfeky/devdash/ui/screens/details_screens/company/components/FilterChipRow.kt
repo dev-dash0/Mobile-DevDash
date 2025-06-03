@@ -28,7 +28,7 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SingleSelectChipRow(
+fun FilterChipRow(
     choices: List<String>,
     onChoiceSelected: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -81,7 +81,7 @@ fun MyScreenWithChoices() {
             Text("Choose an option:")
             Spacer(Modifier.height(8.dp))
 
-            SingleSelectChipRow(
+            FilterChipRow(
                 choices = options,
                 onChoiceSelected = { index ->
                     selectedOption = options[index]

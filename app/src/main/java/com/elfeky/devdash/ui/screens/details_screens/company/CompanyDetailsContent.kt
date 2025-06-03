@@ -1,21 +1,18 @@
 package com.elfeky.devdash.ui.screens.details_screens.company
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -28,208 +25,156 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.dialogs.company.CompanyDialog
-import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
-import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
-import com.elfeky.devdash.ui.common.dialogs.userList
+import com.elfeky.devdash.ui.common.projectList
 import com.elfeky.devdash.ui.common.tab_row.CustomTabRow
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.screens.details_screens.company.components.CompanyInfoPage
+import com.elfeky.devdash.ui.screens.details_screens.company.components.FilterChipRow
 import com.elfeky.devdash.ui.screens.details_screens.company.components.ProjectList
-import com.elfeky.devdash.ui.screens.details_screens.company.components.SingleSelectChipRow
 import com.elfeky.devdash.ui.screens.details_screens.components.ScreenContainer
-import com.elfeky.devdash.ui.screens.details_screens.components.projectList
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.domain.model.project.Project
-import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.tenant.Tenant
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CompanyDetailsContent(
-    state: CompanyDetailsUiState,
-    onRemoveMemberClick: (Int) -> Unit,
-    onDeleteClick: () -> Unit,
-    onPinClick: () -> Unit,
-    onBackClick: () -> Unit,
-    onEditConfirm: (companyUiModel: CompanyUiModel) -> Unit,
-    onCreateProject: (project: ProjectRequest) -> Unit,
-    onProjectClick: (id: Int) -> Unit,
-    onProjectSwipeToDelete: (id: Int) -> Unit,
-    onProjectSwipeToPin: (id: Int) -> Unit,
+    uiState: CompanyDetailsReducer.State,
+    onEvent: (CompanyDetailsReducer.Event) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val tabs = listOf("Info", "Projects")
-    val choices = listOf("All", "Owned", "Joined")
     val scope = rememberCoroutineScope()
 
     val companyTabsPagerState = rememberPagerState(pageCount = { tabs.size })
+
+    ScreenContainer(
+        snackbarHostState = snackbarHostState,
+        title = uiState.tenant?.name ?: "",
+        isPinned = uiState.isPinned,
+        isOwner = uiState.tenant?.role == "Admin",
+        onPinClick = {
+            onEvent(CompanyDetailsReducer.Event.PinCompanyClicked)
+            Log.d("CompanyDetails", "isPinned: " + uiState.isPinned.toString())
+        },
+        onDeleteClick = { onEvent(CompanyDetailsReducer.Event.DeleteCompanyClicked) },
+        onEditClick = { onEvent(CompanyDetailsReducer.Event.EditCompanyClicked) },
+        onBackClick = { onEvent(CompanyDetailsReducer.Event.BackClicked) },
+        modifier = modifier,
+        isLoading = uiState.isLoading && uiState.tenant == null,
+        image = uiState.tenant?.image,
+        hasImageBackground = true,
+        onCreateClick = { onEvent(CompanyDetailsReducer.Event.CreateProjectClicked) },
+        scrollBehavior = scrollBehavior
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomTabRow(
+                tabs = tabs,
+                selectedTabIndex = companyTabsPagerState.currentPage,
+                onTabClick = { index ->
+                    scope.launch { companyTabsPagerState.animateScrollToPage(index) }
+                }
+            )
+
+            HorizontalPager(
+                state = companyTabsPagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                when (page) {
+                    0 -> CompanyInfoPage(
+                        state = uiState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                            .verticalScroll(rememberScrollState()),
+                        onRemoveMemberClick = { memberId ->
+                            onEvent(CompanyDetailsReducer.Event.RemoveMemberClicked(memberId))
+                        },
+                        onCopyTextClicked = { onEvent(CompanyDetailsReducer.Event.CopyTextClicked(it)) }
+                    )
+
+                    1 -> CompanyProjectsTab(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun CompanyProjectsTab(
+    uiState: CompanyDetailsReducer.State,
+    onEvent: (CompanyDetailsReducer.Event) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val choices = listOf("All", "Owned", "Joined")
+    val scope = rememberCoroutineScope()
     val projectPagerState = rememberPagerState(pageCount = { choices.size })
 
-    var isShowEditDialog by remember { mutableStateOf(false) }
-    var isShowCreateProject by remember { mutableStateOf(false) }
-    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
-
-    val isOwner by remember(state.userId, state.tenant) {
-        mutableStateOf(state.userId != null && state.userId == state.tenant?.owner?.id)
-    }
-
-    val projectsToShow by remember(state.projects, projectPagerState.currentPage, state.userId) {
+    val projectsToShow by remember(
+        uiState.projects,
+        projectPagerState.currentPage,
+        uiState.userId
+    ) {
         derivedStateOf {
             when (projectPagerState.currentPage) {
-                0 -> state.projects
-                1 -> state.projects.filter { it.creatorId == state.userId }
-                2 -> state.projects.filterNot { it.creatorId == state.userId }
+                0 -> uiState.projects
+                1 -> uiState.projects.filter { it.role == "Admin" }
+                2 -> uiState.projects.filterNot { it.role == "Admin" }
                 else -> emptyList()
             }
         }
     }
 
-    ScreenContainer(
-        title = state.tenant?.name ?: "",
-        isPinned = state.isPinned,
-        isOwner = isOwner,
-        onPinClick = onPinClick,
-        onDeleteClick = { showDeleteConfirmationDialog = true },
-        onEditClick = { isShowEditDialog = true },
-        onBackClick = onBackClick,
-        modifier = modifier,
-        isLoading = state.isLoading && state.tenant == null,
-        image = state.tenant?.image,
-        hasImageBackground = true,
-        onCreateClick = { isShowCreateProject = true }
-    ) { paddingValues, scrollBehavior ->
-        LazyColumn(
-            modifier = Modifier
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        FilterChipRow(
+            choices = choices,
+            initialSelectedIndex = projectPagerState.currentPage,
+            onChoiceSelected = { index ->
+                scope.launch { projectPagerState.animateScrollToPage(index) }
+            }
+        )
+
+        HorizontalPager(
+            state = projectPagerState,
+            userScrollEnabled = false,
+            key = { choices[it] }
         ) {
-            stickyHeader {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shadowElevation = 2.dp
-                ) {
-                    CustomTabRow(
-                        tabs = tabs,
-                        selectedTabIndex = companyTabsPagerState.currentPage,
-                        onTabClick = { index ->
-                            scope.launch { companyTabsPagerState.animateScrollToPage(index) }
-                        }
+            ProjectList(
+                projects = projectsToShow,
+                pinnedProjects = uiState.pinnedProjects,
+                onProjectClick = { onEvent(CompanyDetailsReducer.Event.ProjectClicked(it)) },
+                onProjectSwipeToDelete = { projectId ->
+                    onEvent(
+                        CompanyDetailsReducer.Event.ProjectSwipedToDelete(
+                            projectId
+                        )
+                    )
+                },
+                onProjectSwipeToPin = { projectId ->
+                    onEvent(
+                        CompanyDetailsReducer.Event.ProjectSwipedToPin(
+                            projectId
+                        )
                     )
                 }
-            }
-
-            item {
-                HorizontalPager(
-                    state = companyTabsPagerState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillParentMaxSize()
-                ) { page ->
-                    when (page) {
-                        0 -> CompanyInfoPage(
-                            state,
-                            isOwner,
-                            Modifier.fillMaxSize(),
-                            onRemoveMemberClick
-                        )
-
-                        1 -> {
-                            Column(Modifier.fillMaxSize()) {
-                                SingleSelectChipRow(
-                                    choices = choices,
-                                    initialSelectedIndex = projectPagerState.currentPage,
-                                    onChoiceSelected = { index ->
-                                        scope.launch { projectPagerState.animateScrollToPage(index) }
-                                    }
-                                )
-
-                                HorizontalPager(
-                                    state = projectPagerState,
-                                    userScrollEnabled = false,
-                                    key = { choices[it] },
-                                ) {
-                                    ProjectList(
-                                        projects = projectsToShow,
-                                        pinnedProjects = state.pinnedProjects,
-                                        scrollBehavior = scrollBehavior,
-                                        onProjectClick = onProjectClick,
-                                        onProjectSwipeToDelete = onProjectSwipeToDelete,
-                                        onProjectSwipeToPin = onProjectSwipeToPin
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            )
         }
-    }
-
-    if (isShowEditDialog) {
-        CompanyDialog(
-            onDismiss = { isShowEditDialog = false },
-            onSubmit = { updatedCompanyUiModel ->
-                onEditConfirm(updatedCompanyUiModel)
-                isShowEditDialog = false
-            },
-            company = state.tenant?.let {
-                CompanyUiModel(
-                    title = it.name,
-                    websiteUrl = it.tenantUrl,
-                    keywords = it.keywords,
-                    description = it.description,
-                    logoUri = it.image
-                )
-            }
-        )
-    }
-
-    if (isShowCreateProject) {
-        ProjectDialog(
-            onDismiss = { isShowCreateProject = false },
-            onSubmit = { projectRequest ->
-                onCreateProject(projectRequest)
-                isShowCreateProject = false
-            },
-        )
-    }
-
-    if (showDeleteConfirmationDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirmationDialog = false },
-            title = {
-                Text(
-                    text = "Delete Company",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.error
-                )
-            },
-            text = {
-                Text(
-                    text = "Are you sure you want to delete this company? This action cannot be undone.",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    onDeleteClick()
-                    showDeleteConfirmationDialog = false
-                }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirmationDialog = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onBackground)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
     }
 }
 
@@ -237,71 +182,37 @@ fun CompanyDetailsContent(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 fun CompanyDetailsContentPreview() {
-    val userList = remember { userList }
-
-    var ownedProjects by remember { mutableStateOf(projectList) }
-
-    var joinedProjects by remember { mutableStateOf(projectList) }
-
-    var pinnedProjects by remember { mutableStateOf(listOf<Project>()) }
-
-    val allProjectsForSwipe = remember(ownedProjects, joinedProjects) {
-        ownedProjects + joinedProjects
-    }
-
     var uiState by remember {
         mutableStateOf(
-            CompanyDetailsUiState(
-                isPinned = false,
-                isLoading = false,
+            CompanyDetailsReducer.initialState().copy(
                 tenant = Tenant(
-                    name = "Preview Company Name",
+                    id = 5,
+                    name = "Acme Corporation",
                     image = null,
-                    tenantCode = "PRE-001",
-                    tenantUrl = "https://previewcompany.com",
+                    tenantCode = "ACME-CORP",
+                    tenantUrl = "https://acmecorp.com",
                     joinedUsers = userList,
                     owner = userList[0],
-                    keywords = "Technology,Software,Startup,FinTech",
-                    description = "a dynamic and forward-thinking organization dedicated to delivering innovative solutions that empower businesses to achieve their full potential. We specialize in partnering with clients to understand their unique challenges and opportunities, leveraging our expertise in [mention a general area",
-                    id = 5,
+                    keywords = "Manufacturing,Innovation,Technology",
+                    description = "Acme Corporation is a leading global innovator in high-quality, cutting-edge products and solutions across diverse industries. We are committed to excellence, sustainability, and transforming the future through our relentless pursuit of innovation.",
                     ownerID = 1,
-                    role = null
+                    role = "Admin"
                 ),
-                tenantId = 6,
                 projects = projectList,
-                userId = 5,
-                pinnedProjects = pinnedProjects
+                pinnedProjects = listOf(projectList[0]),
+                userId = 1,
+                isLoading = false,
+                projectsLoading = false,
+                isPinned = true,
             )
         )
     }
 
     DevDashTheme {
         CompanyDetailsContent(
-            state = uiState,
-            onRemoveMemberClick = { },
-            onDeleteClick = { },
-            onPinClick = { uiState = uiState.copy(isPinned = !uiState.isPinned) },
-            onEditConfirm = { },
-            onBackClick = { },
-            onCreateProject = { },
-            onProjectClick = { id -> println("Project $id clicked") },
-            onProjectSwipeToDelete = { id ->
-                ownedProjects = ownedProjects.filter { it.id != id }
-                joinedProjects = joinedProjects.filter { it.id != id }
-                pinnedProjects = pinnedProjects.filter { it.id != id }
-                true
-            },
-            onProjectSwipeToPin = { id ->
-                val projectToPin = allProjectsForSwipe.find { it.id == id }
-                if (projectToPin != null) {
-                    pinnedProjects = if (pinnedProjects.contains(projectToPin)) {
-                        pinnedProjects - projectToPin
-                    } else {
-                        pinnedProjects + projectToPin
-                    }
-                }
-                false
-            },
+            uiState = uiState,
+            onEvent = {},
+            snackbarHostState = remember { SnackbarHostState() }
         )
     }
 }

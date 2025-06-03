@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.component.avatar.Avatar
 import com.elfeky.devdash.ui.common.component.avatar.MembersAvatar
-import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.DropMenuContainer
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.account.UserProfile
 

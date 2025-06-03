@@ -1,14 +1,22 @@
 package com.elfeky.devdash.ui.screens.details_screens.company
 
-import android.widget.Toast
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.elfeky.devdash.ui.common.dialogs.company.CompanyDialog
+import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
+import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
+import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
+import com.elfeky.devdash.ui.utils.rememberFlowWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,38 +27,120 @@ fun CompanyDetailsScreen(
     onNavigateToProject: (id: Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    var currentDialogType by remember { mutableStateOf<CompanyDetailsReducer.DialogType?>(null) }
 
-    LaunchedEffect(state.isDeleted) {
-        if (state.isDeleted) {
-            onBackClick()
-        }
-    }
+    val uiEffectFlow = rememberFlowWithLifecycle(viewModel.uiEffect)
 
-    LaunchedEffect(state.error) {
-        state.error?.let { errorMessage ->
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            viewModel.clearError()
-        }
-    }
-    LaunchedEffect(state.deleteErrorMessage) {
-        state.deleteErrorMessage?.let { errorMessage ->
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-            viewModel.clearError()
+    LaunchedEffect(uiEffectFlow) {
+        uiEffectFlow.collect { effect ->
+            when (effect) {
+                CompanyDetailsReducer.Effect.NavigateBack -> onBackClick()
+                is CompanyDetailsReducer.Effect.NavigateToProjectDetails -> onNavigateToProject(
+                    effect.projectId
+                )
+
+                is CompanyDetailsReducer.Effect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        withDismissAction = true
+                    )
+                }
+
+                is CompanyDetailsReducer.Effect.ShowDialog -> {
+                    currentDialogType = effect.type
+                }
+
+                else -> Unit
+            }
         }
     }
 
     CompanyDetailsContent(
-        state = state,
-        onRemoveMemberClick = viewModel::removeMember,
-        onDeleteClick = viewModel::deleteCompany,
-        onPinClick = viewModel::pinTenant,
-        onBackClick = onBackClick,
-        onEditConfirm = viewModel::updateCompany,
-        onCreateProject = viewModel::addProject,
-        onProjectClick = onNavigateToProject,
-        onProjectSwipeToDelete = viewModel::deleteProject,
-        onProjectSwipeToPin = viewModel::pinProject,
-        modifier = modifier,
+        uiState = state,
+        onEvent = viewModel::onEvent,
+        modifier = modifier.fillMaxSize(),
+        snackbarHostState = snackbarHostState
     )
+
+    currentDialogType?.let { dialogType ->
+        when (dialogType) {
+            CompanyDetailsReducer.DialogType.EditCompany -> {
+                CompanyDialog(
+                    onDismiss = {
+                        currentDialogType = null
+                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                    },
+                    onSubmit = { updatedCompanyUiModel ->
+                        viewModel.onEvent(
+                            CompanyDetailsReducer.Event.ConfirmEditCompanyClicked(
+                                updatedCompanyUiModel
+                            )
+                        )
+                        currentDialogType = null
+                    },
+                    company = state.tenant?.let {
+                        CompanyUiModel(
+                            title = it.name,
+                            websiteUrl = it.tenantUrl,
+                            keywords = it.keywords,
+                            description = it.description,
+                            logoUri = it.image
+                        )
+                    }
+                )
+            }
+
+            CompanyDetailsReducer.DialogType.CreateProject -> {
+                ProjectDialog(
+                    onDismiss = {
+                        currentDialogType = null
+                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                    },
+                    onSubmit = { projectRequest ->
+                        viewModel.onEvent(
+                            CompanyDetailsReducer.Event.ConfirmCreateProjectClicked(
+                                projectRequest
+                            )
+                        )
+                        currentDialogType = null
+                    },
+                )
+            }
+
+            CompanyDetailsReducer.DialogType.DeleteCompanyConfirmation -> {
+                DeleteConfirmationDialog(
+                    title = "Delete Company",
+                    text = "Are you sure you want to delete this company? This action cannot be undone.",
+                    onDismiss = {
+                        currentDialogType = null
+                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                    },
+                    onConfirm = {
+                        viewModel.onEvent(CompanyDetailsReducer.Event.ConfirmDeleteCompanyClicked)
+                        currentDialogType = null
+                    }
+                )
+            }
+
+            is CompanyDetailsReducer.DialogType.DeleteProjectConfirmation -> {
+                DeleteConfirmationDialog(
+                    title = "Delete Project",
+                    text = "Are you sure you want to delete this project? This action cannot be undone.",
+                    onDismiss = {
+                        currentDialogType = null
+                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                    },
+                    onConfirm = {
+                        viewModel.onEvent(
+                            CompanyDetailsReducer.Event.ConfirmDeleteProjectClicked(
+                                dialogType.projectId
+                            )
+                        )
+                        currentDialogType = null
+                    }
+                )
+            }
+        }
+    }
 }

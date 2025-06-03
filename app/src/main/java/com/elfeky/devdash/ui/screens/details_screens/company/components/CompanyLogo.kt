@@ -1,6 +1,6 @@
 package com.elfeky.devdash.ui.screens.details_screens.company.components
 
-import android.util.Log
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -43,16 +43,6 @@ fun CompanyLogo(
     var selectedImageUri by remember(imageUrl) { mutableStateOf<Any?>(imageUrl) }
     var isImageExpanded by remember { mutableStateOf(false) }
 
-    val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
-        if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
-            selectedImageUri = uri
-            onImageChanged(uri)
-        } else {
-            Log.d("PhotoPicker", "No media selected")
-        }
-    }
-
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(selectedImageUri)
@@ -69,19 +59,46 @@ fun CompanyLogo(
             .clickable { isImageExpanded = true }
     )
 
+    ImageSelectionDialog(
+        isExpanded = isImageExpanded,
+        imageUri = selectedImageUri,
+        onClose = { isImageExpanded = false },
+        onImageSelected = { uri ->
+            selectedImageUri = uri
+            onImageChanged(uri)
+            isImageExpanded = false
+        },
+        onImageDeleted = {
+            selectedImageUri = null
+            onImageChanged(null)
+            isImageExpanded = false
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ImageSelectionDialog(
+    isExpanded: Boolean,
+    imageUri: Any?,
+    onClose: () -> Unit,
+    onImageSelected: (Uri?) -> Unit,
+    onImageDeleted: () -> Unit,
+) {
+    val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
+        onImageSelected(uri)
+    }
+
     AnimatedVisibility(
-        visible = isImageExpanded,
+        visible = isExpanded,
         enter = fadeIn(animationSpec = tween(durationMillis = 300)),
         exit = fadeOut(animationSpec = tween(durationMillis = 300))
     ) {
         ImageViewerDialog(
-            imageUri = selectedImageUri,
-            onClose = { isImageExpanded = false },
+            imageUri = imageUri,
+            onClose = onClose,
             onChangeClick = { pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
-            onDeleteClick = {
-                selectedImageUri = null
-                onImageChanged(null)
-            }
+            onDeleteClick = onImageDeleted
         )
     }
 }
