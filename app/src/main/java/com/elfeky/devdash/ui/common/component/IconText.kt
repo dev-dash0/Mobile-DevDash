@@ -29,7 +29,7 @@ fun IconText(
                 contentDescription = null,
                 tint = selectedItem.color
             )
-        Text(text = selectedItem.text)
+        Text(text = selectedItem.text, color = selectedItem.color)
     }
 }
 

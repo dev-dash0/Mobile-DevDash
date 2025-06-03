@@ -18,10 +18,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.card.IssueCard
 import com.elfeky.devdash.ui.common.component.LoadingIndicator
-import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
+import com.elfeky.devdash.ui.common.labelList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.screens.main_screens.home.components.Item
 import com.elfeky.devdash.ui.screens.main_screens.home.components.ProgressRow
 import com.elfeky.devdash.ui.theme.DevDashTheme

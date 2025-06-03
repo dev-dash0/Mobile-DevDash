@@ -13,10 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.dialogs.userList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.White
 import com.elfeky.devdash.ui.utils.avatarModifier
@@ -26,6 +27,7 @@ import com.elfeky.domain.model.account.UserProfile
 fun Avatar(
     user: UserProfile,
     modifier: Modifier = Modifier,
+    size: Dp = 32.dp,
     backgroundColor: Color = MaterialTheme.colorScheme.onSecondary
 ) {
     SubcomposeAsyncImage(
@@ -33,7 +35,7 @@ fun Avatar(
         contentDescription = "Assignee Image",
         modifier = modifier
             .border(2.dp, White, CircleShape)
-            .avatarModifier(backgroundColor),
+            .avatarModifier(backgroundColor, size),
         loading = {
             Icon(
                 painter = painterResource(id = R.drawable.person_ic),

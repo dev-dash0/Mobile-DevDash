@@ -9,10 +9,10 @@ import com.elfeky.devdash.ui.common.card.component.CardContainer
 import com.elfeky.devdash.ui.common.card.component.CardTitle
 import com.elfeky.devdash.ui.common.card.component.IssueCardFooter
 import com.elfeky.devdash.ui.common.card.component.IssueCardLabels
-import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
+import com.elfeky.devdash.ui.common.labelList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.account.UserProfile
 

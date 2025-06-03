@@ -10,6 +10,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,7 +23,7 @@ fun CustomTabRow(
 ) {
     TabRow(
         selectedTabIndex = selectedTabIndex,
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = Color.Unspecified,
         contentColor = MaterialTheme.colorScheme.onBackground,
         indicator = { tabPositions: List<TabPosition> ->
             if (selectedTabIndex < tabPositions.size) {

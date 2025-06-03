@@ -1,12 +1,6 @@
 package com.elfeky.devdash.ui.screens.details_screens.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,19 +13,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.component.LoadingIndicator
@@ -53,29 +42,19 @@ fun ScreenContainer(
     modifier: Modifier = Modifier,
     image: Any? = null,
     hasImageBackground: Boolean = false,
-    content: @Composable (paddingValues: PaddingValues, scrollBehavior: TopAppBarScrollBehavior) -> Unit
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    var fabVisible by remember { mutableStateOf(true) }
-
-    val fabScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                if (available.y < 0 && !fabVisible) {
-                    fabVisible = true
-                } else if (available.y > 0 && fabVisible) {
-                    fabVisible = false
-                }
-                return Offset.Zero
-            }
-        }
-    }
-
     Scaffold(
         modifier = modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .nestedScroll(fabScrollConnection)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(gradientBackground)
+            .then(
+                if (scrollBehavior != null)
+                    modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+                else modifier
+            ),
         topBar = {
             DetailsScreenAppBar(
                 title = title,
@@ -91,40 +70,51 @@ fun ScreenContainer(
             )
         },
         floatingActionButton = {
-            AnimatedVisibility(
-                visible = fabVisible,
-                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                exit = fadeOut() + shrinkOut(
-                    shrinkTowards = Alignment.Center,
-                    animationSpec = tween(durationMillis = 150)
-                )
-            ) {
-                FloatingActionButton(
-                    onClick = onCreateClick,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Create")
-                }
-            }
-        }
+            CreateFloatingActionButton(onCreateClick = onCreateClick)
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = Color.Unspecified
     ) { paddingValues ->
-        AnimatedContent(
-            targetState = isLoading,
-            modifier = Modifier.fillMaxSize()
-        ) { targetIsLoading ->
-            if (targetIsLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    LoadingIndicator()
-                }
-            } else {
-                content(paddingValues, scrollBehavior)
+        ScreenContentWithLoading(
+            isLoading = isLoading,
+            paddingValues = paddingValues,
+            content = content
+        )
+    }
+}
+
+@Composable
+private fun CreateFloatingActionButton(onCreateClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = onCreateClick,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
+    ) {
+        Icon(imageVector = Icons.Filled.Add, contentDescription = "Create")
+    }
+}
+
+@Composable
+private fun ScreenContentWithLoading(
+    isLoading: Boolean,
+    paddingValues: PaddingValues,
+    content: @Composable (paddingValues: PaddingValues) -> Unit
+) {
+    AnimatedContent(
+        targetState = isLoading,
+        modifier = Modifier.fillMaxSize(), label = "ScreenContentLoadingAnimation"
+    ) { targetIsLoading ->
+        if (targetIsLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadingIndicator()
             }
+        } else {
+            content(paddingValues)
         }
     }
 }
@@ -144,7 +134,6 @@ private fun ScreenContainerPreview() {
             onEditClick = {},
             onBackClick = {},
             onCreateClick = {},
-            modifier = Modifier.background(gradientBackground)
-        ) { _, _ -> }
+        ) { _ -> }
     }
 }

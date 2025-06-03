@@ -7,15 +7,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-fun Modifier.avatarModifier(backgroundColor: Color): Modifier {
+fun Modifier.avatarModifier(backgroundColor: Color, size: Dp = 32.dp): Modifier {
     return this.then(
         Modifier
             .padding(2.dp)
             .clip(CircleShape)
             .background(backgroundColor)
             .padding(4.dp)
-            .size(32.dp)
+            .size(size)
     )
 }

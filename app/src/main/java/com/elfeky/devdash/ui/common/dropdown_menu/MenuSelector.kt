@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.common.dropdown_menu
 
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,13 +40,17 @@ fun MenuSelector(
         content = {
             TextButton(
                 onClick = { },
-                modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.onBackground
                 )
             ) {
-                IconText(selectedItem)
+                IconText(
+                    selectedItem,
+                    modifier = Modifier
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                        .wrapContentSize()
+                )
             }
         }
     ) {

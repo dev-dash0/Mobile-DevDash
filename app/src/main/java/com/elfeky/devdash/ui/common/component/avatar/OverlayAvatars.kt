@@ -2,7 +2,6 @@ package com.elfeky.devdash.ui.common.component.avatar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -16,9 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.dialogs.userList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.avatarModifier
 import com.elfeky.devdash.ui.utils.dashBorder
@@ -28,8 +28,9 @@ import com.elfeky.domain.model.account.UserProfile
 fun OverlayAvatars(
     users: List<UserProfile>,
     modifier: Modifier = Modifier,
+    avatarSize: Dp = 32.dp,
     containerColor: Color = MaterialTheme.colorScheme.onSecondary,
-    content: @Composable (() -> Unit)
+    content: @Composable (() -> Unit)? = null
 ) {
     val reverseRotationModifier = Modifier.graphicsLayer { rotationY = 180f }
     val overlap by remember(users.size) {
@@ -47,9 +48,7 @@ fun OverlayAvatars(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .then(reverseRotationModifier),
+            modifier = reverseRotationModifier,
             horizontalArrangement = Arrangement.spacedBy(overlap),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -58,11 +57,12 @@ fun OverlayAvatars(
                 Avatar(
                     user,
                     reverseRotationModifier,
+                    avatarSize,
                     containerColor
                 )
             }
         }
-        content()
+        content?.invoke()
     }
 }
 

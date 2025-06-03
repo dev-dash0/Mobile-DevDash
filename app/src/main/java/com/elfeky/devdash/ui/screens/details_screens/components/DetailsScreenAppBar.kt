@@ -87,13 +87,10 @@ fun DetailsScreenAppBar(
         collapsedHeight = TopAppBarDefaults.LargeAppBarCollapsedHeight,
         modifier = appBarModifier,
         title = {
-            Text(
-                text = title,
-                modifier = Modifier.padding(start = 24.dp),
-                style = MaterialTheme.typography.headlineMedium,
+            AppBarTitle(
+                title = title,
                 maxLines = maxLines,
-                overflow = TextOverflow.Ellipsis,
-                color = contentColor
+                contentColor = contentColor
             )
         },
         colors = TopAppBarDefaults.largeTopAppBarColors(
@@ -103,39 +100,82 @@ fun DetailsScreenAppBar(
             actionIconContentColor = contentColor,
         ),
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = contentColor
-                )
-            }
+            AppBarBackButton(onBackClick = onBackClick, contentColor = contentColor)
         },
         actions = {
-            AppBarAction(
-                onClick = onPinClick,
-                iconResId = if (isPinned) R.drawable.ic_un_pin else R.drawable.ic_pin,
-                contentDescription = "Pin",
-                tint = contentColor
+            AppBarActions(
+                isPinned = isPinned,
+                isOwner = isOwner,
+                onPinClick = onPinClick,
+                onDeleteClick = onDeleteClick,
+                onEditClick = onEditClick,
+                contentColor = contentColor
             )
-
-            if (isOwner) {
-                AppBarAction(
-                    onClick = onDeleteClick,
-                    iconResId = R.drawable.ic_trash,
-                    contentDescription = "Delete",
-                    tint = MaterialTheme.colorScheme.error
-                )
-                AppBarAction(
-                    onClick = onEditClick,
-                    iconResId = R.drawable.ic_edit,
-                    contentDescription = "Edit",
-                    tint = contentColor
-                )
-            }
         },
         scrollBehavior = scrollBehavior
     )
+}
+
+@Composable
+private fun AppBarTitle(
+    title: String,
+    maxLines: Int,
+    contentColor: Color
+) {
+    Text(
+        text = title,
+        modifier = Modifier.padding(start = 24.dp),
+        style = MaterialTheme.typography.headlineMedium,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
+        color = contentColor
+    )
+}
+
+@Composable
+private fun AppBarBackButton(
+    onBackClick: () -> Unit,
+    contentColor: Color
+) {
+    IconButton(onClick = onBackClick) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Back",
+            tint = contentColor
+        )
+    }
+}
+
+@Composable
+private fun AppBarActions(
+    isPinned: Boolean,
+    isOwner: Boolean,
+    onPinClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onEditClick: () -> Unit,
+    contentColor: Color
+) {
+    AppBarAction(
+        onClick = onPinClick,
+        iconResId = if (isPinned) R.drawable.ic_un_pin else R.drawable.ic_pin,
+        contentDescription = "Pin",
+        tint = contentColor
+    )
+
+    if (isOwner) {
+        AppBarAction(
+            onClick = onDeleteClick,
+            iconResId = R.drawable.ic_trash,
+            contentDescription = "Delete",
+            tint = MaterialTheme.colorScheme.error
+        )
+        AppBarAction(
+            onClick = onEditClick,
+            iconResId = R.drawable.ic_edit,
+            contentDescription = "Edit",
+            tint = contentColor
+        )
+    }
 }
 
 @Composable

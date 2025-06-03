@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.component.avatar.Avatar
 import com.elfeky.devdash.ui.common.component.avatar.OverlayAvatars
-import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.DropMenuContainer
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.avatarModifier
 import com.elfeky.devdash.ui.utils.dashBorder

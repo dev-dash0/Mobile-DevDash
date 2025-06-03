@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
@@ -25,10 +25,10 @@ enum class Priority(
     override val color: Color,
     override val text: String
 ) : MenuOption {
-    Low(Icons.Filled.Flag, Color.Gray, "Low"),
-    Medium(Icons.Filled.Flag, Color.Blue, "Medium"),
-    High(Icons.Filled.Flag, Color(0xFFFF5900), "High"),
-    Urgent(Icons.Filled.Flag, Color.Red, "Urgent");
+    Low(Icons.Outlined.Flag, Color.Gray, "Low"),
+    Medium(Icons.Outlined.Flag, Color.Blue, "Medium"),
+    High(Icons.Outlined.Flag, Color(0xFFCC5210), "High"),
+    Urgent(Icons.Outlined.Flag, Color.Red, "Urgent");
 
     companion object {
         val priorityList = entries

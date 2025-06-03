@@ -28,8 +28,6 @@ import com.elfeky.devdash.ui.common.component.LabelInput
 import com.elfeky.devdash.ui.common.component.OutlinedInputField
 import com.elfeky.devdash.ui.common.dialogs.calender.model.ValidRangeSelectableDates
 import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentHorizontal
-import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.MenuSelector
 import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
@@ -38,6 +36,8 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
+import com.elfeky.devdash.ui.common.labelList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.account.UserProfile
 import java.time.LocalDate

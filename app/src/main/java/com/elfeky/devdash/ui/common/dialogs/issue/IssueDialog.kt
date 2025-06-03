@@ -14,14 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
 import com.elfeky.devdash.ui.common.dialogs.issue.components.IssueDialogContent
 import com.elfeky.devdash.ui.common.dialogs.issue.model.IssueUiModel
-import com.elfeky.devdash.ui.common.dialogs.labelList
-import com.elfeky.devdash.ui.common.dialogs.userList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
+import com.elfeky.devdash.ui.common.labelList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.account.UserProfile
 
