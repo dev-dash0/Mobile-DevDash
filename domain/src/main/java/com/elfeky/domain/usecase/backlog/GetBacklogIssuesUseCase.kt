@@ -1,6 +1,6 @@
 package com.elfeky.domain.usecase.backlog
 
-import com.elfeky.domain.model.backlog.RequestIssueBacklog
+import com.elfeky.domain.model.backlog.ResponseIssueBacklog
 import com.elfeky.domain.repo.BacklogRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
@@ -10,19 +10,19 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class CreateIssueUseCase @Inject constructor(
+class GetBacklogIssuesUseCase @Inject constructor(
     private val repo: BacklogRepo,
     private val accessTokenUseCase: AccessTokenUseCase,
 ) {
-    operator fun invoke(projectId: Int, requestIssueBacklog: RequestIssueBacklog): Flow<Resource<Nothing>> = flow {
+    operator fun invoke(projectId: Int, pageNumber: Int, pageSize: Int): Flow<Resource<ResponseIssueBacklog>> = flow {
         try {
             emit(Resource.Loading())
-            repo.createIssue(accessToken = accessTokenUseCase.get(), projectId = projectId, requestIssueBacklog = requestIssueBacklog)
-            emit(Resource.Success())
+            val response =repo.getIssues(accessToken = accessTokenUseCase.get(), projectId = projectId,pageNumber = pageNumber, pageSize = pageSize  )
+            emit(Resource.Success(data = response))
         }catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
         } catch (e: HttpException) {
-                emit(Resource.Error(message = "Unexpected error occurred"))
+            emit(Resource.Error(message = "Unexpected error occurred"))
         }
     }
 }
