@@ -253,7 +253,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                         sendEventForEffect(
                             CompanyDetailsReducer.Event.UpdatePinnedStatus(!isCurrentlyPinned)
                         )
-                        sendEventForEffect(CompanyDetailsReducer.Event.PinOperationCompleted)
+                        sendEventForEffect(CompanyDetailsReducer.Event.PinCompleted(!isCurrentlyPinned))
                     }
 
                     is Resource.Error -> sendEventForEffect(
@@ -318,7 +318,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                 when (result) {
                     is Resource.Success -> {
                         loadPinnedProjects()
-                        sendEventForEffect(CompanyDetailsReducer.Event.PinOperationCompleted)
+                        sendEventForEffect(CompanyDetailsReducer.Event.PinCompleted(!isCurrentlyPinned))
                     }
 
                     is Resource.Error -> sendEventForEffect(

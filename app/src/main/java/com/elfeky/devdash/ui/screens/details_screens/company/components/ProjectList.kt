@@ -36,7 +36,7 @@ fun ProjectList(
         items(items = projects, key = { it.id }) { project ->
             val isPinned by remember(pinnedProjects, project) {
                 derivedStateOf {
-                    pinnedProjects.contains(project)
+                    pinnedProjects.any { it.id == project.id }
                 }
             }
 

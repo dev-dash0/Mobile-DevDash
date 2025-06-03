@@ -40,7 +40,7 @@ class CompanyDetailsReducer :
         data object CompanyDeletionCompleted : Event()
         data object ProjectDeletionCompleted : Event()
         data object CompanyUpdateCompleted : Event()
-        data object PinOperationCompleted : Event()
+        data class PinCompleted(val isPinned: Boolean) : Event()
         data class SetProjectsLoading(val isLoading: Boolean) : Event()
 
         sealed class Error(val message: String) : Event() {
@@ -143,7 +143,7 @@ class CompanyDetailsReducer :
             Event.CompanyDeletionCompleted -> previousState to Effect.NavigateBack
             Event.ProjectDeletionCompleted -> previousState to Effect.TriggerReloadAllData
             Event.CompanyUpdateCompleted -> previousState to Effect.TriggerReloadAllData
-            Event.PinOperationCompleted -> previousState to Effect.ShowSnackbar(if (previousState.isPinned) "Pinned Successfully" else "unPinned Successfully")
+            is Event.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
 
             is Event.Error -> previousState to Effect.ShowSnackbar(event.message)
 
