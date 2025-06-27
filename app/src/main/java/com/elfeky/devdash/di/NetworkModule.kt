@@ -5,6 +5,7 @@ import com.elfeky.data.remote.BacklogApiService
 import com.elfeky.data.remote.DashBoardApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
+import com.elfeky.data.remote.SearchApiService
 import com.elfeky.data.remote.SprintApiService
 import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.util.Constants.BASE_URL
@@ -83,5 +84,11 @@ object NetworkModule {
     @Singleton
     fun provideSprintApiService(retrofit: Retrofit): SprintApiService {
         return retrofit.create(SprintApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchApiService(retrofit: Retrofit): SearchApiService {
+        return retrofit.create(SearchApiService::class.java)
     }
 }
