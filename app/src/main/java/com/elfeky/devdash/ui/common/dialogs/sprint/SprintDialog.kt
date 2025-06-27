@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
 import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
-import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.projectStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.sprintStatusList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.sprint.SprintRequest
@@ -29,7 +29,7 @@ fun SprintDialog(
 
     val dateRangeState = rememberDateRangePickerState()
 
-    var selectedStatus: MenuOption by remember { mutableStateOf(projectStatusList[0]) }
+    var selectedStatus: MenuOption by remember { mutableStateOf(sprintStatusList[0]) }
 
     DialogContainer(
         title = "Create Sprint",

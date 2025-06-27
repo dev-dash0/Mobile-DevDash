@@ -28,7 +28,6 @@ class ProjectDetailsReducer :
         }
 
         data object BackClicked : Event()
-        data class CopyTextClicked(val text: String) : Event()
         data object DismissDialogClicked : Event()
         data class RemoveMemberClicked(val memberId: Int) : Event()
         data object LoadBacklogIssues : Event()
@@ -52,7 +51,7 @@ class ProjectDetailsReducer :
             data class SwipedToDelete(val sprintId: Int) : SprintAction()
             data class ConfirmDeleteClicked(val sprintId: Int) : SprintAction()
             data class SwipedToPin(val sprintId: Int) : SprintAction()
-            data object Added : SprintAction()
+            data object CreateCompleted : SprintAction()
             data object DeletionCompleted : SprintAction()
             data class PinCompleted(val isPinned: Boolean) : ProjectAction()
         }
@@ -64,10 +63,11 @@ class ProjectDetailsReducer :
             data class SwipedToDelete(val issueId: Int) : IssueAction()
             data class ConfirmDeleteClicked(val issueId: Int) : IssueAction()
             data class SwipedToPin(val issueId: Int) : IssueAction()
-            data object Added : IssueAction()
+            data object CreateCompleted : IssueAction()
             data object DeletionCompleted : IssueAction()
             data class PinCompleted(val isPinned: Boolean) : IssueAction()
-            data class IssueDroppedOnSprint(val issueId: Int) : IssueAction()
+            data class IssueDroppedOnSprint(val issueId: Int, val sprintId: Int) : IssueAction()
+            data object MovedToSprintCompleted : IssueAction()
         }
 
         sealed class Error(val message: String) : Event() {
@@ -87,6 +87,7 @@ class ProjectDetailsReducer :
             data object IssuePinError : Error("Failed to pin/unpin issue")
             data object BacklogIssuesLoadError : Error("Failed to load backlog issues")
             data object LoadMoreBacklogIssuesError : Error("Failed to load more backlog issues")
+            data object IssueMoveToSprintError : Error("Failed to move issue to sprint")
         }
     }
 
@@ -97,7 +98,7 @@ class ProjectDetailsReducer :
         data class ShowSnackbar(val message: String, val isLong: Boolean = false) : Effect()
         data class ShowDialog(val type: DialogType) : Effect()
         data object DismissDialog : Effect()
-        data class AddSprintIssue(val issueId: Int) : Effect()
+        data class AddSprintIssue(val issueId: Int, val sprintId: Int) : Effect()
         data object TriggerReloadAllData : Effect()
         data object TriggerLoadSprints : Effect()
         data object TriggerDeleteProject : Effect()
@@ -149,7 +150,6 @@ class ProjectDetailsReducer :
             is Event.Update.BacklogIssuesFlow -> previousState.copy(backlogIssuesFlow = event.issuesFlow) to null
 
             Event.BackClicked -> previousState to Effect.NavigateBack
-            is Event.CopyTextClicked -> previousState to Effect.ShowSnackbar(event.text)
             Event.DismissDialogClicked -> previousState to Effect.DismissDialog
             is Event.RemoveMemberClicked -> previousState to Effect.ShowSnackbar("Remove member ${event.memberId} (not implemented yet)")
 
@@ -188,11 +188,9 @@ class ProjectDetailsReducer :
                 event.sprintId
             )
 
-            is Event.SprintAction.Added -> {
-                previousState to Effect.TriggerLoadSprints
-            }
+            is Event.SprintAction.CreateCompleted -> previousState to Effect.TriggerLoadSprints
 
-            Event.SprintAction.DeletionCompleted -> previousState to Effect.TriggerReloadAllData
+            Event.SprintAction.DeletionCompleted -> previousState to Effect.TriggerLoadSprints
             is Event.SprintAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Sprint Pinned Successfully" else "Sprint Unpinned Successfully")
 
 
@@ -218,15 +216,19 @@ class ProjectDetailsReducer :
             )
 
             is Event.IssueAction.SwipedToPin -> previousState to Effect.TriggerToggleIssuePin(event.issueId)
-            Event.IssueAction.Added -> {
+            Event.IssueAction.CreateCompleted -> {
                 previousState to Effect.TriggerLoadBacklogIssues
             }
 
             Event.IssueAction.DeletionCompleted -> previousState to Effect.TriggerLoadBacklogIssues
             is Event.IssueAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Issue Pinned Successfully" else "Issue Unpinned Successfully")
             is Event.IssueAction.IssueDroppedOnSprint -> previousState to Effect.AddSprintIssue(
-                event.issueId
+                event.issueId, event.sprintId
             )
+
+            Event.IssueAction.MovedToSprintCompleted -> previousState to Effect.ShowSnackbar("Issue moved to sprint successfully.")
+
+            is Event.Error.IssueMoveToSprintError -> previousState to Effect.ShowSnackbar(event.message)
 
             is Event.Error -> previousState to Effect.ShowSnackbar(event.message)
         }

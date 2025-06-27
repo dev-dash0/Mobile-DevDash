@@ -58,7 +58,7 @@ fun DialogContainer(
             item {
                 Row(
                     modifier = Modifier.fillParentMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(

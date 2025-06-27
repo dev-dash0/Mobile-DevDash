@@ -21,10 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
-import com.elfeky.devdash.ui.common.dialogs.issue.IssueDialog
-import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
-import com.elfeky.devdash.ui.common.dialogs.sprint.SprintDialog
 import com.elfeky.devdash.ui.common.issueList
 import com.elfeky.devdash.ui.common.projectList
 import com.elfeky.devdash.ui.common.sprintList
@@ -33,25 +29,21 @@ import com.elfeky.devdash.ui.screens.details_screens.components.ScreenContainer
 import com.elfeky.devdash.ui.screens.details_screens.project.components.BacklogPage
 import com.elfeky.devdash.ui.screens.details_screens.project.components.InfoPage
 import com.elfeky.devdash.ui.theme.DevDashTheme
-import com.elfeky.devdash.ui.utils.nowLocalDate
-import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.issue.Issue
-import com.elfeky.domain.model.issue.IssueFormFields
-import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.sprint.Sprint
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ProjectsDetailsContent(
-    uiState: ProjectDetailsUiState, // Changed to ProjectDetailsReducer.State
+    uiState: ProjectDetailsReducer.State,
     sprints: List<Sprint>,
     backlogIssues: List<Issue>,
-    onEvent: (ProjectDetailsReducer.Event) -> Unit, // Callback for all events
+    onEvent: (ProjectDetailsReducer.Event) -> Unit,
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState, // Passed from higher level
-    onNavigateToSprintDetails: (Int) -> Unit, // Navigation effect handled here as callback
-    onNavigateBack: () -> Unit // Navigation effect handled here as callback
+    snackbarHostState: SnackbarHostState,
+    onNavigateToSprintDetails: (Int) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     val tabs = listOf("Info", "Backlog")
     val scope = rememberCoroutineScope()
@@ -68,6 +60,7 @@ fun ProjectsDetailsContent(
         onBackClick = onNavigateBack,
         modifier = modifier,
         isLoading = uiState.isLoading,
+        snackbarHostState = snackbarHostState
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -105,7 +98,6 @@ fun ProjectsDetailsContent(
                             pinnedSprints = uiState.pinnedSprints,
                             pinnedIssues = uiState.pinnedIssues,
                             onIssueDroppedOnSprint = { issueId, sprintId ->
-                                // You'll need to define an event for this action in your Reducer
                                 onEvent(
                                     ProjectDetailsReducer.Event.IssueAction.IssueDroppedOnSprint(
                                         issueId,
@@ -139,7 +131,6 @@ fun ProjectsDetailsContent(
                                 onEvent(ProjectDetailsReducer.Event.IssueAction.SwipedToPin(issueId))
                             },
                             onSprintClicked = { sprintId -> onNavigateToSprintDetails(sprintId) },
-//                                onAddIssueClick = { onEvent(ProjectDetailsReducer.Event.IssueAction.CreateClicked) },
                             onIssueClicked = { issue ->
                                 onEvent(ProjectDetailsReducer.Event.IssueAction.Clicked(issue))
                             },
@@ -147,116 +138,6 @@ fun ProjectsDetailsContent(
                     }
                 }
             }
-        }
-    }
-
-    uiState.dialogType?.let { dialogType ->
-        when (dialogType) {
-            ProjectDetailsReducer.DialogType.EditProject -> {
-                ProjectDialog(
-                    project = uiState.project?.let {
-                        ProjectRequest(
-                            name = it.name,
-                            description = it.description,
-                            creationDate = it.creationDate,
-                            startDate = it.startDate,
-                            endDate = it.endDate,
-                            priority = it.priority,
-                            status = it.status
-                        )
-                    },
-                    onDismiss = { onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) },
-                    onSubmit = { projectRequest ->
-                        onEvent(
-                            ProjectDetailsReducer.Event.ProjectAction.ConfirmEditClicked(
-                                projectRequest
-                            )
-                        )
-                    }
-                )
-            }
-
-            ProjectDetailsReducer.DialogType.CreateSprint -> {
-                SprintDialog(
-                    onDismiss = { onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) },
-                    onSubmit = { sprintRequest ->
-                        onEvent(
-                            ProjectDetailsReducer.Event.SprintAction.ConfirmCreateClicked(
-                                sprintRequest
-                            )
-                        )
-                    }
-                )
-            }
-
-            ProjectDetailsReducer.DialogType.CreateIssue -> {
-                IssueDialog(
-                    onDismiss = { onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) },
-                    onSubmit = { issue ->
-                        onEvent(
-                            ProjectDetailsReducer.Event.IssueAction.ConfirmCreateClicked(
-                                IssueFormFields(
-                                    priority = issue.priority.text,
-                                    status = issue.status,
-                                    title = issue.title,
-                                    type = issue.type,
-                                    labels = issue.labels.toString(),
-                                    description = issue.description,
-                                    isBacklog = true,
-                                    startDate = issue.startDate!!.toStringDate(),
-                                    deadline = issue.deadline!!.toStringDate(),
-                                    deliveredDate = null,
-                                    lastUpdate = nowLocalDate(),
-                                    sprintId = null
-                                )
-                            )
-                        )
-                    },
-                    assigneeList = uiState.project?.tenant?.joinedUsers ?: emptyList(),
-                    labelList = emptyList(),
-                )
-            }
-
-            ProjectDetailsReducer.DialogType.DeleteProjectConfirmation -> {
-                DeleteConfirmationDialog(
-                    title = "Delete Project",
-                    text = "Are you sure you want to delete this project? This action cannot be undone.",
-                    onConfirm = { onEvent(ProjectDetailsReducer.Event.ProjectAction.ConfirmDeleteClicked) },
-                    onDismiss = { onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) }
-                )
-            }
-
-            is ProjectDetailsReducer.DialogType.DeleteSprintConfirmation -> {
-                DeleteConfirmationDialog(
-                    title = "Delete Sprint",
-                    text = "Are you sure you want to delete this sprint? This action cannot be undone.",
-                    onConfirm = {
-                        onEvent(
-                            ProjectDetailsReducer.Event.SprintAction.ConfirmDeleteClicked(
-                                dialogType.sprintId
-                            )
-                        )
-                    },
-                    onDismiss = { onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) }
-                )
-            }
-
-            is ProjectDetailsReducer.DialogType.DeleteIssueConfirmation -> {
-                DeleteConfirmationDialog(
-                    title = "Delete Issue",
-                    text = "Are you sure you want to delete this issue? This action cannot be undone.",
-                    onConfirm = {
-                        onEvent(
-                            ProjectDetailsReducer.Event.IssueAction.ConfirmDeleteClicked(
-                                dialogType.issueId
-                            )
-                        )
-                    },
-                    onDismiss = { onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) }
-                )
-            }
-
-            is ProjectDetailsReducer.DialogType.EditIssue -> {}
         }
     }
 }
@@ -269,14 +150,12 @@ private fun ProjectsDetailsContentPreview() {
 
     DevDashTheme {
         ProjectsDetailsContent(
-            uiState = ProjectDetailsUiState(
+            uiState = ProjectDetailsReducer.State(
                 project = projectList[0],
                 isLoading = false,
                 isPinned = true,
                 pinnedIssues = emptyList(),
-                pinnedSprints = emptyList(),
-                dialogType = null,
-                onEvent = {}
+                pinnedSprints = emptyList()
             ),
             sprints = sprints,
             backlogIssues = backlogIssues,

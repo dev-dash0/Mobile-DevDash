@@ -13,6 +13,7 @@ import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsScree
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewModel
+import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen
 import com.elfeky.devdash.ui.screens.main_screens.MainScreen
 
 @Composable
@@ -72,8 +73,18 @@ fun AppNavigation(
                     it.create(projectId)
                 },
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToSprintDetails = { }
+                onNavigateToSprintDetails = { sprintId ->
+                    navController.navigate(AppScreen.SprintScreen.route + "/$sprintId")
+                }
             )
+        }
+
+        composable(
+            AppScreen.SprintScreen.route + "/{sprint_id}",
+            arguments = listOf(navArgument("sprint_id") { type = NavType.IntType })
+        ) {
+            val sprintId = it.arguments?.getInt("sprint_id")!!
+            SprintScreen(sprintId)
         }
     }
 }

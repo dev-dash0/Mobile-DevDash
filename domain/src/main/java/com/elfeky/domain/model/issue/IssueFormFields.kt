@@ -11,6 +11,5 @@ data class IssueFormFields(
     val startDate: String?,
     val deadline: String?,
     val deliveredDate: String?,
-    val lastUpdate: String?,
-    val sprintId: String?
+    val lastUpdate: String?
 )

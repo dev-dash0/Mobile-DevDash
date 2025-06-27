@@ -22,12 +22,12 @@ import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentHorizontal
 import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentVertical
 import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
-import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsUiState
+import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsReducer
 import com.elfeky.devdash.ui.utils.formatDisplayDate
 
 @Composable
 fun InfoPage(
-    state: ProjectDetailsUiState,
+    state: ProjectDetailsReducer.State,
     modifier: Modifier = Modifier,
     onRemoveMemberClick: (Int) -> Unit
 ) {

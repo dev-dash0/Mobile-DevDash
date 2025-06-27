@@ -9,4 +9,5 @@ sealed class AppScreen(val route: String) {
     data object DoneScreen : AppScreen("DoneScreen")
     data object MainScreen : AppScreen("MainScreen")
     data object ProjectDetailsScreen : AppScreen("ProjectDetailsScreen")
+    data object SprintScreen : AppScreen("SprintScreen")
 }
