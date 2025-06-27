@@ -98,10 +98,13 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     // Firebase Storage
-    implementation (libs.firebase.storage)
+    implementation(libs.firebase.storage)
 
     //Gson
     implementation(libs.gson)
+
+    // Paging3
+    implementation(libs.androidx.paging.compose)
 
     project(path = ":domain")
     project(path = ":data")
