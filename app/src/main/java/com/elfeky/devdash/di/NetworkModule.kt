@@ -3,9 +3,11 @@ package com.elfeky.devdash.di
 import com.elfeky.data.remote.AuthenticationApiService
 import com.elfeky.data.remote.BacklogApiService
 import com.elfeky.data.remote.DashBoardApiService
+import com.elfeky.data.remote.IssueApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
 import com.elfeky.data.remote.SprintApiService
+import com.elfeky.data.remote.SprintIssueApiService
 import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.util.Constants.BASE_URL
 import dagger.Module
@@ -83,5 +85,17 @@ object NetworkModule {
     @Singleton
     fun provideSprintApiService(retrofit: Retrofit): SprintApiService {
         return retrofit.create(SprintApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideIssueApiService(retrofit: Retrofit): IssueApiService {
+        return retrofit.create(IssueApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSprintIssueApiService(retrofit: Retrofit): SprintIssueApiService {
+        return retrofit.create(SprintIssueApiService::class.java)
     }
 }
