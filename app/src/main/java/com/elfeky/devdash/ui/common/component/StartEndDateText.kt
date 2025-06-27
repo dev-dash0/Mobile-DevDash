@@ -7,20 +7,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import java.time.LocalDateTime
+import com.elfeky.devdash.ui.utils.dateTimeFormatter
+import com.elfeky.devdash.ui.utils.formatDisplayDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun StartEndDateText(
     startDate: String,
     endDate: String,
     modifier: Modifier = Modifier,
+    formatter: DateTimeFormatter = dateTimeFormatter,
     color: Color = MaterialTheme.colorScheme.secondary,
     style: TextStyle = MaterialTheme.typography.labelSmall
 ) {
-    val formattedStartDate = remember(startDate) { formatDisplayDate(startDate) }
-    val formattedEndDate = remember(endDate) { formatDisplayDate(endDate) }
+    val formattedStartDate = remember(startDate) { formatDisplayDate(startDate, formatter) }
+    val formattedEndDate = remember(endDate) { formatDisplayDate(endDate, formatter) }
 
     Text(
         text = "$formattedStartDate | $formattedEndDate",
@@ -28,11 +29,4 @@ fun StartEndDateText(
         color = color,
         style = style
     )
-}
-
-private fun formatDisplayDate(dateString: String): String {
-    val inputFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-    val dateTime = LocalDateTime.parse(dateString, inputFormatter)
-    val outputFormatter = DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
-    return dateTime.format(outputFormatter)
 }

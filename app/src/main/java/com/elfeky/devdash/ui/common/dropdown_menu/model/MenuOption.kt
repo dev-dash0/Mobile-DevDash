@@ -45,6 +45,7 @@ enum class Status(
     ToDo(Icons.Default.Circle, Color(0xFF8E8E8E), "To Do", 0.25f),
     InProgress(Icons.Default.Circle, Color(0xFF4854F1), "In Progress", 0.5f),
     Planning(Icons.Default.Circle, Color(0xFFC2BFBF), "Planning", 0.25f),
+    Planned(Icons.Default.Circle, Color(0xFFC2BFBF), "Planned", 0.25f),
     WorkingOn(Icons.Default.Circle, Color(0xFF4854F1), "Working on", 0.5f),
     Reviewing(Icons.Default.Circle, Color(0xFFFFA500), "Reviewing", 0.75f),
     Completed(Icons.Default.Circle, Color(0xFF1E8024), "Completed"),
@@ -56,6 +57,7 @@ enum class Status(
             listOf(Backlog, ToDo, InProgress, Reviewing, Completed, Canceled, Postponed)
         val projectStatusList =
             listOf(Planning, WorkingOn, Reviewing, Completed, Canceled, Postponed)
+        val sprintStatusList = listOf(Planned, InProgress, Completed)
     }
 }
 
