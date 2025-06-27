@@ -1,10 +1,22 @@
 package com.elfeky.domain.repo
 
-import com.elfeky.domain.model.backlog.RequestIssueBacklog
-import com.elfeky.domain.model.backlog.ResponseIssueBacklog
+import com.elfeky.domain.model.issue.Issue
+import com.elfeky.domain.model.issue.IssueFormFields
 
 interface BacklogRepo {
-    suspend fun createIssue(accessToken: String, projectId: Int, requestIssueBacklog: RequestIssueBacklog)
-    suspend fun getIssues(accessToken: String, projectId: Int, pageSize: Int, pageNumber: Int): ResponseIssueBacklog
+    suspend fun createIssue(
+        accessToken: String,
+        projectId: Int,
+        formFields: IssueFormFields,
+        attachmentFile: java.io.File?,
+        attachmentMediaType: String?
+    )
+
+    suspend fun getIssues(
+        accessToken: String,
+        projectId: Int,
+        pageSize: Int,
+        pageNumber: Int
+    ): List<Issue>
 
 }

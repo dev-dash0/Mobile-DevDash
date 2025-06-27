@@ -1,20 +1,41 @@
 package com.elfeky.data.repo
 
 import com.elfeky.data.remote.BacklogApiService
-import com.elfeky.domain.model.backlog.RequestIssueBacklog
-import com.elfeky.domain.model.backlog.ResponseIssueBacklog
+import com.elfeky.data.remote.dto.RequestBodyBuilder
+import com.elfeky.domain.model.issue.Issue
+import com.elfeky.domain.model.issue.IssueFormFields
 import com.elfeky.domain.repo.BacklogRepo
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class BacklogRepoImpl @Inject constructor(
     private val backlogApiService: BacklogApiService
-): BacklogRepo {
+) : BacklogRepo {
     override suspend fun createIssue(
         accessToken: String,
         projectId: Int,
-        requestIssueBacklog: RequestIssueBacklog
+        formFields: IssueFormFields,
+        attachmentFile: java.io.File?,
+        attachmentMediaType: String?
     ) {
-        backlogApiService.createIssue(accessToken = "Bearer $accessToken", projectId = projectId, requestIssueBacklog = requestIssueBacklog)
+        val formParts = RequestBodyBuilder.createIssueFormParts(formFields)
+
+        val attachmentMultipartPart: MultipartBody.Part? =
+            if (attachmentFile != null && attachmentMediaType != null) {
+                RequestBodyBuilder.prepareFilePart(
+                    "Attachment",
+                    attachmentFile,
+                    attachmentMediaType
+                )
+            } else {
+                null
+            }
+        backlogApiService.createBacklogIssue(
+            accessToken = "Bearer $accessToken",
+            projectId = projectId,
+            fields = formParts,
+            attachment = attachmentMultipartPart
+        )
     }
 
     override suspend fun getIssues(
@@ -22,7 +43,10 @@ class BacklogRepoImpl @Inject constructor(
         projectId: Int,
         pageSize: Int,
         pageNumber: Int
-    ): ResponseIssueBacklog {
-        return backlogApiService.getIssues(accessToken = "Bearer $accessToken", projectId = projectId, pageSize = pageSize, pageNumber = pageNumber)
-    }
+    ): List<Issue> = backlogApiService.getBacklogIssues(
+        accessToken = "Bearer $accessToken",
+        projectId = projectId,
+        pageSize = pageSize,
+        pageNumber = pageNumber
+    ).result
 }
