@@ -1,6 +1,6 @@
 package com.elfeky.domain.model.sprint
 
-data class RequestSprint(
+data class SprintRequest(
     val title: String,
     val description: String,
     val startDate: String,

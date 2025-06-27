@@ -10,17 +10,17 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class CreateSprintUseCase @Inject constructor(
+class UpdateSprintUseCase @Inject constructor(
     private val repo: SprintRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(projectId: Int, sprint: SprintRequest): Flow<Resource<Nothing>> = flow {
+    operator fun invoke(id: Int, request: SprintRequest): Flow<Resource<Nothing>> = flow {
         try {
             emit(Resource.Loading())
-            repo.createSprint(
+            repo.updateSprint(
                 accessToken = accessTokenUseCase.get(),
-                projectId = projectId,
-                request = sprint
+                id = id,
+                request = request
             )
             emit(Resource.Success())
         } catch (e: IOException) {
