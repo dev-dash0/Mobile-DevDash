@@ -1,0 +1,30 @@
+package com.elfeky.data.remote
+
+import com.elfeky.data.remote.dto.ServiceResponse
+import com.elfeky.domain.model.issue.Issue
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.PartMap
+import retrofit2.http.Query
+
+interface SprintIssueApiService {
+    @POST("/api/Issue/sprint")
+    suspend fun createSprintIssue(
+        @Header("Authorization") accessToken: String,
+        @Query("sprintId") sprintId: Int,
+        @PartMap fields: Map<String, RequestBody>,
+        @Part attachment: MultipartBody.Part?
+    )
+
+    @GET("/api/Issue/sprint")
+    suspend fun getSprintIssues(
+        @Header("Authorization") accessToken: String,
+        @Query("sprintId") sprintId: Int,
+        @Query("pageSize") pageSize: Int,
+        @Query("pageNumber") pageNumber: Int
+    ): ServiceResponse<List<Issue>>
+}
