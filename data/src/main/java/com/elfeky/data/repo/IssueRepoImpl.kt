@@ -42,7 +42,7 @@ class IssueRepoImpl @Inject constructor(
                 null
             }
         issueApiService.updateIssue(
-            accessToken = accessToken,
+            accessToken = "Bearer $accessToken",
             id = id,
             fields = formParts,
             attachment = attachmentMultipartPart
@@ -50,6 +50,6 @@ class IssueRepoImpl @Inject constructor(
     }
 
     override suspend fun deleteIssue(accessToken: String, id: Int) {
-        issueApiService.deleteIssue(accessToken = accessToken, id = id)
+        issueApiService.deleteIssue(accessToken = "Bearer $accessToken", id = id)
     }
 }

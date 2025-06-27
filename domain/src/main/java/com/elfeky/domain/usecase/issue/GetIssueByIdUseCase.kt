@@ -17,8 +17,8 @@ class GetIssueByIdUseCase @Inject constructor(
     operator fun invoke(id: Int): Flow<Resource<Issue>> = flow {
         try {
             emit(Resource.Loading())
-            repo.getIssue(accessTokenUseCase.get(), id)
-            emit(Resource.Success())
+            val issue = repo.getIssue(accessTokenUseCase.get(), id)
+            emit(Resource.Success(issue))
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
         } catch (e: HttpException) {

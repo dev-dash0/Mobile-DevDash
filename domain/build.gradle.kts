@@ -45,6 +45,7 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
+    implementation(libs.okhttp)
     implementation(libs.converter.gson)
 
     //Dagger - Hilt

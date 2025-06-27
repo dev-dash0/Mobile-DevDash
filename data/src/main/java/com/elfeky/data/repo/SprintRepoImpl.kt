@@ -39,7 +39,7 @@ class SprintRepoImpl @Inject constructor(
         accessToken: String,
         id: Int
     ): Sprint {
-        return sprintApiService.getSprintById(accessToken, id).result
+        return sprintApiService.getSprintById("Bearer $accessToken", id).result
     }
 
     override suspend fun updateSprint(
@@ -47,10 +47,10 @@ class SprintRepoImpl @Inject constructor(
         id: Int,
         request: SprintRequest
     ) {
-        sprintApiService.updateSprint(accessToken, id, request)
+        sprintApiService.updateSprint("Bearer $accessToken", id, request)
     }
 
     override suspend fun deleteSprint(accessToken: String, id: Int) {
-        sprintApiService.deleteSprint(accessToken, id)
+        sprintApiService.deleteSprint("Bearer $accessToken", id)
     }
 }

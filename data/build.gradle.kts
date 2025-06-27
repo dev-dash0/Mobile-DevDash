@@ -46,6 +46,7 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
+    implementation(libs.okhttp)
     implementation(libs.converter.gson)
 
     // Coroutines
@@ -58,5 +59,5 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
 
     // Paging3
-    implementation (libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.runtime)
 }
