@@ -12,36 +12,42 @@ class CompanyDetailsReducer :
 
     @Immutable
     sealed class Event : Reducer.ViewEvent {
-        data class UpdateIsLoading(val isLoading: Boolean) : Event()
-        data class UpdateCompany(val tenant: Tenant) : Event()
-        data class UpdatePinnedStatus(val isPinned: Boolean) : Event()
-        data class UpdateUserId(val userId: Int) : Event()
-        data class UpdateProjects(val projects: List<Project>) : Event()
-        data class UpdatePinnedProjects(val pinnedProjects: List<Project>) : Event()
+        sealed class Update : Event() {
+            data class IsLoading(val isLoading: Boolean) : Update()
+            data class Company(val tenant: Tenant) : Update()
+            data class PinnedStatus(val isPinned: Boolean) : Update()
+            data class UserId(val userId: Int) : Update()
+            data class Projects(val projects: List<Project>) : Update()
+            data class PinnedProjects(val pinnedProjects: List<Project>) : Update()
+            data class ProjectsLoading(val isLoading: Boolean) : Update()
+        }
 
         data object BackClicked : Event()
         data object PinCompanyClicked : Event()
         data class CopyTextClicked(val text: String) : Event()
-        data object DeleteCompanyClicked : Event()
-        data object ConfirmDeleteCompanyClicked : Event()
-        data object EditCompanyClicked : Event()
-        data class ConfirmEditCompanyClicked(val companyUiModel: CompanyUiModel) : Event()
-        data object CreateProjectClicked : Event()
-        data class ConfirmCreateProjectClicked(val projectRequest: ProjectRequest) : Event()
-        data class ProjectClicked(val projectId: Int) : Event()
-        data class ProjectSwipedToDelete(val projectId: Int) : Event()
-        data class ConfirmDeleteProjectClicked(val projectId: Int) : Event()
-        data class ProjectSwipedToPin(val projectId: Int) : Event()
-        data class RemoveMemberClicked(val memberId: Int) : Event()
         data object DismissDialogClicked : Event()
+        data class ProjectClicked(val projectId: Int) : Event()
+        data class RemoveMemberClicked(val memberId: Int) : Event()
+        sealed class CompanyAction : Event() {
+            data object DeleteClicked : CompanyAction()
+            data object ConfirmDeleteClicked : CompanyAction()
+            data object EditClicked : CompanyAction()
+            data class ConfirmEditClicked(val companyUiModel: CompanyUiModel) : CompanyAction()
+            data object DeletionCompleted : CompanyAction()
+            data object UpdateCompleted : CompanyAction()
+            data class PinCompleted(val isPinned: Boolean) : CompanyAction()
+        }
 
-        data class ProjectAdded(val project: Project) : Event()
-
-        data object CompanyDeletionCompleted : Event()
-        data object ProjectDeletionCompleted : Event()
-        data object CompanyUpdateCompleted : Event()
-        data class PinCompleted(val isPinned: Boolean) : Event()
-        data class SetProjectsLoading(val isLoading: Boolean) : Event()
+        sealed class ProjectAction : Event() {
+            data object CreateClicked : ProjectAction()
+            data class ConfirmCreateClicked(val projectRequest: ProjectRequest) : ProjectAction()
+            data class SwipedToDelete(val projectId: Int) : ProjectAction()
+            data class ConfirmDeleteClicked(val projectId: Int) : ProjectAction()
+            data class SwipedToPin(val projectId: Int) : ProjectAction()
+            data class Added(val project: Project) : ProjectAction()
+            data object DeletionCompleted : ProjectAction()
+            data class PinCompleted(val isPinned: Boolean) : ProjectAction()
+        }
 
         sealed class Error(val message: String) : Event() {
             data object CompanyLoadError : Error("Error loading company")
@@ -64,7 +70,6 @@ class CompanyDetailsReducer :
         data class NavigateToProjectDetails(val projectId: Int) : Effect()
         data class ShowSnackbar(val message: String, val isLong: Boolean = false) : Effect()
         data class ShowDialog(val type: DialogType) : Effect()
-
         data object TriggerReloadAllData : Effect()
         data object TriggerDeleteCompany : Effect()
         data class TriggerUpdateCompany(val companyUiModel: CompanyUiModel) : Effect()
@@ -95,63 +100,59 @@ class CompanyDetailsReducer :
 
     override fun reduce(previousState: State, event: Event): Pair<State, Effect?> {
         return when (event) {
-            is Event.UpdateIsLoading -> previousState.copy(isLoading = event.isLoading) to null
+            is Event.Update.IsLoading -> previousState.copy(isLoading = event.isLoading) to null
+            is Event.Update.Company -> previousState.copy(tenant = event.tenant) to null
+            is Event.Update.PinnedStatus -> previousState.copy(isPinned = event.isPinned) to null
+            is Event.Update.UserId -> previousState.copy(userId = event.userId) to null
+            is Event.Update.Projects -> previousState.copy(projects = event.projects) to null
+            is Event.Update.PinnedProjects -> previousState.copy(pinnedProjects = event.pinnedProjects) to null
+            is Event.Update.ProjectsLoading -> previousState.copy(projectsLoading = event.isLoading) to null
             Event.BackClicked -> previousState to Effect.NavigateBack
             Event.PinCompanyClicked -> previousState to Effect.TriggerToggleCompanyPin
             is Event.CopyTextClicked -> previousState to Effect.ShowSnackbar(event.text)
-            Event.DeleteCompanyClicked -> previousState to Effect.ShowDialog(DialogType.DeleteCompanyConfirmation)
-            Event.ConfirmDeleteCompanyClicked -> previousState to Effect.TriggerDeleteCompany
+            Event.DismissDialogClicked -> previousState to null
+            is Event.ProjectClicked -> previousState to Effect.NavigateToProjectDetails(event.projectId)
+            is Event.RemoveMemberClicked -> previousState to Effect.ShowSnackbar("Remove member ${event.memberId} (not implemented yet)")
+            Event.CompanyAction.DeleteClicked -> previousState to Effect.ShowDialog(DialogType.DeleteCompanyConfirmation)
+            Event.CompanyAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteCompany
+            Event.CompanyAction.EditClicked -> previousState to Effect.ShowDialog(DialogType.EditCompany)
+            is Event.CompanyAction.ConfirmEditClicked -> previousState to Effect.TriggerUpdateCompany(
+                event.companyUiModel
+            )
 
-            Event.EditCompanyClicked -> previousState to Effect.ShowDialog(DialogType.EditCompany)
-            is Event.ConfirmEditCompanyClicked -> previousState to Effect.TriggerUpdateCompany(event.companyUiModel)
+            Event.CompanyAction.DeletionCompleted -> previousState to Effect.NavigateBack
+            Event.CompanyAction.UpdateCompleted -> previousState to Effect.TriggerReloadAllData
+            is Event.CompanyAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
 
-            Event.CreateProjectClicked -> previousState to Effect.ShowDialog(DialogType.CreateProject)
-            is Event.ConfirmCreateProjectClicked -> previousState to Effect.TriggerAddProject(
+            // --- Project Specific Actions ---
+            Event.ProjectAction.CreateClicked -> previousState to Effect.ShowDialog(DialogType.CreateProject)
+            is Event.ProjectAction.ConfirmCreateClicked -> previousState to Effect.TriggerAddProject(
                 event.projectRequest
             )
 
-            is Event.ProjectClicked -> previousState to Effect.NavigateToProjectDetails(event.projectId)
-            is Event.ProjectSwipedToDelete -> previousState to Effect.ShowDialog(
-                DialogType.DeleteProjectConfirmation(
-                    event.projectId
-                )
+            is Event.ProjectAction.SwipedToDelete -> previousState to Effect.ShowDialog(
+                DialogType.DeleteProjectConfirmation(event.projectId)
             )
 
-            is Event.ConfirmDeleteProjectClicked -> previousState to Effect.TriggerDeleteProject(
+            is Event.ProjectAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteProject(
                 event.projectId
             )
 
-            is Event.ProjectSwipedToPin -> previousState to Effect.TriggerToggleProjectPin(event.projectId)
-            is Event.RemoveMemberClicked -> previousState to Effect.ShowSnackbar("Remove member ${event.memberId} (not implemented yet)")
-            Event.DismissDialogClicked -> previousState to null
+            is Event.ProjectAction.SwipedToPin -> previousState to Effect.TriggerToggleProjectPin(
+                event.projectId
+            )
 
-            is Event.UpdateCompany -> previousState.copy(
-                tenant = event.tenant
-            ) to null
-
-            is Event.UpdatePinnedStatus -> previousState.copy(isPinned = event.isPinned) to null
-            is Event.UpdateUserId -> previousState.copy(userId = event.userId) to null
-            is Event.UpdateProjects -> previousState.copy(
-                projects = event.projects
-            ) to null
-
-            is Event.UpdatePinnedProjects -> previousState.copy(pinnedProjects = event.pinnedProjects) to null
-            is Event.ProjectAdded -> previousState.copy(projects = previousState.projects + event.project) to Effect.ShowSnackbar(
+            is Event.ProjectAction.Added -> previousState.copy(projects = previousState.projects + event.project) to Effect.ShowSnackbar(
                 "Project added"
             )
 
-            Event.CompanyDeletionCompleted -> previousState to Effect.NavigateBack
-            Event.ProjectDeletionCompleted -> previousState to Effect.TriggerReloadAllData
-            Event.CompanyUpdateCompleted -> previousState to Effect.TriggerReloadAllData
-            is Event.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
-
+            Event.ProjectAction.DeletionCompleted -> previousState to Effect.TriggerReloadAllData
+            is Event.ProjectAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
             is Event.Error -> previousState to Effect.ShowSnackbar(event.message)
-
-            is Event.SetProjectsLoading -> previousState.copy(projectsLoading = event.isLoading) to null
         }
     }
 
     companion object {
-        fun initialState() = State()
+        val initialState = State()
     }
 }

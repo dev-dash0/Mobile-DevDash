@@ -73,7 +73,7 @@ fun CompanyDetailsScreen(
                     },
                     onSubmit = { updatedCompanyUiModel ->
                         viewModel.onEvent(
-                            CompanyDetailsReducer.Event.ConfirmEditCompanyClicked(
+                            CompanyDetailsReducer.Event.CompanyAction.ConfirmEditClicked(
                                 updatedCompanyUiModel
                             )
                         )
@@ -99,7 +99,7 @@ fun CompanyDetailsScreen(
                     },
                     onSubmit = { projectRequest ->
                         viewModel.onEvent(
-                            CompanyDetailsReducer.Event.ConfirmCreateProjectClicked(
+                            CompanyDetailsReducer.Event.ProjectAction.ConfirmCreateClicked(
                                 projectRequest
                             )
                         )
@@ -117,7 +117,7 @@ fun CompanyDetailsScreen(
                         viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
                     },
                     onConfirm = {
-                        viewModel.onEvent(CompanyDetailsReducer.Event.ConfirmDeleteCompanyClicked)
+                        viewModel.onEvent(CompanyDetailsReducer.Event.CompanyAction.ConfirmDeleteClicked)
                         currentDialogType = null
                     }
                 )
@@ -133,7 +133,7 @@ fun CompanyDetailsScreen(
                     },
                     onConfirm = {
                         viewModel.onEvent(
-                            CompanyDetailsReducer.Event.ConfirmDeleteProjectClicked(
+                            CompanyDetailsReducer.Event.ProjectAction.ConfirmDeleteClicked(
                                 dialogType.projectId
                             )
                         )

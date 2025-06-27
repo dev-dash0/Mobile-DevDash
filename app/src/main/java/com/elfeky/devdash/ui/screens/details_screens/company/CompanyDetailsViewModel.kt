@@ -23,6 +23,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = CompanyDetailsViewModel.Factory::class)
@@ -42,7 +43,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
     private val pinProjectUseCase: PinProjectUseCase,
     private val unpinProjectUseCase: UnpinProjectUseCase,
 ) : BaseViewModel<CompanyDetailsReducer.State, CompanyDetailsReducer.Event, CompanyDetailsReducer.Effect>(
-    CompanyDetailsReducer.initialState(),
+    CompanyDetailsReducer.initialState,
     CompanyDetailsReducer()
 ) {
 
@@ -58,14 +59,8 @@ class CompanyDetailsViewModel @AssistedInject constructor(
 
     fun onEvent(event: CompanyDetailsReducer.Event) {
         when (event) {
-            is CompanyDetailsReducer.Event.UpdateIsLoading,
-            is CompanyDetailsReducer.Event.DismissDialogClicked,
-            is CompanyDetailsReducer.Event.UpdateCompany,
-            is CompanyDetailsReducer.Event.UpdatePinnedStatus,
-            is CompanyDetailsReducer.Event.UpdateUserId,
-            is CompanyDetailsReducer.Event.UpdateProjects,
-            is CompanyDetailsReducer.Event.UpdatePinnedProjects,
-            is CompanyDetailsReducer.Event.SetProjectsLoading -> sendEvent(event)
+            is CompanyDetailsReducer.Event.Update,
+            is CompanyDetailsReducer.Event.DismissDialogClicked -> sendEvent(event)
 
             else -> sendEventForEffect(event)
         }
@@ -77,16 +72,10 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                 when (effect) {
                     CompanyDetailsReducer.Effect.TriggerReloadAllData -> loadAllCompanyData()
                     CompanyDetailsReducer.Effect.TriggerDeleteCompany -> deleteCompany()
-                    is CompanyDetailsReducer.Effect.TriggerUpdateCompany -> updateCompany(
-                        effect.companyUiModel
-                    )
-
+                    is CompanyDetailsReducer.Effect.TriggerUpdateCompany -> updateCompany(effect.companyUiModel)
                     CompanyDetailsReducer.Effect.TriggerToggleCompanyPin -> toggleTenantPin()
                     is CompanyDetailsReducer.Effect.TriggerAddProject -> addProject(effect.projectRequest)
-                    is CompanyDetailsReducer.Effect.TriggerDeleteProject -> deleteProject(
-                        effect.projectId
-                    )
-
+                    is CompanyDetailsReducer.Effect.TriggerDeleteProject -> deleteProject(effect.projectId)
                     is CompanyDetailsReducer.Effect.TriggerToggleProjectPin -> toggleProjectPin(
                         effect.projectId
                     )
@@ -102,107 +91,83 @@ class CompanyDetailsViewModel @AssistedInject constructor(
 
     private fun loadAllCompanyData() {
         viewModelScope.launch {
-            sendEvent(CompanyDetailsReducer.Event.UpdateIsLoading(true))
-            loadCompany()
-            loadPinnedStatus()
-            loadUserProfile()
-            sendEvent(CompanyDetailsReducer.Event.UpdateIsLoading(false))
+            sendEvent(CompanyDetailsReducer.Event.Update.IsLoading(true))
+            runCatching {
+                loadCompany()
+                loadPinnedStatus()
+                loadUserProfile()
+            }
+            sendEvent(CompanyDetailsReducer.Event.Update.IsLoading(false))
 
-            sendEvent(CompanyDetailsReducer.Event.SetProjectsLoading(true))
-            loadCompanyProjects()
-            loadPinnedProjects()
-            sendEvent(CompanyDetailsReducer.Event.SetProjectsLoading(false))
+            sendEvent(CompanyDetailsReducer.Event.Update.ProjectsLoading(true))
+            runCatching {
+                loadCompanyProjects()
+                loadPinnedProjects()
+            }
+            sendEvent(CompanyDetailsReducer.Event.Update.ProjectsLoading(false))
+        }
+    }
+
+    private suspend fun <T> collectResource(
+        resourceFlow: Flow<Resource<T>>,
+        successEvent: (T) -> CompanyDetailsReducer.Event.Update,
+        errorEvent: CompanyDetailsReducer.Event.Error,
+        loadingEvent: CompanyDetailsReducer.Event.Update? = null
+    ) {
+        resourceFlow.collect { result ->
+            when (result) {
+                is Resource.Success -> result.data?.let { sendEvent(successEvent(it)) }
+                is Resource.Error -> sendEvent(errorEvent)
+                is Resource.Loading -> loadingEvent?.let { sendEvent(it) } ?: Unit
+            }
         }
     }
 
     private suspend fun loadCompany() {
-        getTenantByIdUseCase(companyId).collect { result ->
-            when (result) {
-                is Resource.Success -> sendEvent(
-                    CompanyDetailsReducer.Event.UpdateCompany(
-                        result.data!!
-                    )
-                )
-
-                is Resource.Error -> sendEventForEffect(
-                    CompanyDetailsReducer.Event.Error.CompanyLoadError
-                )
-
-                is Resource.Loading -> Unit
-            }
-        }
+        collectResource(
+            resourceFlow = getTenantByIdUseCase(companyId),
+            successEvent = { CompanyDetailsReducer.Event.Update.Company(it) },
+            errorEvent = CompanyDetailsReducer.Event.Error.CompanyLoadError
+        )
     }
 
     private suspend fun loadPinnedStatus() {
         getPinnedTenantsUseCase().collect { result ->
             when (result) {
                 is Resource.Success -> sendEvent(
-                    CompanyDetailsReducer.Event.UpdatePinnedStatus(
+                    CompanyDetailsReducer.Event.Update.PinnedStatus(
                         result.data?.any { tenant -> tenant.id == companyId } == true
                     )
                 )
 
-                is Resource.Error -> sendEventForEffect(
-                    CompanyDetailsReducer.Event.Error.PinnedTenantsLoadError
-                )
-
+                is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.PinnedTenantsLoadError)
                 else -> Unit
             }
         }
     }
 
     private suspend fun loadUserProfile() {
-        getUserProfileUseCase().collect { result ->
-            when (result) {
-                is Resource.Success -> sendEvent(
-                    CompanyDetailsReducer.Event.UpdateUserId(
-                        result.data?.id!!
-                    )
-                )
-
-                is Resource.Error -> sendEventForEffect(
-                    CompanyDetailsReducer.Event.Error.UserProfileLoadError
-                )
-
-                is Resource.Loading -> Unit
-            }
-        }
+        collectResource(
+            resourceFlow = getUserProfileUseCase(),
+            successEvent = { CompanyDetailsReducer.Event.Update.UserId(it.id) },
+            errorEvent = CompanyDetailsReducer.Event.Error.UserProfileLoadError
+        )
     }
 
     private suspend fun loadCompanyProjects() {
-        getTenantProjectsUseCase(companyId).collect { result ->
-            when (result) {
-                is Resource.Success -> sendEvent(
-                    CompanyDetailsReducer.Event.UpdateProjects(
-                        result.data ?: emptyList()
-                    )
-                )
-
-                is Resource.Error -> sendEventForEffect(
-                    CompanyDetailsReducer.Event.Error.ProjectsLoadError
-                )
-
-                is Resource.Loading -> Unit
-            }
-        }
+        collectResource(
+            resourceFlow = getTenantProjectsUseCase(companyId),
+            successEvent = { CompanyDetailsReducer.Event.Update.Projects(it) },
+            errorEvent = CompanyDetailsReducer.Event.Error.ProjectsLoadError
+        )
     }
 
     private suspend fun loadPinnedProjects() {
-        getPinnedProjectsUseCase().collect { result ->
-            when (result) {
-                is Resource.Success -> sendEvent(
-                    CompanyDetailsReducer.Event.UpdatePinnedProjects(
-                        result.data ?: emptyList()
-                    )
-                )
-
-                is Resource.Error -> sendEventForEffect(
-                    CompanyDetailsReducer.Event.Error.PinnedProjectsLoadError
-                )
-
-                is Resource.Loading -> Unit
-            }
-        }
+        collectResource(
+            resourceFlow = getPinnedProjectsUseCase(),
+            successEvent = { CompanyDetailsReducer.Event.Update.PinnedProjects(it) },
+            errorEvent = CompanyDetailsReducer.Event.Error.PinnedProjectsLoadError
+        )
     }
 
     private fun deleteCompany() {
@@ -210,10 +175,8 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             deleteTenantUseCase(companyId).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEventForEffect(CompanyDetailsReducer.Event.CompanyDeletionCompleted)
-                    is Resource.Error -> sendEventForEffect(
-                        CompanyDetailsReducer.Event.Error.CompanyDeleteError
-                    )
+                    is Resource.Success -> sendEvent(CompanyDetailsReducer.Event.CompanyAction.DeletionCompleted)
+                    is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.CompanyDeleteError)
                 }
             }
         }
@@ -231,10 +194,8 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             updateTenantUseCase(request, companyId).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEventForEffect(CompanyDetailsReducer.Event.CompanyUpdateCompleted)
-                    is Resource.Error -> sendEventForEffect(
-                        CompanyDetailsReducer.Event.Error.CompanyUpdateError
-                    )
+                    is Resource.Success -> sendEvent(CompanyDetailsReducer.Event.CompanyAction.UpdateCompleted)
+                    is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.CompanyUpdateError)
                 }
             }
         }
@@ -244,22 +205,15 @@ class CompanyDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val isCurrentlyPinned = state.value.isPinned
             val operation =
-                if (isCurrentlyPinned) unpinTenantUseCase(companyId) else pinTenantUseCase(
-                    companyId
-                )
+                if (isCurrentlyPinned) unpinTenantUseCase(companyId) else pinTenantUseCase(companyId)
             operation.collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        sendEventForEffect(
-                            CompanyDetailsReducer.Event.UpdatePinnedStatus(!isCurrentlyPinned)
-                        )
-                        sendEventForEffect(CompanyDetailsReducer.Event.PinCompleted(!isCurrentlyPinned))
+                        sendEvent(CompanyDetailsReducer.Event.Update.PinnedStatus(!isCurrentlyPinned))
+                        sendEvent(CompanyDetailsReducer.Event.CompanyAction.PinCompleted(!isCurrentlyPinned))
                     }
 
-                    is Resource.Error -> sendEventForEffect(
-                        CompanyDetailsReducer.Event.Error.CompanyPinError
-                    )
-
+                    is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.CompanyPinError)
                     is Resource.Loading -> Unit
                 }
             }
@@ -271,17 +225,10 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             addProjectUseCase(projectRequest, companyId).collect { result ->
                 when (result) {
                     is Resource.Success -> result.data?.let {
-                        sendEventForEffect(
-                            CompanyDetailsReducer.Event.ProjectAdded(
-                                it
-                            )
-                        )
+                        sendEvent(CompanyDetailsReducer.Event.ProjectAction.Added(it))
                     }
 
-                    is Resource.Error -> sendEventForEffect(
-                        CompanyDetailsReducer.Event.Error.ProjectAddError
-                    )
-
+                    is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.ProjectAddError)
                     is Resource.Loading -> Unit
                 }
             }
@@ -293,15 +240,13 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             deleteProjectUseCase(projectId).collect { result ->
                 when (result) {
                     is Resource.Loading -> sendEvent(
-                        CompanyDetailsReducer.Event.SetProjectsLoading(
+                        CompanyDetailsReducer.Event.Update.ProjectsLoading(
                             true
                         )
                     )
 
-                    is Resource.Success -> sendEventForEffect(CompanyDetailsReducer.Event.ProjectDeletionCompleted)
-                    is Resource.Error -> sendEventForEffect(
-                        CompanyDetailsReducer.Event.Error.ProjectDeleteError
-                    )
+                    is Resource.Success -> sendEvent(CompanyDetailsReducer.Event.ProjectAction.DeletionCompleted)
+                    is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.ProjectDeleteError)
                 }
             }
         }
@@ -318,13 +263,10 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                 when (result) {
                     is Resource.Success -> {
                         loadPinnedProjects()
-                        sendEventForEffect(CompanyDetailsReducer.Event.PinCompleted(!isCurrentlyPinned))
+                        sendEvent(CompanyDetailsReducer.Event.ProjectAction.PinCompleted(!isCurrentlyPinned))
                     }
 
-                    is Resource.Error -> sendEventForEffect(
-                        CompanyDetailsReducer.Event.Error.ProjectPinError
-                    )
-
+                    is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.ProjectPinError)
                     is Resource.Loading -> Unit
                 }
             }
