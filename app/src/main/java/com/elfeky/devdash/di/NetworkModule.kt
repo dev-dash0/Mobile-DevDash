@@ -8,6 +8,7 @@ import com.elfeky.data.remote.ProjectApiService
 import com.elfeky.data.remote.SprintApiService
 import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.util.Constants.BASE_URL
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,4 +85,7 @@ object NetworkModule {
     fun provideSprintApiService(retrofit: Retrofit): SprintApiService {
         return retrofit.create(SprintApiService::class.java)
     }
+
+    @Provides
+    fun provideGson(): Gson = Gson()
 }

@@ -47,6 +47,8 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
