@@ -9,8 +9,7 @@ import javax.inject.Inject
 
 class ProjectRepoImpl @Inject constructor(
     private val projectApiService: ProjectApiService
-) :
-    ProjectRepo {
+) : ProjectRepo {
     override suspend fun createProject(
         accessToken: String,
         request: ProjectRequest,

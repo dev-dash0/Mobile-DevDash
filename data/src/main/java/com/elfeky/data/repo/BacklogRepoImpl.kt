@@ -1,20 +1,70 @@
 package com.elfeky.data.repo
 
 import com.elfeky.data.remote.BacklogApiService
-import com.elfeky.domain.model.backlog.RequestIssueBacklog
-import com.elfeky.domain.model.backlog.ResponseIssueBacklog
+import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.repo.BacklogRepo
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 
 class BacklogRepoImpl @Inject constructor(
     private val backlogApiService: BacklogApiService
-): BacklogRepo {
+) : BacklogRepo {
     override suspend fun createIssue(
-        accessToken: String,
         projectId: Int,
-        requestIssueBacklog: RequestIssueBacklog
-    ) {
-        backlogApiService.createIssue(accessToken = "Bearer $accessToken", projectId = projectId, requestIssueBacklog = requestIssueBacklog)
+        accessToken: String,
+        priority: String,
+        status: String,
+        title: String,
+        type: String,
+        description: String,
+        isBacklog: Boolean,
+        startDate: String,
+        deadline: String,
+        deliveredDate: String,
+        lastUpdate: String,
+        labels: String,
+        attachmentFile: File?,
+        attachmentMediaType: String?
+    ): Issue {
+        val priorityBody = priority.toRequestBody("text/plain".toMediaTypeOrNull())
+        val statusBody = status.toRequestBody("text/plain".toMediaTypeOrNull())
+        val titleBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
+        val typeBody = type.toRequestBody("text/plain".toMediaTypeOrNull())
+        val descriptionBody = description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val isBacklogBody = isBacklog.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val startDateBody = startDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        val deadlineBody = deadline.toRequestBody("text/plain".toMediaTypeOrNull())
+        val deliveredDateBody = deliveredDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        val lastUpdateBody = lastUpdate.toRequestBody("text/plain".toMediaTypeOrNull())
+        val labelsBody = labels.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val attachmentPart = attachmentFile?.let { file ->
+            val requestFile =
+                file.asRequestBody(attachmentMediaType?.toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("attachment", file.name, requestFile)
+        }
+
+        return backlogApiService.createBacklogIssue(
+            projectId = projectId,
+            accessToken = "Bearer $accessToken",
+            priority = priorityBody,
+            status = statusBody,
+            title = titleBody,
+            type = typeBody,
+            description = descriptionBody,
+            isBacklog = isBacklogBody,
+            startDate = startDateBody,
+            deadline = deadlineBody,
+            deliveredDate = deliveredDateBody,
+            attachment = attachmentPart,
+            lastUpdate = lastUpdateBody,
+            labels = labelsBody
+        ).result.issue
+
     }
 
     override suspend fun getIssues(
@@ -22,7 +72,10 @@ class BacklogRepoImpl @Inject constructor(
         projectId: Int,
         pageSize: Int,
         pageNumber: Int
-    ): ResponseIssueBacklog {
-        return backlogApiService.getIssues(accessToken = "Bearer $accessToken", projectId = projectId, pageSize = pageSize, pageNumber = pageNumber)
-    }
+    ): List<Issue> = backlogApiService.getBacklogIssues(
+        accessToken = "Bearer $accessToken",
+        projectId = projectId,
+        pageSize = pageSize,
+        pageNumber = pageNumber
+    ).result
 }

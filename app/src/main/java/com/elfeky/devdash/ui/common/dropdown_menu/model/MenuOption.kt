@@ -41,10 +41,11 @@ enum class Status(
     override val text: String,
     @FloatRange(from = 0.0, to = 1.0) val percentage: Float? = null
 ) : MenuOption {
-    Backlog(Icons.Default.Circle, Color(0xFFC2BFBF), "Backlog", 0f),
-    ToDo(Icons.Default.Circle, Color(0xFF8E8E8E), "To Do", 0.25f),
+    Backlog(Icons.Default.Circle, Color(0xFFC2BFBF), "BackLog", 0f),
+    ToDo(Icons.Default.Circle, Color(0xFF8E8E8E), "To do", 0.25f),
     InProgress(Icons.Default.Circle, Color(0xFF4854F1), "In Progress", 0.5f),
     Planning(Icons.Default.Circle, Color(0xFFC2BFBF), "Planning", 0.25f),
+    Planned(Icons.Default.Circle, Color(0xFFC2BFBF), "Planned", 0.25f),
     WorkingOn(Icons.Default.Circle, Color(0xFF4854F1), "Working on", 0.5f),
     Reviewing(Icons.Default.Circle, Color(0xFFFFA500), "Reviewing", 0.75f),
     Completed(Icons.Default.Circle, Color(0xFF1E8024), "Completed"),
@@ -56,6 +57,7 @@ enum class Status(
             listOf(Backlog, ToDo, InProgress, Reviewing, Completed, Canceled, Postponed)
         val projectStatusList =
             listOf(Planning, WorkingOn, Reviewing, Completed, Canceled, Postponed)
+        val sprintStatusList = listOf(Planned, InProgress, Completed)
     }
 }
 
@@ -64,8 +66,8 @@ enum class Type(
     override val color: Color,
     override val text: String
 ) : MenuOption {
-    Task(Icons.Default.Checklist, Color.White, "Task"),
     Feature(Icons.Default.AutoAwesome, Color.Yellow, "Feature"),
+    Task(Icons.Default.Checklist, Color.White, "Task"),
     Bug(Icons.Default.BugReport, Color.Red, "Bug");
 
     companion object {

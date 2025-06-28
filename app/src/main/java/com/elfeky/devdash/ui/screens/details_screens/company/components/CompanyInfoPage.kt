@@ -89,7 +89,7 @@ fun CompanyInfoPage(
 private fun CompanyInfoPagePreview() {
     val uiState by remember {
         mutableStateOf(
-            CompanyDetailsReducer.initialState().copy(
+            CompanyDetailsReducer.initialState.copy(
                 isPinned = false,
                 isLoading = false,
                 tenant = Tenant(

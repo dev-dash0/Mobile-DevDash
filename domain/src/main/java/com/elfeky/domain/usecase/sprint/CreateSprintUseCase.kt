@@ -1,6 +1,6 @@
 package com.elfeky.domain.usecase.sprint
 
-import com.elfeky.domain.model.sprint.RequestSprint
+import com.elfeky.domain.model.sprint.SprintRequest
 import com.elfeky.domain.repo.SprintRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
@@ -14,7 +14,7 @@ class CreateSprintUseCase @Inject constructor(
     private val repo: SprintRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(projectId: Int, sprint: RequestSprint): Flow<Resource<Nothing>> = flow {
+    operator fun invoke(projectId: Int, sprint: SprintRequest): Flow<Resource<Nothing>> = flow {
         try {
             emit(Resource.Loading())
             repo.createSprint(

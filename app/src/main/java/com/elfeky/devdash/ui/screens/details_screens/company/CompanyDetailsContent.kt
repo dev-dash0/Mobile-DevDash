@@ -59,14 +59,14 @@ fun CompanyDetailsContent(
             onEvent(CompanyDetailsReducer.Event.PinCompanyClicked)
             Log.d("CompanyDetails", "isPinned: " + uiState.isPinned.toString())
         },
-        onDeleteClick = { onEvent(CompanyDetailsReducer.Event.DeleteCompanyClicked) },
-        onEditClick = { onEvent(CompanyDetailsReducer.Event.EditCompanyClicked) },
+        onDeleteClick = { onEvent(CompanyDetailsReducer.Event.CompanyAction.DeleteClicked) },
+        onEditClick = { onEvent(CompanyDetailsReducer.Event.CompanyAction.EditClicked) },
         onBackClick = { onEvent(CompanyDetailsReducer.Event.BackClicked) },
         modifier = modifier,
         isLoading = uiState.isLoading && uiState.tenant == null,
         image = uiState.tenant?.image,
         hasImageBackground = true,
-        onCreateClick = { onEvent(CompanyDetailsReducer.Event.CreateProjectClicked) },
+        onCreateClick = { onEvent(CompanyDetailsReducer.Event.ProjectAction.CreateClicked) },
         scrollBehavior = scrollBehavior
     ) { paddingValues ->
         Column(
@@ -161,14 +161,14 @@ private fun CompanyProjectsTab(
                 onProjectClick = { onEvent(CompanyDetailsReducer.Event.ProjectClicked(it)) },
                 onProjectSwipeToDelete = { projectId ->
                     onEvent(
-                        CompanyDetailsReducer.Event.ProjectSwipedToDelete(
+                        CompanyDetailsReducer.Event.ProjectAction.SwipedToDelete(
                             projectId
                         )
                     )
                 },
                 onProjectSwipeToPin = { projectId ->
                     onEvent(
-                        CompanyDetailsReducer.Event.ProjectSwipedToPin(
+                        CompanyDetailsReducer.Event.ProjectAction.SwipedToPin(
                             projectId
                         )
                     )
@@ -184,7 +184,7 @@ private fun CompanyProjectsTab(
 fun CompanyDetailsContentPreview() {
     var uiState by remember {
         mutableStateOf(
-            CompanyDetailsReducer.initialState().copy(
+            CompanyDetailsReducer.initialState.copy(
                 tenant = Tenant(
                     id = 5,
                     name = "Acme Corporation",
