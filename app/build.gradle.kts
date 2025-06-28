@@ -62,6 +62,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    //Constraint Layout
+    implementation(libs.androidx.constraintlayout.compose)
+
     // viewmodel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
