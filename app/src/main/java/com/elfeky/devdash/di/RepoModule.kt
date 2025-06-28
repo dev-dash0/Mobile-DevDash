@@ -1,5 +1,6 @@
 package com.elfeky.devdash.di
 
+import com.elfeky.data.repo.AssignUserIssueRepoImpl
 import com.elfeky.data.repo.AuthenticationRepoImpl
 import com.elfeky.data.repo.BacklogRepoImpl
 import com.elfeky.data.repo.DashBoardRepoImpl
@@ -9,6 +10,7 @@ import com.elfeky.data.repo.ProjectRepoImpl
 import com.elfeky.data.repo.SprintIssueRepoImpl
 import com.elfeky.data.repo.SprintRepoImpl
 import com.elfeky.data.repo.TenantRepoImpl
+import com.elfeky.domain.repo.AssignUserIssueRepo
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.repo.BacklogRepo
 import com.elfeky.domain.repo.DashBoardRepo
@@ -81,4 +83,29 @@ abstract class RepoModule {
     abstract fun bindSprintIssueRepo(
         sprintIssueRepoImpl: SprintIssueRepoImpl
     ): SprintIssueRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindAssignUserIssueRepo(
+        assignUserIssueRepoImpl: AssignUserIssueRepoImpl
+    ): AssignUserIssueRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindJoinRepo(
+        assignUserIssueRepoImpl: AssignUserIssueRepoImpl
+    ): AssignUserIssueRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindCommentRepo(
+        assignUserIssueRepoImpl: AssignUserIssueRepoImpl
+    ): AssignUserIssueRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepo(
+        assignUserIssueRepoImpl: AssignUserIssueRepoImpl
+    ): AssignUserIssueRepo
+
 }
