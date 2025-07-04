@@ -7,9 +7,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,11 +16,11 @@ import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
 import com.elfeky.devdash.ui.common.dialogs.issue.IssueDialog
 import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
 import com.elfeky.devdash.ui.common.dialogs.sprint.SprintDialog
-import com.elfeky.devdash.ui.utils.nowLocalDate
 import com.elfeky.devdash.ui.utils.rememberFlowWithLifecycle
 import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.issue.IssueFormFields
 import com.elfeky.domain.model.project.ProjectRequest
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -30,15 +28,13 @@ fun ProjectDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: ProjectDetailsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToSprintDetails: (Int) -> Unit
+    onNavigateToSprintDetails: (Int, String) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val sprintsLazyItems = state.sprintsFlow?.collectAsLazyPagingItems()
-    val backlogIssuesLazyItems = state.backlogIssuesFlow?.collectAsLazyPagingItems()
-
-    var currentDialogType by remember { mutableStateOf<ProjectDetailsReducer.DialogType?>(null) }
+    val sprints = state.sprintsFlow.collectAsLazyPagingItems()
+    val backlogIssues = state.backlogIssuesFlow.collectAsLazyPagingItems()
 
     val uiEffectFlow = rememberFlowWithLifecycle(viewModel.uiEffect)
 
@@ -55,13 +51,13 @@ fun ProjectDetailsScreen(
                     )
                 }
 
-                is ProjectDetailsReducer.Effect.ShowDialog -> currentDialogType = effect.type
-
-                is ProjectDetailsReducer.Effect.DismissDialog -> currentDialogType = null
-
                 is ProjectDetailsReducer.Effect.NavigateToSprintDetails -> {
-                    onNavigateToSprintDetails(effect.sprintId)
+                    onNavigateToSprintDetails(effect.sprintId, state.project?.role ?: "Developer")
                 }
+
+                is ProjectDetailsReducer.Effect.TriggerLoadSprints -> sprints.refresh()
+
+                is ProjectDetailsReducer.Effect.TriggerLoadBacklogIssues -> backlogIssues.refresh()
 
                 else -> Unit
             }
@@ -72,14 +68,13 @@ fun ProjectDetailsScreen(
         uiState = state,
         onEvent = viewModel::onEvent,
         snackbarHostState = snackbarHostState,
-        onNavigateToSprintDetails = onNavigateToSprintDetails,
         onNavigateBack = onNavigateBack,
-        sprints = sprintsLazyItems?.itemSnapshotList?.items ?: emptyList(),
-        backlogIssues = backlogIssuesLazyItems?.itemSnapshotList?.items ?: emptyList(),
+        sprints = sprints, // Pass LazyPagingItems directly
+        backlogIssues = backlogIssues, // Pass LazyPagingItems directly
         modifier = modifier
     )
 
-    currentDialogType?.let { dialogType ->
+    state.dialog?.let { dialogType -> // Observe the dialog state directly from reducer
         when (dialogType) {
             ProjectDetailsReducer.DialogType.EditProject -> {
                 ProjectDialog(
@@ -94,7 +89,13 @@ fun ProjectDetailsScreen(
                             status = it.status
                         )
                     },
-                    onDismiss = { viewModel.onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) },
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    },
                     onSubmit = { projectRequest ->
                         viewModel.onEvent(
                             ProjectDetailsReducer.Event.ProjectAction.ConfirmEditClicked(
@@ -107,7 +108,13 @@ fun ProjectDetailsScreen(
 
             ProjectDetailsReducer.DialogType.CreateSprint -> {
                 SprintDialog(
-                    onDismiss = { viewModel.onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) },
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    },
                     onSubmit = { sprintRequest ->
                         viewModel.onEvent(
                             ProjectDetailsReducer.Event.SprintAction.ConfirmCreateClicked(
@@ -120,7 +127,13 @@ fun ProjectDetailsScreen(
 
             ProjectDetailsReducer.DialogType.CreateIssue -> {
                 IssueDialog(
-                    onDismiss = { viewModel.onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) },
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    },
                     onSubmit = { issue ->
                         viewModel.onEvent(
                             ProjectDetailsReducer.Event.IssueAction.ConfirmCreateClicked(
@@ -135,13 +148,12 @@ fun ProjectDetailsScreen(
                                     startDate = issue.startDate!!.toStringDate(),
                                     deadline = issue.deadline!!.toStringDate(),
                                     deliveredDate = null,
-                                    lastUpdate = nowLocalDate()
+                                    lastUpdate = LocalDateTime.now().toString()
                                 )
                             )
                         )
                     },
                     assigneeList = state.project?.tenant?.joinedUsers ?: emptyList(),
-                    labelList = emptyList(),
                 )
             }
 
@@ -150,7 +162,13 @@ fun ProjectDetailsScreen(
                     title = "Delete Project",
                     text = "Are you sure you want to delete this project? This action cannot be undone.",
                     onConfirm = { viewModel.onEvent(ProjectDetailsReducer.Event.ProjectAction.ConfirmDeleteClicked) },
-                    onDismiss = { viewModel.onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) }
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    }
                 )
             }
 
@@ -165,7 +183,13 @@ fun ProjectDetailsScreen(
                             )
                         )
                     },
-                    onDismiss = { viewModel.onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) }
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    }
                 )
             }
 
@@ -180,11 +204,19 @@ fun ProjectDetailsScreen(
                             )
                         )
                     },
-                    onDismiss = { viewModel.onEvent(ProjectDetailsReducer.Event.DismissDialogClicked) }
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    }
                 )
             }
 
-            is ProjectDetailsReducer.DialogType.EditIssue -> {}
+            is ProjectDetailsReducer.DialogType.EditIssue -> {
+                // Handle EditIssue dialog if needed
+            }
         }
     }
 }
