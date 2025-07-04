@@ -2,12 +2,13 @@ package com.elfeky.devdash.ui.common.dialogs.issue.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDateRangePickerState
@@ -36,7 +37,6 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
-import com.elfeky.devdash.ui.common.labelList
 import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.account.UserProfile
@@ -53,24 +53,24 @@ fun IssueDialogContent(
     selectedType: MenuOption,
     selectedStatus: MenuOption,
     assigneeList: List<UserProfile>,
-    labelList: List<String>,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onPriorityChange: (MenuOption) -> Unit,
     onTypeChange: (MenuOption) -> Unit,
     onStatusChange: (MenuOption) -> Unit,
-    onLabelToggle: (List<String>) -> Unit,
+    onLabelToggle: (String) -> Unit,
     onAssigneeToggle: (UserProfile) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isBacklog: Boolean = true
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         InputField(
             value = title,
-            placeholderText = "Untitled Issue",
+            placeholderText = "Untitled Issue...",
             onValueChange = onTitleChange,
             modifier = Modifier.fillMaxWidth(),
             textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
@@ -79,72 +79,76 @@ fun IssueDialogContent(
                 focusedContainerColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
-                focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
+//                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onBackground.copy(.5f),
+//                focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
                 unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                focusedTextColor = MaterialTheme.colorScheme.onBackground
-
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                cursorColor = MaterialTheme.colorScheme.secondary
             )
         )
-
-        LabelledContentHorizontal(label = "Assignees") {
-            UserPicker(
-                assigneeList,
-                assignees,
-                onUserSelected = { onAssigneeToggle(it) },
-                modifier = Modifier.weight(.75f)
-            )
-        }
-
-        LabelledContentHorizontal(label = "Set Date") {
-            DateRangeInput(state = dateRangeState, modifier = Modifier.weight(.75f))
-        }
-
-        LabelledContentHorizontal(label = "Priority") {
-            MenuSelector(
-                items = priorityList,
-                selectedItem = selectedPriority,
-                onItemSelected = { onPriorityChange(it) },
-                modifier = Modifier.weight(.75f)
-            )
-        }
-
-        LabelledContentHorizontal(label = "Type") {
-            MenuSelector(
-                items = typeList,
-                selectedItem = selectedType,
-                onItemSelected = { onTypeChange(it) },
-                modifier = Modifier.weight(.75f)
-            )
-        }
-
-        LabelledContentHorizontal(label = "Status") {
-            MenuSelector(
-                items = issueStatusList,
-                selectedItem = selectedStatus,
-                onItemSelected = { onStatusChange(it) },
-                modifier = Modifier.weight(.75f)
-            )
-        }
-
-        LabelledContentHorizontal("Labels") {
-            LabelInput(
-                options = labelList,
-                onSelectedOptionsChange = { onLabelToggle(it) },
-                modifier = Modifier.weight(.75f)
-            )
-        }
 
         OutlinedInputField(
             value = description,
             placeholderText = "Description.......",
             onValueChanged = { onDescriptionChange(it) },
             modifier = Modifier
-                .padding(vertical = 16.dp)
                 .imePadding()
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(120.dp)
         )
+
+        if (!isBacklog) {
+            LabelInput(
+                onAddLabel = { onLabelToggle(it) },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            HorizontalDivider(thickness = 2.dp)
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MenuSelector(
+                items = priorityList,
+                selectedItem = selectedPriority,
+                onItemSelected = { onPriorityChange(it) }
+            )
+
+            MenuSelector(
+                items = typeList,
+                selectedItem = selectedType,
+                onItemSelected = { onTypeChange(it) }
+            )
+        }
+
+        if (!isBacklog) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MenuSelector(
+                    items = issueStatusList,
+                    selectedItem = selectedStatus,
+                    onItemSelected = { onStatusChange(it) }
+                )
+
+                UserPicker(
+                    assigneeList,
+                    assignees,
+                    onUserSelected = { onAssigneeToggle(it) }
+                )
+            }
+
+            HorizontalDivider(thickness = 2.dp)
+
+            LabelledContentHorizontal(label = "Set Date") {
+                DateRangeInput(state = dateRangeState, modifier = Modifier.weight(.75f))
+            }
+        }
     }
 }
 
@@ -154,7 +158,7 @@ fun IssueDialogContent(
 private fun IssueDialogContentPreview() {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var selectedLabels = remember { mutableStateOf(emptyList<String>()) }
+    var selectedLabels = remember { mutableStateOf("") }
     val assignees = remember { mutableStateListOf<UserProfile>() }
 
     val currentYear = LocalDate.now().year
@@ -177,7 +181,6 @@ private fun IssueDialogContentPreview() {
             selectedType,
             selectedStatus,
             userList,
-            labelList,
             onTitleChange = { title = it },
             onDescriptionChange = { description = it },
             onPriorityChange = { selectedPriority = it as Priority },

@@ -19,10 +19,10 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
 import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.dateFormatter
-import com.elfeky.devdash.ui.utils.nowLocalDate
 import com.elfeky.devdash.ui.utils.toEpochMillis
 import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.project.ProjectRequest
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +55,7 @@ fun ProjectDialog(
                 ProjectRequest(
                     name = title,
                     description = description,
-                    creationDate = nowLocalDate(),
+                    creationDate = LocalDateTime.now().toString(),
                     startDate = dateRangeState.selectedStartDateMillis!!.toStringDate(),
                     endDate = dateRangeState.selectedEndDateMillis!!.toStringDate(),
                     priority = selectedPriority.text,
