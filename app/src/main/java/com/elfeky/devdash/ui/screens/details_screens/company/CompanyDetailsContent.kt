@@ -91,7 +91,7 @@ fun CompanyDetailsContent(
             ) { page ->
                 when (page) {
                     0 -> CompanyInfoPage(
-                        state = uiState,
+                        tenant = uiState.tenant,
                         modifier = Modifier
                             .fillMaxSize()
                             .nestedScroll(scrollBehavior.nestedScrollConnection)
