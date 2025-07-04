@@ -20,10 +20,14 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
-import com.elfeky.devdash.ui.common.labelList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toIssueStatus
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toType
 import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.toEpochMillis
 import com.elfeky.domain.model.account.UserProfile
+import com.elfeky.domain.model.issue.Issue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -31,19 +35,33 @@ fun IssueDialog(
     onDismiss: () -> Unit,
     onSubmit: (IssueUiModel) -> Unit,
     assigneeList: List<UserProfile>,
-    labelList: List<String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    issue: Issue? = null,
+    isBacklog: Boolean = true
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var selectedLabels = remember { mutableStateOf(emptyList<String>()) }
-    val assignees = remember { mutableStateListOf<UserProfile>() }
+    var title by remember { mutableStateOf(issue?.title ?: "") }
+    var description by remember { mutableStateOf(issue?.description ?: "") }
+    var labels = remember { mutableStateOf(issue?.labels ?: "") }
+    val assignedUsers = remember {
+        mutableStateListOf<UserProfile>().apply { issue?.assignedUsers?.let { addAll(it) } }
+    }
 
-    val dateRangeState = rememberDateRangePickerState()
+    val dateRangeState = rememberDateRangePickerState(
+        initialSelectedStartDateMillis = issue?.startDate?.toEpochMillis(),
+        initialSelectedEndDateMillis = issue?.deadline?.toEpochMillis()
+    )
 
-    var selectedType by remember { mutableStateOf(typeList[0]) }
-    var selectedPriority by remember { mutableStateOf(priorityList[0]) }
-    var selectedStatus by remember { mutableStateOf(issueStatusList[0]) }
+    var selectedType by remember { mutableStateOf(issue?.type?.toType() ?: typeList[0]) }
+    var selectedPriority by remember {
+        mutableStateOf(
+            issue?.priority?.toPriority() ?: priorityList[0]
+        )
+    }
+    var selectedStatus by remember {
+        mutableStateOf(
+            issue?.status?.toIssueStatus() ?: issueStatusList[0]
+        )
+    }
 
     DialogContainer(
         title = "Create New Issue",
@@ -53,38 +71,36 @@ fun IssueDialog(
                 IssueUiModel(
                     title,
                     description,
-                    selectedLabels.value,
+                    labels.value,
                     dateRangeState.selectedStartDateMillis,
                     dateRangeState.selectedEndDateMillis,
                     selectedType.text,
                     selectedPriority,
-                    selectedStatus.text
+                    selectedStatus.text,
+                    assignedUsers
                 )
             )
         },
-        confirmEnable = title.isNotEmpty()
-                && description.isNotEmpty()
-                && assignees.isNotEmpty()
-                && dateRangeState.selectedEndDateMillis != null,
+        confirmEnable = title.isNotEmpty(),
         modifier = modifier,
     ) {
         IssueDialogContent(
             title,
             description,
-            assignees,
+            assignedUsers,
             dateRangeState,
             selectedPriority,
             selectedType,
             selectedStatus,
             assigneeList,
-            labelList,
             onTitleChange = { title = it },
             onDescriptionChange = { description = it },
             onPriorityChange = { selectedPriority = it as Priority },
             onTypeChange = { selectedType = it as Type },
             onStatusChange = { selectedStatus = it as Status },
-            onLabelToggle = { selectedLabels.value = it },
-            onAssigneeToggle = { if (!assignees.remove(it)) assignees.add(it) },
+            onLabelToggle = { labels.value = it },
+            onAssigneeToggle = { if (!assignedUsers.remove(it)) assignedUsers.add(it) },
+            isBacklog = isBacklog
         )
     }
 }
@@ -93,6 +109,6 @@ fun IssueDialog(
 @Composable
 private fun IssueScreenPreview() {
     DevDashTheme {
-        IssueDialog({}, {}, userList, labelList)
+        IssueDialog({}, {}, userList)
     }
 }

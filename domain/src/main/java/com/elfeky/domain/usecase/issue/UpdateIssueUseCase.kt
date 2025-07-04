@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.File
 import java.io.IOException
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class UpdateIssueUseCase @Inject constructor(
@@ -16,41 +17,32 @@ class UpdateIssueUseCase @Inject constructor(
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
     operator fun invoke(
-        id: Int,
-        priority: String,
-        status: String,
-        title: String,
-        type: String,
-        description: String,
-        isBacklog: Boolean,
-        startDate: String,
-        deadline: String,
-        deliveredDate: String,
-        lastUpdate: String,
-        labels: String,
-        attachmentFile: File?,
-        attachmentMediaType: String?
-    ): Flow<Resource<Issue>> = flow {
+        issue: Issue,
+        sprintId: Int? = null,
+        attachmentFile: File? = null,
+        attachmentMediaType: String? = null
+    ): Flow<Resource<Nothing>> = flow {
         try {
             emit(Resource.Loading())
-            val response = repo.updateIssue(
+            repo.updateIssue(
                 accessToken = accessTokenUseCase.get(),
-                id = id,
-                priority = priority,
-                status = status,
-                title = title,
-                type = type,
-                description = description,
-                isBacklog = isBacklog,
-                startDate = startDate,
-                deadline = deadline,
-                deliveredDate = deliveredDate,
-                lastUpdate = lastUpdate,
-                labels = labels,
+                id = issue.id,
+                priority = issue.priority,
+                status = issue.status,
+                title = issue.title,
+                type = issue.type,
+                description = issue.description,
+                isBacklog = sprintId == null,
+                startDate = issue.startDate,
+                deadline = issue.deadline,
+                deliveredDate = issue.deliveredDate,
+                lastUpdate = LocalDateTime.now().toString(),
+                labels = issue.labels,
                 attachmentFile = attachmentFile,
-                attachmentMediaType = attachmentMediaType
+                attachmentMediaType = attachmentMediaType,
+                sprintId = sprintId
             )
-            emit(Resource.Success(response))
+            emit(Resource.Success())
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
         } catch (e: HttpException) {

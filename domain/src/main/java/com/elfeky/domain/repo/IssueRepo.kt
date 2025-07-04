@@ -12,16 +12,17 @@ interface IssueRepo {
         status: String,
         title: String,
         type: String,
-        description: String,
+        description: String?,
         isBacklog: Boolean,
-        startDate: String,
-        deadline: String,
-        deliveredDate: String,
-        lastUpdate: String,
-        labels: String,
+        startDate: String?,
+        deadline: String?,
+        deliveredDate: String?,
+        lastUpdate: String?,
+        labels: String?,
         attachmentFile: File?,
-        attachmentMediaType: String?
-    ): Issue
+        attachmentMediaType: String?,
+        sprintId: Int?
+    )
 
     suspend fun deleteIssue(accessToken: String, id: Int)
 }

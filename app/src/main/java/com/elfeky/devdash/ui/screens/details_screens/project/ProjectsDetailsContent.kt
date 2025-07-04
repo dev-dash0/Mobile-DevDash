@@ -11,16 +11,16 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.elfeky.devdash.ui.common.issueList
 import com.elfeky.devdash.ui.common.projectList
 import com.elfeky.devdash.ui.common.sprintList
@@ -31,18 +31,18 @@ import com.elfeky.devdash.ui.screens.details_screens.project.components.InfoPage
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.sprint.Sprint
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ProjectsDetailsContent(
     uiState: ProjectDetailsReducer.State,
-    sprints: List<Sprint>,
-    backlogIssues: List<Issue>,
+    sprints: LazyPagingItems<Sprint>,
+    backlogIssues: LazyPagingItems<Issue>,
     onEvent: (ProjectDetailsReducer.Event) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    onNavigateToSprintDetails: (Int) -> Unit,
     onNavigateBack: () -> Unit
 ) {
     val tabs = listOf("Info", "Backlog")
@@ -130,7 +130,13 @@ fun ProjectsDetailsContent(
                             onSwipeToPinIssue = { issueId ->
                                 onEvent(ProjectDetailsReducer.Event.IssueAction.SwipedToPin(issueId))
                             },
-                            onSprintClicked = { sprintId -> onNavigateToSprintDetails(sprintId) },
+                            onSprintClicked = { sprintId ->
+                                onEvent(
+                                    ProjectDetailsReducer.Event.SprintAction.Clicked(
+                                        sprintId
+                                    )
+                                )
+                            },
                             onIssueClicked = { issue ->
                                 onEvent(ProjectDetailsReducer.Event.IssueAction.Clicked(issue))
                             },
@@ -145,8 +151,8 @@ fun ProjectsDetailsContent(
 @Preview(device = Devices.PIXEL_4)
 @Composable
 private fun ProjectsDetailsContentPreview() {
-    var sprints by remember { mutableStateOf(sprintList) }
-    var backlogIssues by remember { mutableStateOf(issueList) }
+    var sprints = flowOf(PagingData.from(sprintList)).collectAsLazyPagingItems()
+    var backlogIssues = flowOf(PagingData.from(issueList)).collectAsLazyPagingItems()
 
     DevDashTheme {
         ProjectsDetailsContent(
@@ -161,7 +167,6 @@ private fun ProjectsDetailsContentPreview() {
             backlogIssues = backlogIssues,
             onEvent = {},
             snackbarHostState = remember { SnackbarHostState() },
-            onNavigateToSprintDetails = {},
             onNavigateBack = {}
         )
     }

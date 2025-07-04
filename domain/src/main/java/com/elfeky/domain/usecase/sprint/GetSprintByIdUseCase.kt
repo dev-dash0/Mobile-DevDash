@@ -17,11 +17,11 @@ class GetSprintByIdUseCase @Inject constructor(
     operator fun invoke(id: Int): Flow<Resource<Sprint>> = flow {
         try {
             emit(Resource.Loading())
-            repo.getSprintById(
+            val response = repo.getSprintById(
                 accessToken = accessTokenUseCase.get(),
                 id = id
             )
-            emit(Resource.Success())
+            emit(Resource.Success(response))
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
         } catch (e: HttpException) {

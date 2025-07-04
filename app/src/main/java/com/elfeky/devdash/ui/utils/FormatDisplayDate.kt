@@ -8,6 +8,10 @@ fun formatDisplayDate(date: String, formatter: DateTimeFormatter): String {
 }
 
 fun formatDisplayDate(date: String): String {
-    val longDate = date.toEpochMillis() ?: return date
+    val longDate =
+        if (date.length == 10) date.toEpochMillis() ?: return date else date.toEpochMillis(
+            dateTimeFormatter
+        ) ?: return date
+
     return longDate.toStringDate(DateTimeFormatter.ofPattern("d MMM"))
 }

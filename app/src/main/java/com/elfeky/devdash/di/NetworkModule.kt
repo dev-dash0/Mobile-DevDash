@@ -1,9 +1,13 @@
 package com.elfeky.devdash.di
 
+import com.elfeky.data.remote.AssignUserIssueApiService
 import com.elfeky.data.remote.AuthenticationApiService
 import com.elfeky.data.remote.BacklogApiService
+import com.elfeky.data.remote.CommentApiService
 import com.elfeky.data.remote.DashBoardApiService
 import com.elfeky.data.remote.IssueApiService
+import com.elfeky.data.remote.JoinApiService
+import com.elfeky.data.remote.NotificationApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
 import com.elfeky.data.remote.SprintApiService
@@ -102,4 +106,29 @@ object NetworkModule {
     fun provideSprintIssueApiService(retrofit: Retrofit): SprintIssueApiService {
         return retrofit.create(SprintIssueApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideCommentApiService(retrofit: Retrofit): CommentApiService {
+        return retrofit.create(CommentApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationApiService(retrofit: Retrofit): NotificationApiService {
+        return retrofit.create(NotificationApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAssignUserIssueApiService(retrofit: Retrofit): AssignUserIssueApiService {
+        return retrofit.create(AssignUserIssueApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideJoinApiService(retrofit: Retrofit): JoinApiService {
+        return retrofit.create(JoinApiService::class.java)
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.elfeky.domain.usecase.sprint_issue
 
 import com.elfeky.domain.model.issue.Issue
+import com.elfeky.domain.model.issue.IssueFormFields
 import com.elfeky.domain.repo.SprintIssueRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.File
 import java.io.IOException
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class CreateSprintIssueUseCase @Inject constructor(
@@ -17,36 +19,26 @@ class CreateSprintIssueUseCase @Inject constructor(
 ) {
     operator fun invoke(
         sprintId: Int,
-        priority: String,
-        status: String,
-        title: String,
-        type: String,
-        description: String,
-        isBacklog: Boolean,
-        startDate: String,
-        deadline: String,
-        deliveredDate: String,
-        lastUpdate: String,
-        labels: String,
-        attachmentFile: File?,
-        attachmentMediaType: String?
+        issue: IssueFormFields,
+        attachmentFile: File? = null,
+        attachmentMediaType: String? = null
     ): Flow<Resource<Issue>> = flow {
         try {
             emit(Resource.Loading())
             val response = repo.createIssue(
                 accessToken = accessTokenUseCase.get(),
                 sprintId = sprintId,
-                priority = priority,
-                status = status,
-                title = title,
-                type = type,
-                description = description,
-                isBacklog = isBacklog,
-                startDate = startDate,
-                deadline = deadline,
-                deliveredDate = deliveredDate,
-                lastUpdate = lastUpdate,
-                labels = labels,
+                priority = issue.priority,
+                status = issue.status,
+                title = issue.title,
+                type = issue.type,
+                description = issue.description ?: "",
+                isBacklog = issue.isBacklog,
+                startDate = issue.startDate ?: "",
+                deadline = issue.deadline ?: "",
+                deliveredDate = issue.deliveredDate ?: "",
+                lastUpdate = LocalDateTime.now().toString(),
+                labels = issue.labels ?: "",
                 attachmentFile = attachmentFile,
                 attachmentMediaType = attachmentMediaType
             )

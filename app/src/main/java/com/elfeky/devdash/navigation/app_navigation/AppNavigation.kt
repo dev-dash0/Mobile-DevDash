@@ -14,6 +14,7 @@ import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsViewM
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen
+import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintViewModel
 import com.elfeky.devdash.ui.screens.main_screens.MainScreen
 
 @Composable
@@ -66,6 +67,7 @@ fun AppNavigation(
             arguments = listOf(navArgument("project_id") { type = NavType.IntType })
         ) {
             val projectId = it.arguments?.getInt("project_id")!!
+
             ProjectDetailsScreen(
                 viewModel = hiltViewModel<ProjectDetailsViewModel, ProjectDetailsViewModel.Factory>(
                     key = projectId.toString()
@@ -73,18 +75,30 @@ fun AppNavigation(
                     it.create(projectId)
                 },
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToSprintDetails = { sprintId ->
-                    navController.navigate(AppScreen.SprintScreen.route + "/$sprintId")
+                onNavigateToSprintDetails = { sprintId, role ->
+                    navController.navigate(AppScreen.SprintScreen.route + "/$sprintId" + "/$role")
                 }
             )
         }
 
         composable(
-            AppScreen.SprintScreen.route + "/{sprint_id}",
-            arguments = listOf(navArgument("sprint_id") { type = NavType.IntType })
+            AppScreen.SprintScreen.route + "/{sprint_id}" + "/{role}",
+            arguments = listOf(
+                navArgument("sprint_id") { type = NavType.IntType },
+                navArgument("role") { type = NavType.StringType }
+            )
         ) {
             val sprintId = it.arguments?.getInt("sprint_id")!!
-            SprintScreen(sprintId)
+            val role = it.arguments?.getString("role")!!
+
+            SprintScreen(
+                role = role,
+                viewModel = hiltViewModel<SprintViewModel, SprintViewModel.Factory>(
+                    key = sprintId.toString()
+                ) { it.create(sprintId) },
+                onBackClick = { navController.popBackStack() },
+                onIssueClick = {}
+            )
         }
     }
 }

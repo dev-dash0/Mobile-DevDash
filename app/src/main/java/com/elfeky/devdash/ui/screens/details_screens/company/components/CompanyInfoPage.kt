@@ -18,15 +18,13 @@ import androidx.compose.ui.unit.sp
 import com.elfeky.devdash.ui.common.component.TagFlowLayout
 import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentHorizontal
 import com.elfeky.devdash.ui.common.dialogs.component.LabelledContentVertical
-import com.elfeky.devdash.ui.common.projectList
 import com.elfeky.devdash.ui.common.userList
-import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.tenant.Tenant
 
 @Composable
 fun CompanyInfoPage(
-    state: CompanyDetailsReducer.State,
+    tenant: Tenant?,
     modifier: Modifier = Modifier,
     onRemoveMemberClick: (Int) -> Unit,
     onCopyTextClicked: (text: String) -> Unit
@@ -35,36 +33,36 @@ fun CompanyInfoPage(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (state.tenant?.role == "Admin") {
+        if (tenant?.role == "Admin") {
             LabelledContentHorizontal("Code:") {
                 CopyableText(
-                    state.tenant.tenantCode,
+                    tenant.tenantCode,
                     modifier = Modifier.weight(.75f),
-                    onCopyClick = { onCopyTextClicked(state.tenant.tenantCode) }
+                    onCopyClick = { onCopyTextClicked(tenant.tenantCode) }
                 )
             }
         }
 
         LabelledContentHorizontal("URL:") {
             CopyableText(
-                state.tenant?.tenantUrl ?: "",
+                tenant?.tenantUrl ?: "",
                 modifier = Modifier.weight(.75f),
-                onCopyClick = { onCopyTextClicked(state.tenant?.tenantUrl ?: "") }
+                onCopyClick = { onCopyTextClicked(tenant?.tenantUrl ?: "") }
             )
         }
 
         LabelledContentHorizontal("Members:") {
             Row(modifier = Modifier.weight(.75f), horizontalArrangement = Arrangement.End) {
                 MembersMenu(
-                    state.tenant?.joinedUsers ?: emptyList(),
-                    state.tenant?.role == "Admin",
+                    tenant?.joinedUsers ?: emptyList(),
+                    tenant?.role == "Admin",
                     onRemoveMemberClick
                 )
             }
         }
 
         LabelledContentVertical("Tags:") {
-            state.tenant?.keywords?.let {
+            tenant?.keywords?.let {
                 TagFlowLayout(
                     tags = it.split(","),
                     modifier = Modifier.fillMaxWidth()
@@ -73,7 +71,7 @@ fun CompanyInfoPage(
         }
 
         LabelledContentVertical("Description:") {
-            state.tenant?.let {
+            tenant?.let {
                 Text(
                     it.description,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = .8f),
@@ -87,31 +85,25 @@ fun CompanyInfoPage(
 @Preview
 @Composable
 private fun CompanyInfoPagePreview() {
-    val uiState by remember {
+    val tenant by remember {
         mutableStateOf(
-            CompanyDetailsReducer.initialState.copy(
-                isPinned = false,
-                isLoading = false,
-                tenant = Tenant(
-                    name = "Preview Company Name",
-                    image = null,
-                    tenantCode = "PRE-001",
-                    tenantUrl = "https://previewcompany.com",
-                    joinedUsers = userList,
-                    owner = userList[0],
-                    keywords = "Technology,Software,Startup,FinTech",
-                    description = "a dynamic and forward-thinking organization dedicated to delivering innovative solutions that empower businesses to achieve their full potential. We specialize in partnering with clients to understand their unique challenges and opportunities, leveraging our expertise in [mention a general area",
-                    id = 5,
-                    ownerID = 1,
-                    role = null
-                ),
-                projects = projectList,
-                userId = 5
+            Tenant(
+                name = "Preview Company Name",
+                image = null,
+                tenantCode = "PRE-001",
+                tenantUrl = "https://previewcompany.com",
+                joinedUsers = userList,
+                owner = userList[0],
+                keywords = "Technology,Software,Startup,FinTech",
+                description = "a dynamic and forward-thinking organization dedicated to delivering innovative solutions that empower businesses to achieve their full potential. We specialize in partnering with clients to understand their unique challenges and opportunities, leveraging our expertise in [mention a general area",
+                id = 5,
+                ownerID = 1,
+                role = null
             )
         )
     }
 
     DevDashTheme {
-        CompanyInfoPage(uiState, onRemoveMemberClick = {}, onCopyTextClicked = {})
+        CompanyInfoPage(tenant, onRemoveMemberClick = {}, onCopyTextClicked = {})
     }
 }

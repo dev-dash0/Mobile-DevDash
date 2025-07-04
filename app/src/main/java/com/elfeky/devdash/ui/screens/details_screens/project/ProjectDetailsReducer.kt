@@ -10,6 +10,7 @@ import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.sprint.Sprint
 import com.elfeky.domain.model.sprint.SprintRequest
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class ProjectDetailsReducer :
     Reducer<ProjectDetailsReducer.State, ProjectDetailsReducer.Event, ProjectDetailsReducer.Effect> {
@@ -25,13 +26,11 @@ class ProjectDetailsReducer :
             data class PinnedIssues(val pinnedIssues: List<Issue>) : Update()
             data class PinnedSprints(val pinnedSprints: List<Sprint>) : Update()
             data class BacklogIssuesFlow(val issuesFlow: Flow<PagingData<Issue>>) : Update()
+            data class ShowDialog(val type: DialogType?) : Update()
         }
 
         data object BackClicked : Event()
-        data object DismissDialogClicked : Event()
         data class RemoveMemberClicked(val memberId: Int) : Event()
-        data object LoadBacklogIssues : Event()
-        data object LoadMoreBacklogIssuesClicked : Event()
 
         sealed class ProjectAction : Event() {
             data object PinClicked : ProjectAction()
@@ -86,7 +85,6 @@ class ProjectDetailsReducer :
             data object SprintPinError : Error("Failed to pin/unpin sprint")
             data object IssuePinError : Error("Failed to pin/unpin issue")
             data object BacklogIssuesLoadError : Error("Failed to load backlog issues")
-            data object LoadMoreBacklogIssuesError : Error("Failed to load more backlog issues")
             data object IssueMoveToSprintError : Error("Failed to move issue to sprint")
         }
     }
@@ -96,9 +94,6 @@ class ProjectDetailsReducer :
         data object NavigateBack : Effect()
         data class NavigateToSprintDetails(val sprintId: Int) : Effect()
         data class ShowSnackbar(val message: String, val isLong: Boolean = false) : Effect()
-        data class ShowDialog(val type: DialogType) : Effect()
-        data object DismissDialog : Effect()
-        data class AddSprintIssue(val issueId: Int, val sprintId: Int) : Effect()
         data object TriggerReloadAllData : Effect()
         data object TriggerLoadSprints : Effect()
         data object TriggerDeleteProject : Effect()
@@ -111,6 +106,7 @@ class ProjectDetailsReducer :
         data class TriggerToggleSprintPin(val sprintId: Int) : Effect()
         data class TriggerToggleIssuePin(val issueId: Int) : Effect()
         data object TriggerLoadBacklogIssues : Effect()
+        data class AddSprintIssue(val issueId: Int, val sprintId: Int) : Effect()
     }
 
     @Immutable
@@ -118,10 +114,11 @@ class ProjectDetailsReducer :
         val project: Project? = null,
         val isPinned: Boolean = false,
         val isLoading: Boolean = false,
-        val sprintsFlow: Flow<PagingData<Sprint>>? = null,
+        val sprintsFlow: Flow<PagingData<Sprint>> = flowOf(PagingData.empty()),
         val pinnedIssues: List<Issue> = emptyList(),
         val pinnedSprints: List<Sprint> = emptyList(),
-        val backlogIssuesFlow: Flow<PagingData<Issue>>? = null,
+        val backlogIssuesFlow: Flow<PagingData<Issue>> = flowOf(PagingData.empty()),
+        val dialog: DialogType? = null
     ) : Reducer.ViewState
 
     @Immutable
@@ -146,21 +143,17 @@ class ProjectDetailsReducer :
             is Event.Update.SprintsFlow -> previousState.copy(sprintsFlow = event.sprintsFlow) to null
             is Event.Update.PinnedIssues -> previousState.copy(pinnedIssues = event.pinnedIssues) to null
             is Event.Update.PinnedSprints -> previousState.copy(pinnedSprints = event.pinnedSprints) to null
-
             is Event.Update.BacklogIssuesFlow -> previousState.copy(backlogIssuesFlow = event.issuesFlow) to null
+            is Event.Update.ShowDialog -> previousState.copy(dialog = event.type) to null
 
             Event.BackClicked -> previousState to Effect.NavigateBack
-            Event.DismissDialogClicked -> previousState to Effect.DismissDialog
             is Event.RemoveMemberClicked -> previousState to Effect.ShowSnackbar("Remove member ${event.memberId} (not implemented yet)")
 
-            Event.LoadBacklogIssues -> previousState to Effect.TriggerLoadBacklogIssues
-            Event.LoadMoreBacklogIssuesClicked -> previousState to Effect.ShowSnackbar("Paging handles loading more backlog issues automatically.")
-
             Event.ProjectAction.PinClicked -> previousState to Effect.TriggerToggleProjectPin
-            Event.ProjectAction.DeleteClicked -> previousState to Effect.ShowDialog(DialogType.DeleteProjectConfirmation)
-            Event.ProjectAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteProject
-            Event.ProjectAction.EditClicked -> previousState to Effect.ShowDialog(DialogType.EditProject)
-            is Event.ProjectAction.ConfirmEditClicked -> previousState to Effect.TriggerUpdateProject(
+            Event.ProjectAction.DeleteClicked -> previousState.copy(dialog = DialogType.DeleteProjectConfirmation) to null
+            Event.ProjectAction.ConfirmDeleteClicked -> previousState.copy(dialog = null) to Effect.TriggerDeleteProject
+            Event.ProjectAction.EditClicked -> previousState.copy(dialog = DialogType.EditProject) to null
+            is Event.ProjectAction.ConfirmEditClicked -> previousState.copy(dialog = null) to Effect.TriggerUpdateProject(
                 event.projectRequest
             )
 
@@ -168,19 +161,19 @@ class ProjectDetailsReducer :
             Event.ProjectAction.UpdateCompleted -> previousState to Effect.TriggerReloadAllData
             is Event.ProjectAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Project Pinned Successfully" else "Project Unpinned Successfully")
 
-            Event.SprintAction.CreateClicked -> previousState to Effect.ShowDialog(DialogType.CreateSprint)
-            is Event.SprintAction.ConfirmCreateClicked -> previousState to Effect.TriggerAddSprint(
+            Event.SprintAction.CreateClicked -> previousState.copy(dialog = DialogType.CreateSprint) to null
+            is Event.SprintAction.ConfirmCreateClicked -> previousState.copy(dialog = null) to Effect.TriggerAddSprint(
                 event.sprint
             )
 
             is Event.SprintAction.Clicked -> previousState to Effect.NavigateToSprintDetails(event.sprintId)
-            is Event.SprintAction.SwipedToDelete -> previousState to Effect.ShowDialog(
-                DialogType.DeleteSprintConfirmation(
+            is Event.SprintAction.SwipedToDelete -> previousState.copy(
+                dialog = DialogType.DeleteSprintConfirmation(
                     event.sprintId
                 )
-            )
+            ) to null
 
-            is Event.SprintAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteSprint(
+            is Event.SprintAction.ConfirmDeleteClicked -> previousState.copy(dialog = null) to Effect.TriggerDeleteSprint(
                 event.sprintId
             )
 
@@ -188,37 +181,34 @@ class ProjectDetailsReducer :
                 event.sprintId
             )
 
-            is Event.SprintAction.CreateCompleted -> previousState to Effect.TriggerLoadSprints
+            Event.SprintAction.CreateCompleted -> previousState to Effect.TriggerLoadSprints
 
             Event.SprintAction.DeletionCompleted -> previousState to Effect.TriggerLoadSprints
             is Event.SprintAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Sprint Pinned Successfully" else "Sprint Unpinned Successfully")
 
-
-            Event.IssueAction.CreateClicked -> previousState to Effect.ShowDialog(DialogType.CreateIssue)
-            is Event.IssueAction.ConfirmCreateClicked -> previousState to Effect.TriggerAddIssue(
+            Event.IssueAction.CreateClicked -> previousState.copy(dialog = DialogType.CreateIssue) to null
+            is Event.IssueAction.ConfirmCreateClicked -> previousState.copy(dialog = null) to Effect.TriggerAddIssue(
                 event.issueBacklog
             )
 
-            is Event.IssueAction.Clicked -> previousState to Effect.ShowDialog(
-                DialogType.EditIssue(
+            is Event.IssueAction.Clicked -> previousState.copy(
+                dialog = DialogType.EditIssue(
                     event.issue
                 )
-            )
+            ) to null
 
-            is Event.IssueAction.SwipedToDelete -> previousState to Effect.ShowDialog(
-                DialogType.DeleteIssueConfirmation(
+            is Event.IssueAction.SwipedToDelete -> previousState.copy(
+                dialog = DialogType.DeleteIssueConfirmation(
                     event.issueId
                 )
-            )
+            ) to null
 
-            is Event.IssueAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteIssue(
+            is Event.IssueAction.ConfirmDeleteClicked -> previousState.copy(dialog = null) to Effect.TriggerDeleteIssue(
                 event.issueId
             )
 
             is Event.IssueAction.SwipedToPin -> previousState to Effect.TriggerToggleIssuePin(event.issueId)
-            Event.IssueAction.CreateCompleted -> {
-                previousState to Effect.TriggerLoadBacklogIssues
-            }
+            Event.IssueAction.CreateCompleted -> previousState to Effect.TriggerLoadBacklogIssues
 
             Event.IssueAction.DeletionCompleted -> previousState to Effect.TriggerLoadBacklogIssues
             is Event.IssueAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Issue Pinned Successfully" else "Issue Unpinned Successfully")
@@ -227,8 +217,6 @@ class ProjectDetailsReducer :
             )
 
             Event.IssueAction.MovedToSprintCompleted -> previousState to Effect.ShowSnackbar("Issue moved to sprint successfully.")
-
-            is Event.Error.IssueMoveToSprintError -> previousState to Effect.ShowSnackbar(event.message)
 
             is Event.Error -> previousState to Effect.ShowSnackbar(event.message)
         }
