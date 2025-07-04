@@ -18,10 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.card.IssueCard
 import com.elfeky.devdash.ui.common.component.LoadingIndicator
-import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
-import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
-import com.elfeky.devdash.ui.common.labelList
-import com.elfeky.devdash.ui.common.userList
+import com.elfeky.devdash.ui.common.issueList
 import com.elfeky.devdash.ui.screens.main_screens.home.components.Item
 import com.elfeky.devdash.ui.screens.main_screens.home.components.ProgressRow
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -66,14 +63,11 @@ fun HomeScreen(
             item {
                 Item(R.drawable.alert_ic, "Urgent Issues") {
                     IssueCard(
-                        "12 Feb | 18 Feb",
-                        Status.InProgress,
-                        "Issue Title",
-                        labelList.take(3),
-                        userList.take(3),
-                        Priority.Medium,
-                        onClick = { },
-                        onLongClick = { }
+                        issue = issueList[0],
+                        isPinned = true,
+                        onPinClick = { },
+                        onDeleteClick = { },
+                        onEditClick = { }
                     )
                 }
             }
@@ -81,14 +75,11 @@ fun HomeScreen(
             item {
                 Item(R.drawable.ic_pin, "Pinned") {
                     IssueCard(
-                        "12 Feb | 18 Feb",
-                        Status.Reviewing,
-                        "Issue Title",
-                        labelList.take(3),
-                        userList.take(3),
-                        Priority.Low,
-                        onClick = { },
-                        onLongClick = { }
+                        issue = issueList[1],
+                        isPinned = false,
+                        onPinClick = { },
+                        onDeleteClick = { },
+                        onEditClick = { }
                     )
                 }
             }
