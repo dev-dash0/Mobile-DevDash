@@ -10,6 +10,7 @@ import com.elfeky.data.repo.JoinRepoImpl
 import com.elfeky.data.repo.NotificationRepoImpl
 import com.elfeky.data.repo.PinRepoImpl
 import com.elfeky.data.repo.ProjectRepoImpl
+import com.elfeky.data.repo.SearchRepoImpl
 import com.elfeky.data.repo.SprintIssueRepoImpl
 import com.elfeky.data.repo.SprintRepoImpl
 import com.elfeky.data.repo.TenantRepoImpl
@@ -23,6 +24,7 @@ import com.elfeky.domain.repo.JoinRepo
 import com.elfeky.domain.repo.NotificationRepo
 import com.elfeky.domain.repo.PinRepo
 import com.elfeky.domain.repo.ProjectRepo
+import com.elfeky.domain.repo.SearchRepo
 import com.elfeky.domain.repo.SprintIssueRepo
 import com.elfeky.domain.repo.SprintRepo
 import com.elfeky.domain.repo.TenantRepo
@@ -78,6 +80,11 @@ abstract class RepoModule {
         sprintRepoImpl: SprintRepoImpl
     ): SprintRepo
 
+    @Binds
+    @Singleton
+    abstract fun bindSearchRepo(
+        searchRepoImpl: SearchRepoImpl
+    ): SearchRepo
     @Binds
     @Singleton
     abstract fun bindIssueRepo(

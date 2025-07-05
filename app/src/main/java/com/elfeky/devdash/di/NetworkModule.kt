@@ -10,6 +10,7 @@ import com.elfeky.data.remote.JoinApiService
 import com.elfeky.data.remote.NotificationApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
+import com.elfeky.data.remote.SearchApiService
 import com.elfeky.data.remote.SprintApiService
 import com.elfeky.data.remote.SprintIssueApiService
 import com.elfeky.data.remote.TenantApiService
@@ -90,6 +91,12 @@ object NetworkModule {
     @Singleton
     fun provideSprintApiService(retrofit: Retrofit): SprintApiService {
         return retrofit.create(SprintApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchApiService(retrofit: Retrofit): SearchApiService {
+        return retrofit.create(SearchApiService::class.java)
     }
 
     @Provides
