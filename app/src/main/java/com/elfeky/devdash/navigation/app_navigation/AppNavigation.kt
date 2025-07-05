@@ -15,7 +15,8 @@ import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScree
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintViewModel
-import com.elfeky.devdash.ui.screens.main_screens.MainScreen
+import com.elfeky.devdash.ui.screens.main_screens.MainScreenHost
+import com.elfeky.devdash.ui.screens.main_screens.inbox.NotificationScreen
 
 @Composable
 fun AppNavigation(
@@ -32,8 +33,10 @@ fun AppNavigation(
         authNavigation(navController)
 
         composable(AppScreen.MainScreen.route) {
-            MainScreen(
-                onCompanyDetailsNavigation = { navController.navigate(MainScreen.CompanyDetails.route + "/$it") },
+            MainScreenHost(
+                onSearchNavigate = {},
+                onNotificationNavigate = { navController.navigate(AppScreen.NotificationScreen.route) },
+                onCompanyDetailsNavigate = { navController.navigate(MainScreen.CompanyDetails.route + "/$it") },
                 onLogout = {
                     navController.navigate(AppScreen.AuthScreens.route) {
                         popUpTo(0) { inclusive = true }
@@ -99,6 +102,10 @@ fun AppNavigation(
                 onBackClick = { navController.popBackStack() },
                 onIssueClick = {}
             )
+        }
+
+        composable(AppScreen.NotificationScreen.route) {
+            NotificationScreen()
         }
     }
 }

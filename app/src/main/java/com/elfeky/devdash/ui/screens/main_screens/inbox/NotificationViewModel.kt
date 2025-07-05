@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.main_screens.inbox
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfeky.domain.usecase.notification.GetNotificationsUseCase
@@ -31,7 +32,7 @@ class NotificationViewModel @Inject constructor(
                     is Resource.Loading -> state.value.copy(isLoading = true)
 
                     is Resource.Success -> state.value.copy(
-                        notifications = result.data!!,
+                        notifications = result.data ?: emptyList(),
                         isLoading = false
                     )
                 }
@@ -41,7 +42,8 @@ class NotificationViewModel @Inject constructor(
 
     fun markAsRead(id: Int) {
         viewModelScope.launch {
-            markNotificationReadUseCase(id)
+            Log.d("NotificationViewModel", "markAsRead called with id: $id")
+            markNotificationReadUseCase(id).collect {}
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.elfeky.devdash.ui.common.top_bar
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,41 +21,25 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 @Composable
 fun TopBar(
     title: String,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-    showIcons: Boolean = false
+    onSearchClick: () -> Unit,
+    onNotificationClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
         title = { Text(title) },
         modifier = modifier,
-        navigationIcon = {
-            if (showIcons)
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "Back"
-                    )
-                }
-        },
         actions = {
-            if (showIcons) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        painter = painterResource(R.drawable.sesrch_ic),
-                        contentDescription = "Back"
-                    )
-                }
-                IconButton(onClick = onBack) {
-                    Icon(
-                        painter = painterResource(R.drawable.user_add_ic),
-                        contentDescription = "Back"
-                    )
-                }
-            }
-            IconButton(onClick = onBack) {
+            IconButton(onClick = onSearchClick) {
                 Icon(
-                    painter = painterResource(R.drawable.user_ic),
+                    painter = painterResource(R.drawable.sesrch_ic),
                     contentDescription = "Back"
+                )
+            }
+
+            IconButton(onClick = onNotificationClick) {
+                Icon(
+                    imageVector = Icons.Filled.Notifications,
+                    contentDescription = "Notification"
                 )
             }
         },
@@ -72,6 +56,6 @@ fun TopBar(
 @Composable
 private fun TopBarPreview() {
     DevDashTheme {
-        TopBar("Home", {})
+        TopBar("Home", {}, {})
     }
 }

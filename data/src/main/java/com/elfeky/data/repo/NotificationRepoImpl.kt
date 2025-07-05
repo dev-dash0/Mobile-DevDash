@@ -9,12 +9,12 @@ class NotificationRepoImpl @Inject constructor(
     private val apiService: NotificationApiService
 ) : NotificationRepo {
     override suspend fun getNotifications(accessToken: String): List<Notification> =
-        apiService.getNotifications(accessToken).result
+        apiService.getNotifications("Bearer $accessToken").result.notifications
 
     override suspend fun markNotificationRead(
         accessToken: String,
         notificationId: Int
     ) {
-        apiService.markNotificationRead(accessToken, notificationId)
+        apiService.markNotificationRead("Bearer $accessToken", notificationId)
     }
 }

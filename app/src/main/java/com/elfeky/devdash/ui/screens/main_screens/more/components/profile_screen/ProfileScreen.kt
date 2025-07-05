@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -112,86 +113,93 @@ fun ProfileScreen(
         viewModel.getUserProfile()
     }
 
-    Column(
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
             .padding(vertical = 32.dp, horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        if (state.isProfileLoading || state.isUpdatingProfile) {
-            CircularProgressIndicator(modifier = Modifier.padding(top = 32.dp))
-        } else {
-            if (state.profileError != "") {
-                Text(text = state.profileError, color = MaterialTheme.colorScheme.error)
-            } else if (state.updateProfileError != "") {
-                Text(text = state.updateProfileError, color = MaterialTheme.colorScheme.error)
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (state.isProfileLoading || state.isUpdatingProfile) {
+                CircularProgressIndicator(modifier = Modifier.padding(top = 32.dp))
             } else {
-                AnimatedContent(targetState = state.userProfile?.imageUrl) {
-                    if (it == null) {
-                        ProfileSymbol(
-                            modifier = Modifier.size(128.dp),
-                            firstName = state.userProfile?.firstName ?: "",
-                            lastName = state.userProfile?.lastName ?: "",
-                            isUpdatingImage = isUpdatingImage
-                        )
-                    } else {
-                        // Image from URL
-                        SubcomposeAsyncImage(
-                            model = it,
-                            contentDescription = "Profile Image",
-                            loading = {CircularProgressIndicator()},
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(128.dp)
-                                .clip(CircleShape)
-                        )
+                if (state.profileError != "") {
+                    Text(text = state.profileError, color = MaterialTheme.colorScheme.error)
+                } else if (state.updateProfileError != "") {
+                    Text(text = state.updateProfileError, color = MaterialTheme.colorScheme.error)
+                } else {
+                    AnimatedContent(targetState = state.userProfile?.imageUrl) {
+                        if (it == null) {
+                            ProfileSymbol(
+                                modifier = Modifier.size(128.dp),
+                                firstName = state.userProfile?.firstName ?: "",
+                                lastName = state.userProfile?.lastName ?: "",
+                                isUpdatingImage = isUpdatingImage
+                            )
+                        } else {
+                            // Image from URL
+                            SubcomposeAsyncImage(
+                                model = it,
+                                contentDescription = "Profile Image",
+                                loading = { CircularProgressIndicator() },
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(128.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
                     }
-                }
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.clickable {
-                        launcher.launch("image/*")
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.clickable {
+                            launcher.launch("image/*")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Image",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        Text(
+                            text = "Edit",
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Image",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
 
-                    Text(
-                        text = "Edit",
-                        color = MaterialTheme.colorScheme.onBackground
+                    Spacer(Modifier.height(16.dp))
+                    ProfileInfoItem(
+                        primaryName = "Email",
+                        secondaryName = state.userProfile!!.email
                     )
-
+                    ProfileInfoItem(
+                        primaryName = "Full Name",
+                        secondaryName = state.userProfile.firstName + " " + state.userProfile.lastName
+                    )
+                    ProfileInfoItem(
+                        primaryName = "username",
+                        secondaryName = state.userProfile.userName
+                    )
+                    ProfileInfoItem(
+                        primaryName = "Phone Number",
+                        secondaryName = state.userProfile.phoneNumber
+                    )
+                    ProfileInfoItem(
+                        primaryName = "Birth Date",
+                        secondaryName = state.userProfile.birthday
+                    )
                 }
 
-                Spacer(Modifier.height(16.dp))
-                ProfileInfoItem(primaryName = "Email", secondaryName = state.userProfile!!.email)
-                ProfileInfoItem(
-                    primaryName = "Full Name",
-                    secondaryName = state.userProfile.firstName + " " + state.userProfile.lastName
-                )
-                ProfileInfoItem(
-                    primaryName = "username",
-                    secondaryName = state.userProfile.userName
-                )
-                ProfileInfoItem(
-                    primaryName = "Phone Number",
-                    secondaryName = state.userProfile.phoneNumber
-                )
-                ProfileInfoItem(
-                    primaryName = "Birth Date",
-                    secondaryName = state.userProfile.birthday
-                )
             }
 
+
         }
-
-
     }
-
-
 }
 
 
