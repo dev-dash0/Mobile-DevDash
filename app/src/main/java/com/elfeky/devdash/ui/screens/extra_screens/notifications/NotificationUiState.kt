@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.main_screens.inbox
+package com.elfeky.devdash.ui.screens.extra_screens.notifications
 
 import com.elfeky.domain.model.notification.Notification
 

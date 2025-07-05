@@ -15,8 +15,8 @@ import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScree
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintViewModel
+import com.elfeky.devdash.ui.screens.extra_screens.notifications.NotificationScreen
 import com.elfeky.devdash.ui.screens.main_screens.MainScreenHost
-import com.elfeky.devdash.ui.screens.main_screens.inbox.NotificationScreen
 
 @Composable
 fun AppNavigation(
