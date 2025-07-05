@@ -1,15 +1,10 @@
 package com.elfeky.devdash.ui.screens.details_screens.company.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -52,15 +47,18 @@ fun FilterChipRow(
                     onChoiceSelected(selectedChoiceIndex)
                 },
                 label = {
-                    Text(choice)
+                    Text(
+                        choice,
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 },
-                shape = CircleShape,
+                shape = RoundedCornerShape(16.dp),
                 colors = FilterChipDefaults.filterChipColors(
                     containerColor = MaterialTheme.colorScheme.surface.copy(alpha = .6f),
-                    labelColor = MaterialTheme.colorScheme.onBackground,
-                    selectedContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 68f),
-                    selectedLabelColor = MaterialTheme.colorScheme.onBackground,
-                ),
+                    labelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = .6f),
+                    selectedContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = .8f),
+                    selectedLabelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = .8f),
+                )
             )
         }
     }
@@ -73,25 +71,12 @@ fun MyScreenWithChoices() {
     var selectedOption by remember { mutableStateOf<String?>(null) }
 
     DevDashTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Text("Choose an option:")
-            Spacer(Modifier.height(8.dp))
-
-            FilterChipRow(
-                choices = options,
-                onChoiceSelected = { index ->
-                    selectedOption = options[index]
-                },
-                initialSelectedIndex = 0
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text("Selected: ${selectedOption ?: "None"}")
-        }
+        FilterChipRow(
+            choices = options,
+            onChoiceSelected = { index ->
+                selectedOption = options[index]
+            },
+            initialSelectedIndex = 0
+        )
     }
 }

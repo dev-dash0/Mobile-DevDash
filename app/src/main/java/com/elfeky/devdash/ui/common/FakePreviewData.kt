@@ -1,12 +1,12 @@
 package com.elfeky.devdash.ui.common
 
-import com.elfeky.devdash.ui.common.dialogs.project.model.CompanyUiModel
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
 import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.comment.Comment
 import com.elfeky.domain.model.issue.Issue
+import com.elfeky.domain.model.notification.Notification
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.UserProject
 import com.elfeky.domain.model.sprint.Sprint
@@ -205,12 +205,24 @@ val commentList = List(30) { i ->
     )
 }
 
-
-
-val companyList = listOf(
-    CompanyUiModel("Google", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    CompanyUiModel("Microsoft", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    CompanyUiModel("Meta", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    CompanyUiModel("OpenAI", ""),
-    CompanyUiModel("Intel", "")
-)
+val notificationList = List(15) { i ->
+    val issue = issueList[Random.nextInt(issueList.size)]
+    val creationDateTime =
+        LocalDateTime.now().minusMinutes(Random.nextLong(0, 1440))
+    val messages = listOf(
+        "New comment on issue: ${issue.title}",
+        "Issue status updated: ${issue.title}",
+        "You have been assigned to issue: ${issue.title}",
+        "Issue deadline approaching: ${issue.title}",
+        "Sprint started: ${sprintList.random().title}"
+    )
+    Notification(
+        createdAt = creationDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        id = 200 + i,
+        isRead = Random.nextBoolean(),
+        issue = issue,
+        issueId = issue.id,
+        message = messages.random(),
+        userId = userList.random().id
+    )
+}

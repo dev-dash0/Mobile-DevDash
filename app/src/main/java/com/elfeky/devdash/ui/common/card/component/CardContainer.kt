@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,6 +29,7 @@ import com.elfeky.devdash.ui.utils.cardGradientBackground
 @Composable
 fun CardContainer(
     modifier: Modifier = Modifier,
+    shape: Shape = CardDefaults.shape,
     containerColor: Brush = cardGradientBackground,
     contentColor: Color = MaterialTheme.colorScheme.onBackground,
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -37,6 +39,7 @@ fun CardContainer(
 ) {
     Card(
         modifier = modifier,
+        shape = shape,
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent,
             contentColor = contentColor
