@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.elfeky.devdash.ui.common.dialogs.component.DialogContainer
 import com.elfeky.devdash.ui.common.dropdown_menu.model.MenuOption
-import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.sprintStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toSprintStatus
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.toEpochMillis
 import com.elfeky.devdash.ui.utils.toStringDate
+import com.elfeky.domain.model.sprint.Sprint
 import com.elfeky.domain.model.sprint.SprintRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,15 +23,19 @@ import com.elfeky.domain.model.sprint.SprintRequest
 fun SprintDialog(
     onDismiss: () -> Unit,
     onSubmit: (SprintRequest) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    sprint: Sprint? = null
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var summary by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(sprint?.title ?: "") }
+    var description by remember { mutableStateOf(sprint?.description ?: "") }
+    var summary by remember { mutableStateOf(sprint?.summary ?: "") }
 
-    val dateRangeState = rememberDateRangePickerState()
+    val dateRangeState = rememberDateRangePickerState(
+        initialSelectedStartDateMillis = sprint?.startDate?.toEpochMillis(),
+        initialSelectedEndDateMillis = sprint?.endDate?.toEpochMillis()
+    )
 
-    var selectedStatus: MenuOption by remember { mutableStateOf(sprintStatusList[0]) }
+    var selectedStatus: MenuOption by remember { mutableStateOf(sprint?.status.toSprintStatus()) }
 
     DialogContainer(
         title = "Create Sprint",

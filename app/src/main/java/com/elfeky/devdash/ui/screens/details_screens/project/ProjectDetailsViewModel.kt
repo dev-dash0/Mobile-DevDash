@@ -10,6 +10,7 @@ import com.elfeky.domain.usecase.backlog.CreateBacklogIssueUseCase
 import com.elfeky.domain.usecase.backlog.GetBacklogIssuesUseCase
 import com.elfeky.domain.usecase.issue.DeleteIssueUseCase
 import com.elfeky.domain.usecase.issue.GetIssueByIdUseCase
+import com.elfeky.domain.usecase.issue.UpdateIssueUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedIssuesUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedProjectsUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedSprintsUseCase
@@ -25,12 +26,12 @@ import com.elfeky.domain.usecase.project.UpdateProjectUseCase
 import com.elfeky.domain.usecase.sprint.CreateSprintUseCase
 import com.elfeky.domain.usecase.sprint.DeleteSprintUseCase
 import com.elfeky.domain.usecase.sprint.GetProjectSprintsUseCase
-import com.elfeky.domain.usecase.sprint_issue.CreateSprintIssueUseCase
 import com.elfeky.domain.util.Resource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -55,8 +56,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
     private val pinIssueUseCase: PinIssueUseCase,
     private val unpinIssueUseCase: UnpinIssueUseCase,
     private val getBacklogIssuesUseCase: GetBacklogIssuesUseCase,
-    private val createSprintIssueUseCase: CreateSprintIssueUseCase,
     private val getIssueByIdUseCase: GetIssueByIdUseCase,
+    private val updateIssueUseCase: UpdateIssueUseCase
 ) : BaseViewModel<ProjectDetailsReducer.State, ProjectDetailsReducer.Event, ProjectDetailsReducer.Effect>(
     ProjectDetailsReducer.initialState,
     ProjectDetailsReducer()
@@ -73,6 +74,7 @@ class ProjectDetailsViewModel @AssistedInject constructor(
 
     fun onEvent(event: ProjectDetailsReducer.Event) {
         when (event) {
+            is ProjectDetailsReducer.Event.Update.ShowDialog,
             is ProjectDetailsReducer.Event.Update -> sendEvent(event)
 
             else -> sendEventForEffect(event)
@@ -84,50 +86,24 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             internalEffect.collect { effect ->
                 when (effect) {
                     ProjectDetailsReducer.Effect.TriggerReloadAllData -> loadAllProjectData()
-                    ProjectDetailsReducer.Effect.TriggerLoadSprints -> loadSprints()
-                    ProjectDetailsReducer.Effect.TriggerDeleteProject -> {
-                        deleteProject()
-                        sendUiEffect(ProjectDetailsReducer.Effect.DismissDialog)
-                    }
-
-                    is ProjectDetailsReducer.Effect.TriggerUpdateProject -> {
-                        updateProject(effect.projectRequest)
-                        sendUiEffect(ProjectDetailsReducer.Effect.DismissDialog)
-                    }
-
+                    ProjectDetailsReducer.Effect.TriggerDeleteProject -> deleteProject()
+                    is ProjectDetailsReducer.Effect.TriggerUpdateProject -> updateProject(effect.projectRequest)
                     ProjectDetailsReducer.Effect.TriggerToggleProjectPin -> toggleProjectPin()
-                    is ProjectDetailsReducer.Effect.TriggerAddSprint -> {
-                        addSprint(effect.sprint)
-                        sendUiEffect(ProjectDetailsReducer.Effect.DismissDialog)
-                    }
-
-                    is ProjectDetailsReducer.Effect.TriggerDeleteSprint -> {
-                        deleteSprint(effect.sprintId)
-                        sendUiEffect(ProjectDetailsReducer.Effect.DismissDialog)
-                    }
-
-                    is ProjectDetailsReducer.Effect.TriggerAddIssue -> {
-                        createIssue(effect.issueBacklog)
-                        sendUiEffect(ProjectDetailsReducer.Effect.DismissDialog)
-                    }
-
-                    is ProjectDetailsReducer.Effect.TriggerDeleteIssue -> {
-                        deleteIssue(effect.issueId)
-                        sendUiEffect(ProjectDetailsReducer.Effect.DismissDialog)
-                    }
-
+                    is ProjectDetailsReducer.Effect.TriggerAddSprint -> addSprint(effect.sprint)
+                    is ProjectDetailsReducer.Effect.TriggerDeleteSprint -> deleteSprint(effect.sprintId)
+                    is ProjectDetailsReducer.Effect.TriggerAddIssue -> createIssue(effect.issueBacklog)
+                    is ProjectDetailsReducer.Effect.TriggerDeleteIssue -> deleteIssue(effect.issueId)
                     is ProjectDetailsReducer.Effect.TriggerToggleSprintPin -> toggleSprintPin(effect.sprintId)
                     is ProjectDetailsReducer.Effect.TriggerToggleIssuePin -> toggleIssuePin(effect.issueId)
-                    ProjectDetailsReducer.Effect.TriggerLoadBacklogIssues -> loadBacklogIssues()
-                    is ProjectDetailsReducer.Effect.AddSprintIssue -> createSprintIssue(
+                    is ProjectDetailsReducer.Effect.AddSprintIssue -> moveIssueToSprint(
                         effect.issueId,
                         effect.sprintId
                     )
 
                     is ProjectDetailsReducer.Effect.ShowSnackbar,
-                    is ProjectDetailsReducer.Effect.ShowDialog,
-                    ProjectDetailsReducer.Effect.DismissDialog,
                     ProjectDetailsReducer.Effect.NavigateBack,
+                    ProjectDetailsReducer.Effect.TriggerLoadBacklogIssues,
+                    ProjectDetailsReducer.Effect.TriggerLoadSprints,
                     is ProjectDetailsReducer.Effect.NavigateToSprintDetails -> sendUiEffect(effect)
                 }
             }
@@ -136,20 +112,16 @@ class ProjectDetailsViewModel @AssistedInject constructor(
 
     private fun loadAllProjectData() {
         viewModelScope.launch {
-            sendEvent(ProjectDetailsReducer.Event.Update.IsLoading(true))
-            runCatching {
-                loadProject()
-                loadPinnedProjectStatus()
-                loadSprints()
-                loadPinnedSprints()
-                loadPinnedIssues()
-                loadBacklogIssues()
-            }.onSuccess {
-                sendEvent(ProjectDetailsReducer.Event.Update.IsLoading(false))
-            }.onFailure {
-                sendEvent(ProjectDetailsReducer.Event.Update.IsLoading(false))
-                sendUiEffect(ProjectDetailsReducer.Effect.ShowSnackbar("Failed to load all project data."))
+            onEvent(ProjectDetailsReducer.Event.Update.IsLoading(true))
+            coroutineScope {
+                launch { loadProject() }
+                launch { loadPinnedProjectStatus() }
+                launch { loadSprints() }
+                launch { loadPinnedSprints() }
+                launch { loadPinnedIssues() }
+                launch { loadBacklogIssues() }
             }
+            onEvent(ProjectDetailsReducer.Event.Update.IsLoading(false))
         }
     }
 
@@ -160,8 +132,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
     ) {
         resourceFlow.collect { result ->
             when (result) {
-                is Resource.Success -> result.data?.let { sendEvent(successEvent(it)) }
-                is Resource.Error -> sendEvent(errorEvent)
+                is Resource.Success -> result.data?.let { onEvent(successEvent(it)) }
+                is Resource.Error -> onEvent(errorEvent)
                 is Resource.Loading -> Unit
             }
         }
@@ -178,20 +150,20 @@ class ProjectDetailsViewModel @AssistedInject constructor(
     private suspend fun loadPinnedProjectStatus() {
         getPinnedProjectsUseCase().collect { result ->
             when (result) {
-                is Resource.Success -> sendEvent(
+                is Resource.Success -> onEvent(
                     ProjectDetailsReducer.Event.Update.PinnedStatus(
                         result.data?.any { project -> project.id == projectId } == true
                     )
                 )
 
-                is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.PinnedProjectLoadError)
+                is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.PinnedProjectLoadError)
                 else -> Unit
             }
         }
     }
 
     private fun loadSprints() {
-        sendEvent(ProjectDetailsReducer.Event.Update.SprintsFlow(getProjectSprintsUseCase(projectId)))
+        onEvent(ProjectDetailsReducer.Event.Update.SprintsFlow(getProjectSprintsUseCase(projectId)))
     }
 
     private suspend fun loadPinnedSprints() {
@@ -211,7 +183,7 @@ class ProjectDetailsViewModel @AssistedInject constructor(
     }
 
     private fun loadBacklogIssues() {
-        sendEvent(
+        onEvent(
             ProjectDetailsReducer.Event.Update.BacklogIssuesFlow(
                 getBacklogIssuesUseCase(
                     projectId
@@ -225,8 +197,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             deleteProjectUseCase(projectId).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEvent(ProjectDetailsReducer.Event.ProjectAction.DeletionCompleted)
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.ProjectDeleteError)
+                    is Resource.Success -> onEvent(ProjectDetailsReducer.Event.ProjectAction.DeletionCompleted)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.ProjectDeleteError)
                 }
             }
         }
@@ -247,8 +219,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             updateProjectUseCase(projectId, request).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEvent(ProjectDetailsReducer.Event.ProjectAction.UpdateCompleted)
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.ProjectUpdateError)
+                    is Resource.Success -> onEvent(ProjectDetailsReducer.Event.ProjectAction.UpdateCompleted)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.ProjectUpdateError)
                 }
             }
         }
@@ -264,11 +236,11 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             operation.collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        sendEvent(ProjectDetailsReducer.Event.Update.PinnedStatus(!isCurrentlyPinned))
-                        sendEvent(ProjectDetailsReducer.Event.ProjectAction.PinCompleted(!isCurrentlyPinned))
+                        onEvent(ProjectDetailsReducer.Event.Update.PinnedStatus(!isCurrentlyPinned))
+                        onEvent(ProjectDetailsReducer.Event.ProjectAction.PinCompleted(!isCurrentlyPinned))
                     }
 
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.ProjectPinError)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.ProjectPinError)
                     is Resource.Loading -> Unit
                 }
             }
@@ -280,8 +252,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             createSprintUseCase(projectId, sprintRequest).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEvent(ProjectDetailsReducer.Event.SprintAction.CreateCompleted)
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.SprintAddError)
+                    is Resource.Success -> onEvent(ProjectDetailsReducer.Event.SprintAction.CreateCompleted)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.SprintAddError)
                 }
             }
         }
@@ -292,8 +264,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             deleteSprintUseCase(sprintId).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEventForEffect(ProjectDetailsReducer.Event.SprintAction.DeletionCompleted)
-                    is Resource.Error -> sendEventForEffect(ProjectDetailsReducer.Event.Error.SprintDeleteError)
+                    is Resource.Success -> onEvent(ProjectDetailsReducer.Event.SprintAction.DeletionCompleted)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.SprintDeleteError)
                 }
             }
         }
@@ -308,10 +280,10 @@ class ProjectDetailsViewModel @AssistedInject constructor(
                 when (result) {
                     is Resource.Success -> {
                         loadPinnedSprints()
-                        sendEvent(ProjectDetailsReducer.Event.SprintAction.PinCompleted(!isCurrentlyPinned))
+                        onEvent(ProjectDetailsReducer.Event.SprintAction.PinCompleted(!isCurrentlyPinned))
                     }
 
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.SprintPinError)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.SprintPinError)
                     is Resource.Loading -> Unit
                 }
             }
@@ -338,10 +310,10 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             ).collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        sendEvent(ProjectDetailsReducer.Event.IssueAction.CreateCompleted)
+                        onEvent(ProjectDetailsReducer.Event.IssueAction.CreateCompleted)
                     }
 
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.IssueAddError)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssueAddError)
                     is Resource.Loading -> Unit
                 }
             }
@@ -353,8 +325,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
             deleteIssueUseCase(issueId).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEvent(ProjectDetailsReducer.Event.IssueAction.DeletionCompleted)
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.IssueDeleteError)
+                    is Resource.Success -> onEvent(ProjectDetailsReducer.Event.IssueAction.DeletionCompleted)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssueDeleteError)
                 }
             }
         }
@@ -369,69 +341,47 @@ class ProjectDetailsViewModel @AssistedInject constructor(
                 when (result) {
                     is Resource.Success -> {
                         loadPinnedIssues()
-                        sendEvent(ProjectDetailsReducer.Event.IssueAction.PinCompleted(!isCurrentlyPinned))
+                        onEvent(ProjectDetailsReducer.Event.IssueAction.PinCompleted(!isCurrentlyPinned))
                     }
 
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.IssuePinError)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssuePinError)
                     is Resource.Loading -> Unit
                 }
             }
         }
     }
 
-    private fun createSprintIssue(issueId: Int, sprintId: Int) {
+    private fun moveIssueToSprint(issueId: Int, sprintId: Int) {
         viewModelScope.launch {
             getIssueByIdUseCase(issueId).collect { result ->
                 when (result) {
                     is Resource.Success -> {
                         val issueToMove = result.data
                         if (issueToMove == null) {
-                            sendUiEffect(ProjectDetailsReducer.Effect.ShowSnackbar("Failed to find issue to move."))
+                            onEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
                             return@collect
                         }
-                        IssueFormFields(
-                            priority = issueToMove.priority,
-                            status = issueToMove.status,
-                            title = issueToMove.title,
-                            type = issueToMove.type,
-                            labels = issueToMove.labels,
-                            description = issueToMove.description,
-                            isBacklog = false,
-                            startDate = issueToMove.startDate,
-                            deadline = issueToMove.deadline,
-                            deliveredDate = issueToMove.deliveredDate,
-                            lastUpdate = issueToMove.lastUpdate
-                        )
-                        createSprintIssueUseCase(
+
+                        updateIssueUseCase(
                             sprintId = sprintId,
-                            priority = issueToMove.priority,
-                            status = issueToMove.status,
-                            title = issueToMove.title,
-                            type = issueToMove.type,
-                            description = issueToMove.description ?: "",
-                            isBacklog = false,
-                            startDate = issueToMove.startDate,
-                            deadline = issueToMove.deadline,
-                            deliveredDate = issueToMove.deliveredDate ?: "",
-                            lastUpdate = issueToMove.lastUpdate,
-                            labels = issueToMove.labels,
+                            issue = issueToMove,
                             attachmentFile = null,
                             attachmentMediaType = "file",
                         ).collect { createResult ->
                             when (createResult) {
                                 is Resource.Success -> {
-                                    sendEvent(ProjectDetailsReducer.Event.IssueAction.MovedToSprintCompleted)
+                                    onEvent(ProjectDetailsReducer.Event.IssueAction.MovedToSprintCompleted)
                                     loadBacklogIssues()
                                     loadSprints()
                                 }
 
-                                is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
+                                is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
                                 is Resource.Loading -> Unit
                             }
                         }
                     }
 
-                    is Resource.Error -> sendEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
+                    is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
                     is Resource.Loading -> Unit
                 }
             }

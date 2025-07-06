@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.projectStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.sprintStatusList
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
 
 interface MenuOption {
@@ -28,7 +29,8 @@ enum class Priority(
     Low(Icons.Outlined.Flag, Color.Gray, "Low"),
     Medium(Icons.Outlined.Flag, Color.Blue, "Medium"),
     High(Icons.Outlined.Flag, Color(0xFFCC5210), "High"),
-    Urgent(Icons.Outlined.Flag, Color.Red, "Urgent");
+    Urgent(Icons.Outlined.Flag, Color.Red, "Urgent"),
+    Critical(Icons.Outlined.Flag, Color.Red, "Critical");
 
     companion object {
         val priorityList = entries
@@ -42,7 +44,7 @@ enum class Status(
     @FloatRange(from = 0.0, to = 1.0) val percentage: Float? = null
 ) : MenuOption {
     Backlog(Icons.Default.Circle, Color(0xFFC2BFBF), "BackLog", 0f),
-    ToDo(Icons.Default.Circle, Color(0xFF8E8E8E), "To do", 0.25f),
+    ToDo(Icons.Default.Circle, Color(0xFF8E8E8E), "to do", 0.25f),
     InProgress(Icons.Default.Circle, Color(0xFF4854F1), "In Progress", 0.5f),
     Planning(Icons.Default.Circle, Color(0xFFC2BFBF), "Planning", 0.25f),
     Planned(Icons.Default.Circle, Color(0xFFC2BFBF), "Planned", 0.25f),
@@ -81,5 +83,8 @@ fun String?.toIssueStatus(): Status = issueStatusList.find { it.text == this } ?
 
 fun String?.toProjectStatus(): Status =
     projectStatusList.find { it.text == this } ?: projectStatusList[0]
+
+fun String?.toSprintStatus(): Status =
+    sprintStatusList.find { it.text == this } ?: sprintStatusList[0]
 
 fun String?.toType(): Type = typeList.find { it.text == this } ?: typeList[0]

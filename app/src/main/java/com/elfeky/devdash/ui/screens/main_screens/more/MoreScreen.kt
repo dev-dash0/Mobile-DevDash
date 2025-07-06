@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,95 +46,100 @@ fun MoreScreen(
 
     val state = viewModel.state.value
 
-
-    Column(
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .padding(vertical = 32.dp, horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        IconAndTextMoreItem(
-            primaryText = "Personal Information",
-            secondaryText = "Your information",
-            logo = Icons.Default.ManageAccounts,
-            contentDescription = "Personal Information",
-            onItemClick = onProfileNavigate
-        )
-        HorizontalDivider()
-        IconAndTextMoreItem(
-            primaryText = "Update Password",
-            secondaryText = "Reset your password",
-            logo = Icons.Default.Lock,
-            contentDescription = "Update Password",
+            .padding(vertical = 32.dp, horizontal = 16.dp)
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            showChangePasswordDialog = true
-        }
-        HorizontalDivider()
-        IconAndTextMoreItem(
-            primaryText = "Delete Account",
-            secondaryText = "Remove your account",
-            logo = Icons.Default.Delete,
-            contentDescription = "Logout",
-        ) {
-            showDeleteAccountDialog = true
-        }
-        HorizontalDivider()
-        Spacer(Modifier.height(16.dp))
-        IconAndTextMoreItem(
-            primaryText = "Logout",
-            secondaryText = "End Session",
-            logo = Icons.AutoMirrored.Filled.Logout,
-            contentDescription = "Logout",
-        ) {
-            showLogoutDialog = true
-        }
-
-        if (showChangePasswordDialog) {
-            ChangePasswordDialog(
-                onDismiss = { showChangePasswordDialog = false },
-                onConfirm = { currentPassword, newPassword ->
-                    viewModel.changePassword(
-                        changePasswordRequest = ChangePasswordRequest(
-                            currentPassword = currentPassword,
-                            newPassword = newPassword
-                        )
-                    )
-                },
-                error = state.changePasswordError
+            IconAndTextMoreItem(
+                primaryText = "Personal Information",
+                secondaryText = "Your information",
+                logo = Icons.Default.ManageAccounts,
+                contentDescription = "Personal Information",
+                onItemClick = onProfileNavigate
             )
-        }
-
-
-        if (showLogoutDialog) {
-            SureAlertDialog(
-                onDismiss = { showLogoutDialog = false },
-                onConfirm = { viewModel.logout() },
-                action = "Logout",
-                error = state.logoutError
-            )
-        }
-
-        if (showDeleteAccountDialog) {
-            SureAlertDialog(
-                onDismiss = { showDeleteAccountDialog = false },
-                onConfirm = { viewModel.deleteAccount() },
-                action = "Delete Account",
-                error = state.deleteAccountError
-            )
-        }
-
-        if (state.passwordChanged) {
-            showChangePasswordDialog = false
-            LaunchedEffect(Unit) {
-                Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
+            HorizontalDivider()
+            IconAndTextMoreItem(
+                primaryText = "Update Password",
+                secondaryText = "Reset your password",
+                logo = Icons.Default.Lock,
+                contentDescription = "Update Password",
+            ) {
+                showChangePasswordDialog = true
             }
-        }
+            HorizontalDivider()
+            IconAndTextMoreItem(
+                primaryText = "Delete Account",
+                secondaryText = "Remove your account",
+                logo = Icons.Default.Delete,
+                contentDescription = "Logout",
+            ) {
+                showDeleteAccountDialog = true
+            }
+            HorizontalDivider()
+            Spacer(Modifier.height(16.dp))
+            IconAndTextMoreItem(
+                primaryText = "Logout",
+                secondaryText = "End Session",
+                logo = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = "Logout",
+            ) {
+                showLogoutDialog = true
+            }
+
+            if (showChangePasswordDialog) {
+                ChangePasswordDialog(
+                    onDismiss = { showChangePasswordDialog = false },
+                    onConfirm = { currentPassword, newPassword ->
+                        viewModel.changePassword(
+                            changePasswordRequest = ChangePasswordRequest(
+                                currentPassword = currentPassword,
+                                newPassword = newPassword
+                            )
+                        )
+                    },
+                    error = state.changePasswordError
+                )
+            }
 
 
-        if (state.isLoggedOut || state.isAccountDeleted) {
-            showLogoutDialog = false
-            showDeleteAccountDialog = false
-            onLogout()
+            if (showLogoutDialog) {
+                SureAlertDialog(
+                    onDismiss = { showLogoutDialog = false },
+                    onConfirm = { viewModel.logout() },
+                    action = "Logout",
+                    error = state.logoutError
+                )
+            }
+
+            if (showDeleteAccountDialog) {
+                SureAlertDialog(
+                    onDismiss = { showDeleteAccountDialog = false },
+                    onConfirm = { viewModel.deleteAccount() },
+                    action = "Delete Account",
+                    error = state.deleteAccountError
+                )
+            }
+
+            if (state.passwordChanged) {
+                showChangePasswordDialog = false
+                LaunchedEffect(Unit) {
+                    Toast.makeText(context, "Password Updated", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+
+            if (state.isLoggedOut || state.isAccountDeleted) {
+                showLogoutDialog = false
+                showDeleteAccountDialog = false
+                onLogout()
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.common.component
 
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -41,6 +42,7 @@ fun InputField(
     isPhoneNumber: Boolean = false,
     singleLine: Boolean = true,
     imeAction: ImeAction = ImeAction.Next,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     supportingText: @Composable (() -> Unit)? = null,
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -82,7 +84,8 @@ fun InputField(
         } else null,
         supportingText = supportingText,
         shape = shape,
-        colors = colors
+        colors = colors,
+        keyboardActions = keyboardActions
     )
 }
 

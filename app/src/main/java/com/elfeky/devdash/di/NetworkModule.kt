@@ -1,15 +1,21 @@
 package com.elfeky.devdash.di
 
+import com.elfeky.data.remote.AssignUserIssueApiService
 import com.elfeky.data.remote.AuthenticationApiService
 import com.elfeky.data.remote.BacklogApiService
+import com.elfeky.data.remote.CommentApiService
 import com.elfeky.data.remote.DashBoardApiService
 import com.elfeky.data.remote.IssueApiService
+import com.elfeky.data.remote.JoinApiService
+import com.elfeky.data.remote.NotificationApiService
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.data.remote.ProjectApiService
+import com.elfeky.data.remote.SearchApiService
 import com.elfeky.data.remote.SprintApiService
 import com.elfeky.data.remote.SprintIssueApiService
 import com.elfeky.data.remote.TenantApiService
 import com.elfeky.domain.util.Constants.BASE_URL
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,6 +95,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideSearchApiService(retrofit: Retrofit): SearchApiService {
+        return retrofit.create(SearchApiService::class.java)
+    }
+
+    @Provides
+    fun provideGson(): Gson = Gson()
+
+    @Provides
+    @Singleton
     fun provideIssueApiService(retrofit: Retrofit): IssueApiService {
         return retrofit.create(IssueApiService::class.java)
     }
@@ -98,4 +113,29 @@ object NetworkModule {
     fun provideSprintIssueApiService(retrofit: Retrofit): SprintIssueApiService {
         return retrofit.create(SprintIssueApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideCommentApiService(retrofit: Retrofit): CommentApiService {
+        return retrofit.create(CommentApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationApiService(retrofit: Retrofit): NotificationApiService {
+        return retrofit.create(NotificationApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAssignUserIssueApiService(retrofit: Retrofit): AssignUserIssueApiService {
+        return retrofit.create(AssignUserIssueApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideJoinApiService(retrofit: Retrofit): JoinApiService {
+        return retrofit.create(JoinApiService::class.java)
+    }
+
 }

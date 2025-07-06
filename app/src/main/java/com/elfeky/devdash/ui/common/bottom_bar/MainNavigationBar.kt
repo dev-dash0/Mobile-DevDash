@@ -22,9 +22,11 @@ import androidx.compose.ui.unit.sp
 import com.elfeky.devdash.ui.theme.Lavender
 import com.elfeky.devdash.ui.theme.NavyBlue
 import com.elfeky.devdash.ui.theme.White
+import com.elfeky.domain.model.BottomNavigationItem
 
 @Composable
 fun MainNavigationBar(
+    navigationItems: List<BottomNavigationItem>,
     isSelected: (route: String) -> Boolean,
     modifier: Modifier = Modifier,
     onItemClick: (route: String) -> Unit

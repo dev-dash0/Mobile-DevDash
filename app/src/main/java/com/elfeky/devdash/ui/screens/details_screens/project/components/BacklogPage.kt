@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.details_screens.project.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,24 +14,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.elfeky.devdash.ui.common.issueList
 import com.elfeky.devdash.ui.common.sprintList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.sprint.Sprint
+import kotlinx.coroutines.flow.flowOf
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BacklogPage(
-    sprints: List<Sprint>,
-    backlogIssues: List<Issue>,
+    sprints: LazyPagingItems<Sprint>, // Changed to LazyPagingItems
+    backlogIssues: LazyPagingItems<Issue>, // Changed to LazyPagingItems
     pinnedIssues: List<Issue>,
     pinnedSprints: List<Sprint>,
     onIssueDroppedOnSprint: (Int, Int) -> Unit,
@@ -54,7 +56,7 @@ fun BacklogPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SprintSection(
-                    sprints = sprints,
+                    sprints = sprints, // Pass LazyPagingItems
                     pinnedSprints = pinnedSprints,
                     onIssueDroppedOnSprint = onIssueDroppedOnSprint,
                     onSprintClicked = onSprintClicked,
@@ -84,7 +86,7 @@ fun BacklogPage(
 
         CardAnimatedSize(title = "Backlog") {
             BacklogSection(
-                backlogIssues = backlogIssues,
+                backlogIssues = backlogIssues, // Pass LazyPagingItems
                 pinnedIssues = pinnedIssues,
                 onSwipeToPin = onSwipeToPinIssue,
                 onSwipeToDelete = onSwipeToDeleteIssue,
@@ -97,8 +99,8 @@ fun BacklogPage(
 @Preview
 @Composable
 fun BacklogPagePreview() {
-    var sprints by remember { mutableStateOf(sprintList) }
-    var backlogIssues by remember { mutableStateOf(issueList) }
+    var sprints = flowOf(PagingData.from(sprintList)).collectAsLazyPagingItems()
+    var backlogIssues = flowOf(PagingData.from(issueList)).collectAsLazyPagingItems()
 
     DevDashTheme {
         BacklogPage(

@@ -1,20 +1,30 @@
 package com.elfeky.devdash.di
 
+import com.elfeky.data.repo.AssignUserIssueRepoImpl
 import com.elfeky.data.repo.AuthenticationRepoImpl
 import com.elfeky.data.repo.BacklogRepoImpl
+import com.elfeky.data.repo.CommentRepoImpl
 import com.elfeky.data.repo.DashBoardRepoImpl
 import com.elfeky.data.repo.IssueRepoImpl
+import com.elfeky.data.repo.JoinRepoImpl
+import com.elfeky.data.repo.NotificationRepoImpl
 import com.elfeky.data.repo.PinRepoImpl
 import com.elfeky.data.repo.ProjectRepoImpl
+import com.elfeky.data.repo.SearchRepoImpl
 import com.elfeky.data.repo.SprintIssueRepoImpl
 import com.elfeky.data.repo.SprintRepoImpl
 import com.elfeky.data.repo.TenantRepoImpl
+import com.elfeky.domain.repo.AssignUserIssueRepo
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.repo.BacklogRepo
+import com.elfeky.domain.repo.CommentRepo
 import com.elfeky.domain.repo.DashBoardRepo
 import com.elfeky.domain.repo.IssueRepo
+import com.elfeky.domain.repo.JoinRepo
+import com.elfeky.domain.repo.NotificationRepo
 import com.elfeky.domain.repo.PinRepo
 import com.elfeky.domain.repo.ProjectRepo
+import com.elfeky.domain.repo.SearchRepo
 import com.elfeky.domain.repo.SprintIssueRepo
 import com.elfeky.domain.repo.SprintRepo
 import com.elfeky.domain.repo.TenantRepo
@@ -72,6 +82,11 @@ abstract class RepoModule {
 
     @Binds
     @Singleton
+    abstract fun bindSearchRepo(
+        searchRepoImpl: SearchRepoImpl
+    ): SearchRepo
+    @Binds
+    @Singleton
     abstract fun bindIssueRepo(
         issueRepoImpl: IssueRepoImpl
     ): IssueRepo
@@ -81,4 +96,29 @@ abstract class RepoModule {
     abstract fun bindSprintIssueRepo(
         sprintIssueRepoImpl: SprintIssueRepoImpl
     ): SprintIssueRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindAssignUserIssueRepo(
+        assignUserIssueRepoImpl: AssignUserIssueRepoImpl
+    ): AssignUserIssueRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindJoinRepo(
+        joinRepoImpl: JoinRepoImpl
+    ): JoinRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindCommentRepo(
+        commentRepoImpl: CommentRepoImpl
+    ): CommentRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepo(
+        notificationRepoImpl: NotificationRepoImpl
+    ): NotificationRepo
+
 }

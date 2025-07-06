@@ -26,12 +26,19 @@ fun Long.toStringDate(pattern: String): String =
 
 
 fun String.toEpochMillis(): Long? {
-    return runCatching {
-        LocalDate.parse(this, dateFormatter)
-            .atStartOfDay(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
-    }.getOrNull()
+    if (this.length == 10)
+        return runCatching {
+            LocalDate.parse(this, dateFormatter)
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        }.getOrNull()
+    else
+        return runCatching {
+            LocalDateTime.parse(this, dateTimeFormatter)
+                .toInstant(ZoneOffset.UTC)
+                .toEpochMilli()
+        }.getOrNull()
 }
 
 fun String.toEpochMillis(format: DateTimeFormatter): Long? {
@@ -41,8 +48,3 @@ fun String.toEpochMillis(format: DateTimeFormatter): Long? {
             .toEpochMilli()
     }.getOrNull()
 }
-
-fun nowLocalDate(): String =
-    LocalDate
-        .now()
-        .format(dateFormatter)

@@ -30,34 +30,37 @@ class IssueRepoImpl @Inject constructor(
         status: String,
         title: String,
         type: String,
-        description: String,
+        description: String?,
         isBacklog: Boolean,
-        startDate: String,
-        deadline: String,
-        deliveredDate: String,
-        lastUpdate: String,
-        labels: String,
+        startDate: String?,
+        deadline: String?,
+        deliveredDate: String?,
+        lastUpdate: String?,
+        labels: String?,
         attachmentFile: File?,
-        attachmentMediaType: String?
-    ): Issue {
+        attachmentMediaType: String?,
+        sprintId: Int?
+    ) {
         val priorityBody = priority.toRequestBody("text/plain".toMediaTypeOrNull())
         val statusBody = status.toRequestBody("text/plain".toMediaTypeOrNull())
         val titleBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
         val typeBody = type.toRequestBody("text/plain".toMediaTypeOrNull())
-        val descriptionBody = description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val descriptionBody = description?.toRequestBody("text/plain".toMediaTypeOrNull())
         val isBacklogBody = isBacklog.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val startDateBody = startDate.toRequestBody("text/plain".toMediaTypeOrNull())
-        val deadlineBody = deadline.toRequestBody("text/plain".toMediaTypeOrNull())
-        val deliveredDateBody = deliveredDate.toRequestBody("text/plain".toMediaTypeOrNull())
-        val lastUpdateBody = lastUpdate.toRequestBody("text/plain".toMediaTypeOrNull())
-        val labelsBody = labels.toRequestBody("text/plain".toMediaTypeOrNull())
+        val startDateBody = startDate?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val deadlineBody = deadline?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val deliveredDateBody = deliveredDate?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val lastUpdateBody = lastUpdate?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val labelsBody = labels?.toRequestBody("text/plain".toMediaTypeOrNull())
+        val sprintId = sprintId?.toString()?.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val attachmentPart = attachmentFile?.let { file ->
             val requestFile =
                 file.asRequestBody(attachmentMediaType?.toMediaTypeOrNull())
             MultipartBody.Part.createFormData("attachment", file.name, requestFile)
         }
-        return issueApiService.updateIssue(
+
+        issueApiService.updateIssue(
             accessToken = "Bearer $accessToken",
             id = id,
             priority = priorityBody,
@@ -71,8 +74,9 @@ class IssueRepoImpl @Inject constructor(
             deliveredDate = deliveredDateBody,
             attachment = attachmentPart,
             lastUpdate = lastUpdateBody,
-            labels = labelsBody
-        ).result.issue
+            labels = labelsBody,
+            sprintId = sprintId
+        )
     }
 
     override suspend fun deleteIssue(accessToken: String, id: Int) {

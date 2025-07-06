@@ -1,54 +1,49 @@
 package com.elfeky.devdash.ui.common.card.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.common.component.StatusIndicator
-import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 
 @Composable
 fun CardTitle(
-    status: Status,
-    issueTitle: String,
     date: String,
+    issueTitle: String,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.labelLarge
+    dateTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
+    titleTextStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+    leadingIcon: @Composable (RowScope.() -> Unit)
 ) {
-    Row(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        Text(
+            text = date,
+            modifier = Modifier.align(Alignment.End),
+            style = dateTextStyle,
+            color = MaterialTheme.colorScheme.secondary
+        )
+
         Row(
+            modifier = Modifier.height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StatusIndicator(status)
-            Text(text = issueTitle, style = textStyle)
-        }
+            leadingIcon()
 
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.calender_ic),
-                contentDescription = "Date",
-                modifier = Modifier.size(18.dp)
-            )
-            Text(text = date, style = textStyle)
+            Text(text = issueTitle, style = titleTextStyle)
         }
     }
 }

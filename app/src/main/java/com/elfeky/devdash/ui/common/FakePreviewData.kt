@@ -1,8 +1,12 @@
 package com.elfeky.devdash.ui.common
 
-import com.elfeky.devdash.ui.common.dialogs.project.model.CompanyUiModel
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority.Companion.priorityList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
+import com.elfeky.devdash.ui.common.dropdown_menu.model.Type.Companion.typeList
 import com.elfeky.domain.model.account.UserProfile
+import com.elfeky.domain.model.comment.Comment
 import com.elfeky.domain.model.issue.Issue
+import com.elfeky.domain.model.notification.Notification
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.UserProject
 import com.elfeky.domain.model.sprint.Sprint
@@ -26,7 +30,8 @@ val userList = (1..20).map { id ->
         lastName = "Last$id",
         userName = "user$id",
         phoneNumber = "${100 + id}-${200 + id}-${300 + id}",
-        birthday = "199${id % 10}-0${id % 12 + 1}-0${id % 28 + 1}"
+        birthday = "199${id % 10}-0${id % 12 + 1}-0${id % 28 + 1}",
+        personalTenantId = 1
     )
 }
 
@@ -36,9 +41,9 @@ val issueList = List(20) { i ->
     val startDateTime = creationDateTime.plusDays(Random.nextLong(0, 30))
     val deadlineDateTime = startDateTime.plusDays(Random.nextLong(7, 60))
     val assignedUsers = userList.shuffled().take(Random.nextInt(1, 4))
-    val statusOptions = listOf("To Do", "In Progress", "Done", "Blocked")
-    val priorityOptions = listOf("High", "Medium", "Low")
-    val issueTypes = listOf("Story", "Bug", "Task", "Epic")
+    val statusOptions = issueStatusList
+    val priorityOptions = priorityList
+    val issueTypes = typeList
     val descriptions = listOf(
         "Implement user authentication module.",
         "Fix critical bug in payment gateway.",
@@ -46,7 +51,7 @@ val issueList = List(20) { i ->
         "Design new dashboard UI.",
         "Write unit tests for API endpoints."
     )
-    val labels = labelList.shuffled().take(Random.nextInt(1, 3)).joinToString(",")
+    val labels = labelList.shuffled().take(Random.nextInt(1, 3)).joinToString(" ")
 
     Issue(
         assignedUsers = assignedUsers,
@@ -64,14 +69,14 @@ val issueList = List(20) { i ->
         labels = labels,
         lastUpdate = LocalDateTime.now().minusHours(Random.nextLong(0, 24))
             .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-        priority = priorityOptions.random(),
+        priority = priorityOptions.random().text,
         projectId = Random.nextInt(1, 5),
         sprintId = if (Random.nextBoolean()) Random.nextInt(1, 6) else null,
         startDate = startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-        status = statusOptions.random(),
+        status = statusOptions.random().text,
         tenantId = 1000 + Random.nextInt(1, 4),
         title = "Issue $id - ${descriptions.random()}",
-        type = issueTypes.random()
+        type = issueTypes.random().text
     )
 }
 
@@ -172,10 +177,52 @@ val projectList = List(10) { i ->
     )
 }
 
-val companyList = listOf(
-    CompanyUiModel("Google", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    CompanyUiModel("Microsoft", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    CompanyUiModel("Meta", "https://freesvg.org/img/publicdomainq-0006224bvmrqd.png"),
-    CompanyUiModel("OpenAI", ""),
-    CompanyUiModel("Intel", "")
-)
+val commentList = List(30) { i ->
+    val createdBy = userList[Random.nextInt(userList.size)]
+    val creationDateTime = LocalDateTime.now().minusHours(Random.nextLong(0, 72))
+    val issue = issueList[Random.nextInt(issueList.size)]
+
+    Comment(
+        content = "This is comment number ${i + 1}. ${
+            listOf(
+                "Great work!",
+                "Needs review.",
+                "Can you elaborate?",
+                "Looks good to me.",
+                "I have a question about this."
+            ).random()
+        }",
+        createdBy = createdBy,
+        createdById = createdBy.id,
+        creationDate = creationDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        issueId = issue.id,
+        projectId = issue.projectId,
+        sprintId = issue.sprintId ?: Random.nextInt(
+            1,
+            6
+        ), // Assign to a random sprint if issue is not in one
+        tenantId = issue.tenantId
+    )
+}
+
+val notificationList = List(15) { i ->
+    val issue = issueList[Random.nextInt(issueList.size)]
+    val creationDateTime =
+        LocalDateTime.now().minusMinutes(Random.nextLong(0, 1440))
+    val messages = listOf(
+        "New comment on issue: ${issue.title}",
+        "Issue status updated: ${issue.title}",
+        "You have been assigned to issue: ${issue.title}",
+        "Issue deadline approaching: ${issue.title}",
+        "Sprint started: ${sprintList.random().title}"
+    )
+    Notification(
+        createdAt = creationDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        id = 200 + i,
+        isRead = Random.nextBoolean(),
+        issue = issue,
+        issueId = issue.id,
+        message = messages.random(),
+        userId = userList.random().id
+    )
+}
