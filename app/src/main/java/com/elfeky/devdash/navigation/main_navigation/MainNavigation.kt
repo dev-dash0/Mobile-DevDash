@@ -21,21 +21,19 @@ fun MainNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = MainScreen.HomeScreen.route
+        startDestination = MainScreen.HomeScreen.route,
+        modifier = modifier
     ) {
         composable(route = MainScreen.HomeScreen.route) {
-            HomeScreen(modifier = modifier)
+            HomeScreen()
         }
 
         composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen(
-                modifier = modifier,
-                onCompanyClick = onCompanyDetailsNavigation
-            )
+            CompanyScreen(onNavigateToCompanyDetails = onCompanyDetailsNavigation)
         }
 
         composable(route = MainScreen.CalenderScreen.route) {
-            CalenderScreen(modifier = modifier)
+            CalenderScreen()
         }
 
         navigation(
@@ -52,7 +50,7 @@ fun MainNavigation(
             }
 
             composable(route = MainScreen.ProfileScreen.route) {
-                ProfileScreen(modifier = modifier)
+                ProfileScreen()
             }
         }
     }

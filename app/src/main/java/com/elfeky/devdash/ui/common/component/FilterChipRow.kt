@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.details_screens.company.components
+package com.elfeky.devdash.ui.common.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -52,7 +52,7 @@ fun FilterChipRow(
                         style = MaterialTheme.typography.labelLarge
                     )
                 },
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = FilterChipDefaults.filterChipColors(
                     containerColor = MaterialTheme.colorScheme.surface.copy(alpha = .6f),
                     labelColor = MaterialTheme.colorScheme.onBackground.copy(alpha = .6f),

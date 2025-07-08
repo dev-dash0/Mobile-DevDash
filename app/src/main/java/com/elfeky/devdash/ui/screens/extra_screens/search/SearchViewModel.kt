@@ -11,15 +11,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
-//    private val recentSearchesRepository: RecentSearchesRepository,
 ) : BaseViewModel<SearchReducer.State, SearchReducer.Event, SearchReducer.Effect>(
     SearchReducer.initialState,
     SearchReducer()
 ) {
-
     init {
         observeEffects()
-//        loadRecentSearches()
     }
 
     fun onEvent(event: SearchReducer.Event) {
@@ -36,64 +33,37 @@ class SearchScreenViewModel @Inject constructor(
             internalEffect.collect { effect ->
                 when (effect) {
                     is SearchReducer.Effect.TriggerSearch -> performSearch(effect.query)
-//                    is SearchReducer.Effect.SaveRecentSearch -> saveRecentSearch(effect.searchResult)
-//                    SearchReducer.Effect.ClearRecentSearches -> clearRecentSearches()
                     SearchReducer.Effect.NavigateBack,
                     is SearchReducer.Effect.ShowSnackbar,
-                    is SearchReducer.Effect.NavigateToCompanyDetails, // If applicable
-                    is SearchReducer.Effect.NavigateToProjectDetails, // If applicable
-                    is SearchReducer.Effect.NavigateToIssueDetails -> sendUiEffect(effect) // If applicable
+                    is SearchReducer.Effect.NavigateToCompanyDetails,
+                    is SearchReducer.Effect.NavigateToProjectDetails,
+                    is SearchReducer.Effect.NavigateToIssueDetails -> sendUiEffect(effect)
                 }
             }
         }
     }
 
-//    private fun loadRecentSearches() {
-//        viewModelScope.launch {
-//            recentSearchesRepository.getRecentSearches().collect { searches ->
-//                sendEvent(SearchReducer.Event.Update.RecentSearches(searches))
-//            }
-//        }
-//    }
-
     private fun performSearch(query: String) {
         viewModelScope.launch {
-            sendEvent(SearchReducer.Event.Update.IsLoading(true))
+            onEvent(SearchReducer.Event.Update.IsLoading(true))
             searchUseCase(query).collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        sendEvent(SearchReducer.Event.Update.SearchResults(result.data))
-//                        result.data?.let {
-//                            sendInternalEffect(SearchReducer.Effect.SaveRecentSearch(it))
-//                        }
+                        onEvent(SearchReducer.Event.Update.SearchResults(result.data))
                     }
 
                     is Resource.Error -> {
-                        sendEvent(
+                        onEvent(
                             SearchReducer.Event.Error.SearchLoadError(
                                 result.message ?: "Unknown error"
                             )
                         )
                     }
 
-                    is Resource.Loading -> Unit // Handled by initial isLoading(true)
+                    is Resource.Loading -> Unit
                 }
             }
-            sendEvent(SearchReducer.Event.Update.IsLoading(false))
+            onEvent(SearchReducer.Event.Update.IsLoading(false))
         }
     }
-
-//    private fun saveRecentSearch(search: Search) {
-//        viewModelScope.launch {
-//            recentSearchesRepository.addRecentSearch(search)
-//            loadRecentSearches() // Reload to update the UI
-//        }
-//    }
-//
-//    private fun clearRecentSearches() {
-//        viewModelScope.launch {
-//            recentSearchesRepository.clearRecentSearches()
-//            sendEvent(SearchReducer.Event.Update.RecentSearches(emptyList()))
-//        }
-//    }
 }

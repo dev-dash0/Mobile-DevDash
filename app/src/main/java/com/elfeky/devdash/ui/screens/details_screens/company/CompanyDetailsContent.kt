@@ -25,11 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.elfeky.devdash.ui.common.component.FilterChipRow
 import com.elfeky.devdash.ui.common.projectList
 import com.elfeky.devdash.ui.common.tab_row.CustomTabRow
 import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.screens.details_screens.company.components.CompanyInfoPage
-import com.elfeky.devdash.ui.screens.details_screens.company.components.FilterChipRow
 import com.elfeky.devdash.ui.screens.details_screens.company.components.ProjectList
 import com.elfeky.devdash.ui.screens.details_screens.components.ScreenContainer
 import com.elfeky.devdash.ui.theme.DevDashTheme

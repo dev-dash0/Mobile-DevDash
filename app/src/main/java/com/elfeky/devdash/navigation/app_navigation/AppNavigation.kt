@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.elfeky.devdash.navigation.main_navigation.MainScreen
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScreen
@@ -16,6 +15,7 @@ import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewM
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintViewModel
 import com.elfeky.devdash.ui.screens.extra_screens.notifications.NotificationScreen
+import com.elfeky.devdash.ui.screens.extra_screens.search.SearchScreen
 import com.elfeky.devdash.ui.screens.main_screens.MainScreenHost
 
 @Composable
@@ -34,9 +34,9 @@ fun AppNavigation(
 
         composable(AppScreen.MainScreen.route) {
             MainScreenHost(
-                onSearchNavigate = {},
+                onSearchNavigate = { navController.navigate(AppScreen.SearchScreen.route) },
                 onNotificationNavigate = { navController.navigate(AppScreen.NotificationScreen.route) },
-                onCompanyDetailsNavigate = { navController.navigate(MainScreen.CompanyDetails.route + "/$it") },
+                onCompanyDetailsNavigate = { navController.navigate(AppScreen.CompanyDetails.route + "/$it") },
                 onLogout = {
                     navController.navigate(AppScreen.AuthScreens.route) {
                         popUpTo(0) { inclusive = true }
@@ -46,7 +46,7 @@ fun AppNavigation(
         }
 
         composable(
-            route = MainScreen.CompanyDetails.route + "/{id}",
+            route = AppScreen.CompanyDetails.route + "/{id}",
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
             val companyId = it.arguments?.getInt("id")!!
@@ -106,6 +106,15 @@ fun AppNavigation(
 
         composable(AppScreen.NotificationScreen.route) {
             NotificationScreen()
+        }
+
+        composable(AppScreen.SearchScreen.route) {
+            SearchScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCompanyDetails = { navController.navigate(AppScreen.CompanyDetails.route + "/$it") },
+                onNavigateToProjectDetails = { navController.navigate(AppScreen.ProjectDetailsScreen.route + "/$it") },
+                onNavigateToIssueDetails = { },
+            )
         }
     }
 }

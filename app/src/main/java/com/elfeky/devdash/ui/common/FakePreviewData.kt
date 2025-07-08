@@ -35,6 +35,24 @@ val userList = (1..20).map { id ->
     )
 }
 
+val companyList = List(5) { i ->
+    val id = 1000 + i
+    Tenant(
+        description = "A dynamic and forward-thinking organization dedicated to delivering innovative solutions for company ${i + 1}.",
+        id = id,
+        image = if (i % 2 == 0) "https://example.com/logos/company$id.png" else null,
+        joinedUsers = userList.shuffled().take(Random.nextInt(10, 20)),
+        keywords = listOf("Tech", "Software", "Innovation", "Startup", "Enterprise").shuffled()
+            .take(Random.nextInt(2, 4)).joinToString(", "),
+        name = "Company ${'A' + i}",
+        owner = userList[i % userList.size],
+        ownerID = userList[i % userList.size].id,
+        role = listOf("Admin", "Owner", null).random(),
+        tenantCode = "COMP-${format("%03d", id)}",
+        tenantUrl = "https://company${'a' + i}.example.com"
+    )
+}
+
 val issueList = List(20) { i ->
     val id = 100 + i
     val creationDateTime = LocalDateTime.now().minusDays(Random.nextLong(0, 365))

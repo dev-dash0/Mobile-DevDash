@@ -84,7 +84,7 @@ fun ScreenContainer(
 }
 
 @Composable
-private fun CreateFloatingActionButton(onCreateClick: () -> Unit) {
+fun CreateFloatingActionButton(onCreateClick: () -> Unit) {
     FloatingActionButton(
         onClick = onCreateClick,
         containerColor = MaterialTheme.colorScheme.primary,

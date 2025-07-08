@@ -11,6 +11,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface TenantApiService {
     @POST("/api/Tenant")
@@ -19,8 +20,12 @@ interface TenantApiService {
         @Body request: TenantRequest
     ): ServiceResponse<TenantResult>
 
-    @GET("/api/Tenant")
-    suspend fun getCompanies(@Header("Authorization") accessToken: String): ServiceResponse<List<Tenant>>
+    @GET("/api/Tenant/tenants")
+    suspend fun getCompanies(
+        @Header("Authorization") accessToken: String,
+        @Query("pageSize") pageSize: Int,
+        @Query("pageNumber") pageNumber: Int
+    ): ServiceResponse<List<Tenant>>
 
     @GET("/api/Tenant/{tenantId}")
     suspend fun getCompanyById(

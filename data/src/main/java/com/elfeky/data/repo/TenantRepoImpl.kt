@@ -12,8 +12,15 @@ class TenantRepoImpl @Inject constructor(
     override suspend fun createTenant(accessToken: String, request: TenantRequest) =
         tenantApiService.addCompany("Bearer $accessToken", request).result.tenant
 
-    override suspend fun getTenants(accessToken: String): List<Tenant> =
-        tenantApiService.getCompanies("Bearer $accessToken").result
+    override suspend fun getTenants(
+        accessToken: String, pageSize: Int,
+        pageNumber: Int
+    ): List<Tenant> =
+        tenantApiService.getCompanies(
+            accessToken = "Bearer $accessToken",
+            pageSize = pageSize,
+            pageNumber = pageNumber
+        ).result
 
     override suspend fun getTenantById(accessToken: String, id: Int): Tenant =
         tenantApiService.getCompanyById("Bearer $accessToken", id).result

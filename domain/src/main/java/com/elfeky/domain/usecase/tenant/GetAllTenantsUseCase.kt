@@ -1,28 +1,32 @@
 package com.elfeky.domain.usecase.tenant
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.elfeky.domain.model.tenant.Tenant
+import com.elfeky.domain.pager.CustomPagerSource
 import com.elfeky.domain.repo.TenantRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
-import com.elfeky.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class GetAllTenantsUseCase @Inject constructor(
     private val repo: TenantRepo,
     private val accessTokenUseCase: AccessTokenUseCase
 ) {
-    operator fun invoke(): Flow<Resource<List<Tenant>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val response = repo.getTenants(accessTokenUseCase.get())
-            emit(Resource.Success(response))
-        } catch (_: IOException) {
-            emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
-        } catch (_: HttpException) {
-            emit(Resource.Error(message = "Unexpected error occurred"))
-        }
+    operator fun invoke(): Flow<PagingData<Tenant>> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            initialKey = 1,
+            pagingSourceFactory = {
+                CustomPagerSource {
+                    repo.getTenants(
+                        accessToken = accessTokenUseCase.get(),
+                        pageNumber = it,
+                        pageSize = 20
+                    )
+                }
+            }
+        ).flow
     }
 }

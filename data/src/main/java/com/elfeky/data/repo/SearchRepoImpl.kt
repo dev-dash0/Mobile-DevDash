@@ -8,7 +8,7 @@ import javax.inject.Inject
 class SearchRepoImpl @Inject constructor(
     private val searchApiService: SearchApiService
 ) : SearchRepo {
-    override suspend fun search(token: String, query: String): Search {
-        return searchApiService.search(token, query).result
+    override suspend fun search(accessToken: String, query: String): Search {
+        return searchApiService.search("Bearer $accessToken", query).result
     }
 }
