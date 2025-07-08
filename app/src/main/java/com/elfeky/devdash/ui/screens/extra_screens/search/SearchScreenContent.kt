@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.elfeky.devdash.ui.screens.extra_screens.search.components.SearchItem
+import com.elfeky.devdash.ui.screens.extra_screens.search.components.SearchTopBar
+import com.elfeky.devdash.ui.screens.extra_screens.search.components.searchResultItem
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.search.IssueSearch
 import com.elfeky.domain.model.search.Search
@@ -61,7 +64,12 @@ fun SearchScreenContent(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
-                } else if (uiState.searchResults == null) {
+                } else if (uiState.searchResults != null
+                    && uiState.searchResults.issues.isEmpty()
+                    && uiState.searchResults.tenants.isEmpty()
+                    && uiState.searchResults.projects.isEmpty()
+                    && uiState.searchResults.sprints.isEmpty()
+                ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
                             text = "No results found for \"${uiState.searchQuery}\"",
@@ -69,7 +77,7 @@ fun SearchScreenContent(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-                } else {
+                } else if (uiState.searchResults != null) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),

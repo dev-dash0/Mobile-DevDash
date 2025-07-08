@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.extra_screens.search
+package com.elfeky.devdash.ui.screens.extra_screens.search.components
 
 data class SearchItem(
     val id: Int,

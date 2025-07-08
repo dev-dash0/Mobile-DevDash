@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.extra_screens.search
+package com.elfeky.devdash.ui.screens.extra_screens.search.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable

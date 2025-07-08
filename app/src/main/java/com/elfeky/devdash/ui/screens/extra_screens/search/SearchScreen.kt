@@ -54,11 +54,11 @@ fun SearchScreen(
         uiState = uiState,
         focusRequester = focusRequester,
         onSearchQueryChanged = { viewModel.onEvent(SearchReducer.Event.Update.SearchQuery(it)) },
-        onBackClicked = { viewModel.onEvent(SearchReducer.Event.ClearSearch) },
+        onBackClicked = { onNavigateBack() },
         onSearchBarActiveChanged = { viewModel.onEvent(SearchReducer.Event.Update.SearchActive(it)) },
         onSearchSubmitted = { viewModel.onEvent(SearchReducer.Event.TriggerSearch) },
-        onNavigateToCompanyDetails = onNavigateToIssueDetails,
+        onNavigateToCompanyDetails = onNavigateToCompanyDetails,
         onNavigateToProjectDetails = onNavigateToProjectDetails,
-        onNavigateToIssueDetails = onNavigateToCompanyDetails
+        onNavigateToIssueDetails = onNavigateToIssueDetails
     )
 }

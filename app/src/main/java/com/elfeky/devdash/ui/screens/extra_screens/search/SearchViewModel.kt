@@ -2,6 +2,7 @@ package com.elfeky.devdash.ui.screens.extra_screens.search
 
 import androidx.lifecycle.viewModelScope
 import com.elfeky.devdash.ui.base.BaseViewModel
+import com.elfeky.domain.model.search.Search
 import com.elfeky.domain.usecase.search.SearchUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +50,16 @@ class SearchScreenViewModel @Inject constructor(
             searchUseCase(query).collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        onEvent(SearchReducer.Event.Update.SearchResults(result.data))
+                        onEvent(
+                            SearchReducer.Event.Update.SearchResults(
+                                result.data ?: Search(
+                                    issues = emptyList(),
+                                    projects = emptyList(),
+                                    sprints = emptyList(),
+                                    tenants = emptyList()
+                                )
+                            )
+                        )
                     }
 
                     is Resource.Error -> {
