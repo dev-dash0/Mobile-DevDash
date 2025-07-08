@@ -61,7 +61,12 @@ fun SearchScreenContent(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
-                } else if (uiState.searchResults == null) {
+                } else if (uiState.searchResults != null
+                    && uiState.searchResults.issues.isEmpty()
+                    && uiState.searchResults.tenants.isEmpty()
+                    && uiState.searchResults.projects.isEmpty()
+                    && uiState.searchResults.sprints.isEmpty()
+                ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
                             text = "No results found for \"${uiState.searchQuery}\"",
@@ -69,7 +74,7 @@ fun SearchScreenContent(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-                } else {
+                } else if (uiState.searchResults != null) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(12.dp),

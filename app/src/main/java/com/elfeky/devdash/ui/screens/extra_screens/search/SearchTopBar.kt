@@ -76,7 +76,7 @@ fun SearchTopBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     BasicTextField(
@@ -96,7 +96,7 @@ fun SearchTopBar(
                         keyboardActions = KeyboardActions { onSearchSubmitted() },
                         singleLine = true,
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
                             .focusRequester(focusRequester)
                             .onFocusChanged { focusState ->
                                 onSearchBarActiveChange(focusState.isFocused)
