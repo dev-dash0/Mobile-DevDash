@@ -44,6 +44,7 @@ class NotificationViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("NotificationViewModel", "markAsRead called with id: $id")
             markNotificationReadUseCase(id).collect {}
+            getNotifications()
         }
     }
 }

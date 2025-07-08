@@ -105,7 +105,7 @@ fun AppNavigation(
         }
 
         composable(AppScreen.NotificationScreen.route) {
-            NotificationScreen()
+            NotificationScreen { navController.popBackStack() }
         }
 
         composable(AppScreen.SearchScreen.route) {
