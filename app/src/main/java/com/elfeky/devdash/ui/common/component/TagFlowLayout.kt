@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +40,10 @@ fun TagFlowLayout(
                 color = textColor,
                 style = textStyle,
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = .6f), CircleShape)
+                    .background(
+                        MaterialTheme.colorScheme.surface.copy(alpha = .6f),
+                        RoundedCornerShape(8.dp)
+                    )
                     .padding(horizontal = 6.dp, vertical = 4.dp)
             )
         }

@@ -15,7 +15,9 @@ import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen
 @Composable
 fun MainNavigation(
     navController: NavHostController,
-    onCompanyDetailsNavigation: (id: Int) -> Unit,
+    onCompanyDetailsNavigate: (id: Int) -> Unit,
+    onProjectDetailsNavigate: (id: Int) -> Unit,
+    onSprintNavigate: (id: Int, role: String) -> Unit,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -25,11 +27,15 @@ fun MainNavigation(
         modifier = modifier
     ) {
         composable(route = MainScreen.HomeScreen.route) {
-            HomeScreen()
+            HomeScreen(
+                navigateToCompany = onCompanyDetailsNavigate,
+                navigateToProject = onProjectDetailsNavigate,
+                navigateToSprint = onSprintNavigate
+            )
         }
 
         composable(route = MainScreen.CompanyScreen.route) {
-            CompanyScreen(onNavigateToCompanyDetails = onCompanyDetailsNavigation)
+            CompanyScreen(onNavigateToCompanyDetails = onCompanyDetailsNavigate)
         }
 
         composable(route = MainScreen.CalenderScreen.route) {

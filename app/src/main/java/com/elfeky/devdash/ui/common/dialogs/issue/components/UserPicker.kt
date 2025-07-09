@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.component.avatar.Avatar
-import com.elfeky.devdash.ui.common.component.avatar.OverlayAvatars
+import com.elfeky.devdash.ui.common.component.avatar.AvatarStack
 import com.elfeky.devdash.ui.common.dropdown_menu.DropMenuContainer
 import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
@@ -47,7 +47,7 @@ fun UserPicker(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OverlayAvatars(
+                AvatarStack(
                     selectedUsers,
                     modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
                 ) {

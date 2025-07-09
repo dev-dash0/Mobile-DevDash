@@ -46,4 +46,9 @@ interface ProjectApiService {
         @Header("Authorization") accessToken: String,
         @Path("projectId") id: Int
     ): ServiceResponse<Unit>
+
+    @GET("/api/DashBoard/allproject")
+    suspend fun getUserProjects(
+        @Header("Authorization") accessToken: String
+    ): ServiceResponse<List<Project>>
 }

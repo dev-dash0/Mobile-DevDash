@@ -82,4 +82,7 @@ class IssueRepoImpl @Inject constructor(
     override suspend fun deleteIssue(accessToken: String, id: Int) {
         issueApiService.deleteIssue(accessToken = "Bearer $accessToken", id = id)
     }
+
+    override suspend fun getUserIssues(accessToken: String) =
+        issueApiService.getUserIssues(accessToken = "Bearer $accessToken").result
 }

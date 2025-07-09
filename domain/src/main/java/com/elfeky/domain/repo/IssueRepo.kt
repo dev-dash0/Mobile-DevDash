@@ -25,4 +25,6 @@ interface IssueRepo {
     )
 
     suspend fun deleteIssue(accessToken: String, id: Int)
+
+    suspend fun getUserIssues(accessToken: String): List<Issue>
 }

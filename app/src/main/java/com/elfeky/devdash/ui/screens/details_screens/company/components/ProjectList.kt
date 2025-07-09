@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.card.ProjectCard
 import com.elfeky.devdash.ui.common.component.SwipeToDismissItem
-import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
 import com.elfeky.domain.model.project.Project
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,10 +45,7 @@ fun ProjectList(
                 onSwipeToDelete = { onProjectSwipeToDelete(project.id) }
             ) {
                 ProjectCard(
-                    date = project.endDate,
-                    status = project.status.toProjectStatus(),
-                    issueTitle = project.name,
-                    description = project.description,
+                    project = project,
                     onClick = { onProjectClick(project.id) },
                     onLongClick = { }
                 )

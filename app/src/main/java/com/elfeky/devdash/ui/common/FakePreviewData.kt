@@ -7,6 +7,7 @@ import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.comment.Comment
 import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.notification.Notification
+import com.elfeky.domain.model.pin.PinnedItems
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.UserProject
 import com.elfeky.domain.model.sprint.Sprint
@@ -244,3 +245,10 @@ val notificationList = List(15) { i ->
         userId = userList.random().id
     )
 }
+
+val pinnedItems = PinnedItems(
+    issues = issueList.shuffled().take(Random.nextInt(1, 4)),
+    projects = projectList.shuffled().take(Random.nextInt(1, 4)),
+    sprints = sprintList.shuffled().take(Random.nextInt(1, 4)),
+    tenants = companyList.shuffled().take(Random.nextInt(1, 4))
+)

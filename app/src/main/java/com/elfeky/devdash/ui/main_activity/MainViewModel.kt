@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elfeky.devdash.navigation.app_navigation.AppScreen
 import com.elfeky.domain.usecase.account.LoginUserUseCase
+import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.usecase.local_storage.IsFirstLoginUseCase
 import com.elfeky.domain.usecase.local_storage.LoginDataUseCase
 import com.elfeky.domain.util.Resource
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     isFirstLoginUseCase: IsFirstLoginUseCase,
     loginDataUseCase: LoginDataUseCase,
+    private val accessTokenUseCase: AccessTokenUseCase,
     private val loginUseCase: LoginUserUseCase,
 ) : ViewModel() {
     private val isFirstLogin = isFirstLoginUseCase.get()
@@ -30,7 +32,10 @@ class MainViewModel @Inject constructor(
                 loginUseCase(loginDataUseCase.get()).collect {
                     _uiState.value = when (it) {
                         is Resource.Loading -> AuthState.Loading
-                        is Resource.Success -> AuthState.Success(it.data!!.accessToken)
+                        is Resource.Success -> {
+                            accessTokenUseCase.save(it.data?.accessToken ?: "")
+                            AuthState.Success(it.data!!.accessToken)
+                        }
                         is Resource.Error -> AuthState.Unauthorized
                     }
                 }

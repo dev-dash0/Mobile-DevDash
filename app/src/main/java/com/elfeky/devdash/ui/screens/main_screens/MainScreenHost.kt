@@ -26,6 +26,8 @@ fun MainScreenHost(
     onSearchNavigate: () -> Unit,
     onNotificationNavigate: () -> Unit,
     onCompanyDetailsNavigate: (id: Int) -> Unit,
+    onProjectDetailsNavigate: (id: Int) -> Unit,
+    onSprintNavigate: (id: Int, role: String) -> Unit,
     onLogout: () -> Unit
 ) {
     val mainNavController = rememberNavController()
@@ -69,7 +71,9 @@ fun MainScreenHost(
                 .fillMaxSize()
                 .padding(innerPadding),
             navController = mainNavController,
-            onCompanyDetailsNavigation = onCompanyDetailsNavigate,
+            onCompanyDetailsNavigate = onCompanyDetailsNavigate,
+            onProjectDetailsNavigate = onProjectDetailsNavigate,
+            onSprintNavigate = onSprintNavigate,
             onLogout = onLogout
         )
     }

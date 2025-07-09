@@ -15,8 +15,8 @@ fun MembersAvatar(
     modifier: Modifier = Modifier,
     maxShownUsers: Int = 5
 ) {
-    OverlayAvatars(
-        users.take(if (users.size > maxShownUsers) maxShownUsers else users.size),
+    AvatarStack(
+        users.take(maxShownUsers),
         modifier = modifier
     ) {
         if (users.size > maxShownUsers) {
@@ -32,6 +32,6 @@ fun MembersAvatar(
 @Composable
 private fun MembersAvatarPreview() {
     DevDashTheme {
-        MembersAvatar(userList.take(6))
+        MembersAvatar(userList)
     }
 }

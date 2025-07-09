@@ -8,42 +8,39 @@ import androidx.compose.runtime.Composable
 
 @Composable
 internal fun DeleteConfirmationDialog(
-    showDialog: Boolean = true,
     title: String,
     text: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.error
-                )
-            },
-            text = {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    onConfirm()
-                    onDismiss()
-                }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onBackground)
-                }
-            },
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
-    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        },
+        text = {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm()
+                onDismiss()
+            }) {
+                Text("Delete", color = MaterialTheme.colorScheme.error)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = MaterialTheme.colorScheme.onBackground)
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    )
 }

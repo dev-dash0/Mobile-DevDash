@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.elfeky.devdash.ui.common.component.IconText
-import com.elfeky.devdash.ui.common.component.avatar.OverlayAvatars
+import com.elfeky.devdash.ui.common.component.avatar.AvatarStack
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
 import com.elfeky.domain.model.account.UserProfile
 
@@ -24,6 +24,6 @@ fun IssueCardFooter(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconText(priority)
-        OverlayAvatars(assignees, containerColor = containerColor) {}
+        AvatarStack(assignees, containerColor = containerColor) {}
     }
 }

@@ -10,4 +10,5 @@ interface ProjectRepo {
     suspend fun getProjectById(accessToken: String, id: Int): Project
     suspend fun updateProject(accessToken: String, id: Int, request: UpdateProjectRequest)
     suspend fun deleteProject(accessToken: String, id: Int)
+    suspend fun getUserProjects(accessToken: String): List<Project>
 }

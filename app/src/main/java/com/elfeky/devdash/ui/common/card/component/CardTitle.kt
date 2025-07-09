@@ -21,13 +21,13 @@ fun CardTitle(
     date: String,
     issueTitle: String,
     modifier: Modifier = Modifier,
-    dateTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
-    titleTextStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Medium),
+    dateTextStyle: TextStyle = MaterialTheme.typography.labelMedium,
+    titleTextStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
     leadingIcon: @Composable (RowScope.() -> Unit)
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = date,

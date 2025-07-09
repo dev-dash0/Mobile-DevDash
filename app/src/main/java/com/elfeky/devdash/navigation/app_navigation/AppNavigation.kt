@@ -37,6 +37,8 @@ fun AppNavigation(
                 onSearchNavigate = { navController.navigate(AppScreen.SearchScreen.route) },
                 onNotificationNavigate = { navController.navigate(AppScreen.NotificationScreen.route) },
                 onCompanyDetailsNavigate = { navController.navigate(AppScreen.CompanyDetails.route + "/$it") },
+                onProjectDetailsNavigate = { navController.navigate(AppScreen.ProjectDetailsScreen.route + "/$it") },
+                onSprintNavigate = { id, role -> navController.navigate(AppScreen.SprintScreen.route + "/$id/$role") },
                 onLogout = {
                     navController.navigate(AppScreen.AuthScreens.route) {
                         popUpTo(0) { inclusive = true }

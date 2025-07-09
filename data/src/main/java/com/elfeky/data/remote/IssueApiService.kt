@@ -44,4 +44,9 @@ interface IssueApiService {
         @Header("Authorization") accessToken: String,
         @Path("id") id: Int,
     )
+
+    @GET("/api/DashBoard/allissue")
+    suspend fun getUserIssues(
+        @Header("Authorization") accessToken: String
+    ): ServiceResponse<List<Issue>>
 }

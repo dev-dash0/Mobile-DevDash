@@ -32,4 +32,7 @@ class ProjectRepoImpl @Inject constructor(
 
     override suspend fun deleteProject(accessToken: String, id: Int) =
         projectApiService.deleteProject("Bearer $accessToken", id).result
+
+    override suspend fun getUserProjects(accessToken: String): List<Project> =
+        projectApiService.getUserProjects("Bearer $accessToken").result
 }

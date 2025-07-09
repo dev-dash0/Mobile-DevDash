@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.common.card.ProjectCard
-import com.elfeky.devdash.ui.common.dropdown_menu.model.toProjectStatus
 import com.elfeky.devdash.ui.common.projectList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
@@ -124,10 +123,7 @@ private fun SwipeToDismissItemPreview() {
     DevDashTheme {
         SwipeToDismissItem(false, {}, {}) {
             ProjectCard(
-                date = project.endDate,
-                status = project.status.toProjectStatus(),
-                issueTitle = project.name,
-                description = project.description,
+                project = project,
                 onClick = { },
                 onLongClick = { }
             )
