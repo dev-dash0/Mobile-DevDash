@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.converter.gson)
 
+    // OkHttp SSE
+    implementation(libs.okhttp.sse)
+
     //Dagger - Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

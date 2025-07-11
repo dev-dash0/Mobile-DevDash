@@ -11,15 +11,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class AgentViewModel @Inject constructor(
     private val repository: AgentRepo,
     private val gson: Gson
 ) : ViewModel() {
 
-   var messages = MutableStateFlow<List<String>>(emptyList())
-       private set
+    var messages = MutableStateFlow<List<String>>(emptyList())
+        private set
 
 
     fun startChat(
@@ -36,11 +35,11 @@ class AgentViewModel @Inject constructor(
                     val response = gson.fromJson(event, AgentResponse::class.java)
                     Log.d("AgentViewModel", "Response: $response")
                     when (response.type) {
-                        "start" -> messages.value += "Chat started: ${response.chat_id}"
+                        "start" -> messages.value += "Chat started: ${response.chatId}"
                         "token" -> messages.value += "${response.content}"
-                        "tool_call" -> messages.value += "Tool: ${response.tool_name}"
-                        "tool_output" -> messages.value += "Tool Output (${response.tool_name}): ${response.output}"
-                        "end" -> messages.value += "Chat ended: ${response.chat_id}"
+                        "tool_call" -> messages.value += "Tool: ${response.toolName}"
+                        "tool_output" -> messages.value += "Tool Output (${response.toolName})"
+                        "end" -> messages.value += "Chat ended: ${response.chatId}"
                         "error" -> messages.value += "Error: ${response.content}"
                         else -> messages.value += "Unknown event type: $event"
                     }
@@ -53,7 +52,6 @@ class AgentViewModel @Inject constructor(
                 }
             )
         }
-
     }
 
     fun stopChat() {

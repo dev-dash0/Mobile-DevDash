@@ -63,6 +63,7 @@ fun CompanyDetailsContent(
         onEditClick = { onEvent(CompanyDetailsReducer.Event.CompanyAction.EditClicked) },
         onBackClick = { onEvent(CompanyDetailsReducer.Event.BackClicked) },
         modifier = modifier,
+        onChatWithAIClick = { onEvent(CompanyDetailsReducer.Event.OnChatWithAgentClick) },
         isLoading = uiState.isLoading && uiState.tenant == null,
         image = uiState.tenant?.image,
         hasImageBackground = true,

@@ -21,8 +21,8 @@ val navigationItems = listOf(
         route = MainScreen.CalenderScreen.route
     ),
     BottomNavigationItem(
-        title = "More",
+        title = "Profile",
         icon = R.drawable.more_1,
-        route = MainScreen.MoreScreen.route
+        route = MainScreen.ProfileScreen.route
     ),
 )

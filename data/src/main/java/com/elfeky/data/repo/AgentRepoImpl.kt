@@ -6,9 +6,9 @@ import com.elfeky.data.remote.sse.SseClient
 import com.elfeky.domain.repo.AgentRepo
 import com.elfeky.domain.util.Constants.AGENT_BASE_URL
 import com.google.gson.Gson
-import javax.inject.Inject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import javax.inject.Inject
 
 class AgentRepoImpl @Inject constructor(
     private val gson: Gson,
@@ -17,7 +17,7 @@ class AgentRepoImpl @Inject constructor(
 
     private val baseUrl = AGENT_BASE_URL
 
-    override  fun startSseStream(
+    override fun startSseStream(
         text: String,
         startDate: String,
         endDate: String,
@@ -28,11 +28,11 @@ class AgentRepoImpl @Inject constructor(
         onComplete: () -> Unit
     ) {
         val request = AgentRequestDto(
-            tenant_id = tenantId,
+            tenantId = tenantId,
             text = text,
             startDate = startDate,
             endDate = endDate,
-            chat_id = ""
+            chatId = ""
         )
         val json = gson.toJson(request, AgentRequestDto::class.java)
         val body = json.toRequestBody("application/json".toMediaType())
@@ -50,7 +50,7 @@ class AgentRepoImpl @Inject constructor(
         )
     }
 
-    override  fun stopSseStream() {
+    override fun stopSseStream() {
         sseClient.stop()
     }
 }

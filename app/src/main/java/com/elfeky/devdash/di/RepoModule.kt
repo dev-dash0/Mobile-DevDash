@@ -3,6 +3,7 @@ package com.elfeky.devdash.di
 import com.elfeky.data.repo.AssignUserIssueRepoImpl
 import com.elfeky.data.repo.AuthenticationRepoImpl
 import com.elfeky.data.repo.BacklogRepoImpl
+import com.elfeky.data.repo.ChatRepositoryImpl
 import com.elfeky.data.repo.CommentRepoImpl
 import com.elfeky.data.repo.DashBoardRepoImpl
 import com.elfeky.data.repo.IssueRepoImpl
@@ -17,6 +18,7 @@ import com.elfeky.data.repo.TenantRepoImpl
 import com.elfeky.domain.repo.AssignUserIssueRepo
 import com.elfeky.domain.repo.AuthenticationRepo
 import com.elfeky.domain.repo.BacklogRepo
+import com.elfeky.domain.repo.ChatRepository
 import com.elfeky.domain.repo.CommentRepo
 import com.elfeky.domain.repo.DashBoardRepo
 import com.elfeky.domain.repo.IssueRepo
@@ -121,4 +123,9 @@ abstract class RepoModule {
         notificationRepoImpl: NotificationRepoImpl
     ): NotificationRepo
 
+    @Binds
+    @Singleton
+    abstract fun bindChatRepository(
+        chatRepositoryImpl: ChatRepositoryImpl
+    ): ChatRepository
 }

@@ -48,7 +48,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.converter.gson)
-    implementation(libs.okhttp)
+
+    // OkHttp SSE
+    implementation(libs.okhttp.sse)
 
 
     // Coroutines

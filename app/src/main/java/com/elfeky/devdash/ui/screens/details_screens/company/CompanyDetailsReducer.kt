@@ -2,6 +2,14 @@ package com.elfeky.devdash.ui.screens.details_screens.company
 
 import com.elfeky.devdash.ui.base.Reducer
 import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.DialogType.DeleteProjectConfirmation
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.NavigateToProjectDetails
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.ShowDialog
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.ShowSnackbar
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.TriggerAddProject
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.TriggerDeleteProject
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.TriggerToggleProjectPin
+import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsReducer.Effect.TriggerUpdateCompany
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.tenant.Tenant
@@ -20,6 +28,7 @@ class CompanyDetailsReducer :
             data class Projects(val projects: List<Project>) : Update()
             data class PinnedProjects(val pinnedProjects: List<Project>) : Update()
             data class ProjectsLoading(val isLoading: Boolean) : Update()
+            data class IsShowingBottomSheet(val isShowBottomSheet: Boolean) : Update()
         }
 
         data object BackClicked : Event()
@@ -28,6 +37,8 @@ class CompanyDetailsReducer :
         data object DismissDialogClicked : Event()
         data class ProjectClicked(val projectId: Int) : Event()
         data class RemoveMemberClicked(val memberId: Int) : Event()
+        data object OnChatWithAgentClick : Event()
+
         sealed class CompanyAction : Event() {
             data object DeleteClicked : CompanyAction()
             data object ConfirmDeleteClicked : CompanyAction()
@@ -87,7 +98,8 @@ class CompanyDetailsReducer :
         val userId: Int? = null,
         val isLoading: Boolean = false,
         val projectsLoading: Boolean = false,
-        val isPinned: Boolean = false
+        val isPinned: Boolean = false,
+        val isShowBottomSheet: Boolean = false
     ) : Reducer.ViewState
 
     @Immutable
@@ -107,48 +119,51 @@ class CompanyDetailsReducer :
             is Event.Update.Projects -> previousState.copy(projects = event.projects) to null
             is Event.Update.PinnedProjects -> previousState.copy(pinnedProjects = event.pinnedProjects) to null
             is Event.Update.ProjectsLoading -> previousState.copy(projectsLoading = event.isLoading) to null
+            is Event.Update.IsShowingBottomSheet -> previousState.copy(isShowBottomSheet = event.isShowBottomSheet) to null
+
             Event.BackClicked -> previousState to Effect.NavigateBack
             Event.PinCompanyClicked -> previousState to Effect.TriggerToggleCompanyPin
-            is Event.CopyTextClicked -> previousState to Effect.ShowSnackbar(event.text)
+            is Event.CopyTextClicked -> previousState to ShowSnackbar(event.text)
             Event.DismissDialogClicked -> previousState to null
-            is Event.ProjectClicked -> previousState to Effect.NavigateToProjectDetails(event.projectId)
-            is Event.RemoveMemberClicked -> previousState to Effect.ShowSnackbar("Remove member ${event.memberId} (not implemented yet)")
-            Event.CompanyAction.DeleteClicked -> previousState to Effect.ShowDialog(DialogType.DeleteCompanyConfirmation)
+            is Event.ProjectClicked -> previousState to NavigateToProjectDetails(event.projectId)
+            is Event.RemoveMemberClicked -> previousState to ShowSnackbar("Remove member ${event.memberId} (not implemented yet)")
+
+            Event.CompanyAction.DeleteClicked -> previousState to ShowDialog(DialogType.DeleteCompanyConfirmation)
             Event.CompanyAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteCompany
-            Event.CompanyAction.EditClicked -> previousState to Effect.ShowDialog(DialogType.EditCompany)
-            is Event.CompanyAction.ConfirmEditClicked -> previousState to Effect.TriggerUpdateCompany(
+            Event.CompanyAction.EditClicked -> previousState to ShowDialog(DialogType.EditCompany)
+            is Event.CompanyAction.ConfirmEditClicked -> previousState to TriggerUpdateCompany(
                 event.companyUiModel
             )
-
             Event.CompanyAction.DeletionCompleted -> previousState to Effect.NavigateBack
             Event.CompanyAction.UpdateCompleted -> previousState to Effect.TriggerReloadAllData
-            is Event.CompanyAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
+            is Event.CompanyAction.PinCompleted -> previousState to ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
 
-            // --- Project Specific Actions ---
-            Event.ProjectAction.CreateClicked -> previousState to Effect.ShowDialog(DialogType.CreateProject)
-            is Event.ProjectAction.ConfirmCreateClicked -> previousState to Effect.TriggerAddProject(
+            Event.ProjectAction.CreateClicked -> previousState to ShowDialog(DialogType.CreateProject)
+            is Event.ProjectAction.ConfirmCreateClicked -> previousState to TriggerAddProject(
                 event.projectRequest
             )
 
-            is Event.ProjectAction.SwipedToDelete -> previousState to Effect.ShowDialog(
-                DialogType.DeleteProjectConfirmation(event.projectId)
+            is Event.ProjectAction.SwipedToDelete -> previousState to ShowDialog(
+                DeleteProjectConfirmation(event.projectId)
             )
 
-            is Event.ProjectAction.ConfirmDeleteClicked -> previousState to Effect.TriggerDeleteProject(
+            is Event.ProjectAction.ConfirmDeleteClicked -> previousState to TriggerDeleteProject(
                 event.projectId
             )
 
-            is Event.ProjectAction.SwipedToPin -> previousState to Effect.TriggerToggleProjectPin(
+            is Event.ProjectAction.SwipedToPin -> previousState to TriggerToggleProjectPin(
                 event.projectId
             )
 
-            is Event.ProjectAction.Added -> previousState.copy(projects = previousState.projects + event.project) to Effect.ShowSnackbar(
+            is Event.ProjectAction.Added -> previousState.copy(projects = previousState.projects + event.project) to ShowSnackbar(
                 "Project added"
             )
 
             Event.ProjectAction.DeletionCompleted -> previousState to Effect.TriggerReloadAllData
-            is Event.ProjectAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
-            is Event.Error -> previousState to Effect.ShowSnackbar(event.message)
+            is Event.ProjectAction.PinCompleted -> previousState to ShowSnackbar(if (event.isPinned) "Pinned Successfully" else "unPinned Successfully")
+            is Event.Error -> previousState to ShowSnackbar(event.message)
+
+            Event.OnChatWithAgentClick -> previousState.copy(isShowBottomSheet = true) to null
         }
     }
 

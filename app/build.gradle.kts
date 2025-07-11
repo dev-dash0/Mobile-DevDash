@@ -77,9 +77,11 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
-    // OkHttp Logging Interceptor
+    implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
+    // OkHttp SSE
+    implementation(libs.okhttp.sse)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

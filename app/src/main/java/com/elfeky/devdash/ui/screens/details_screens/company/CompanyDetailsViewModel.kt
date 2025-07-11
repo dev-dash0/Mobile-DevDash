@@ -224,10 +224,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             addProjectUseCase(projectRequest, companyId).collect { result ->
                 when (result) {
-                    is Resource.Success -> result.data?.let {
-                        sendEvent(CompanyDetailsReducer.Event.ProjectAction.Added(it))
-                    }
-
+                    is Resource.Success -> loadCompanyProjects()
                     is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.ProjectAddError)
                     is Resource.Loading -> Unit
                 }

@@ -1,9 +1,11 @@
 package com.elfeky.data.remote.dto
 
- class AgentRequestDto(
-    val tenant_id: String,
+import com.google.gson.annotations.SerializedName
+
+class AgentRequestDto(
+    @SerializedName("tenant_id") val tenantId: String,
     val text: String,
-    val startDate: String,
-    val endDate: String,
-    val chat_id: String = ""
+    val startDate: String?,
+    val endDate: String?,
+    @SerializedName("chat_id") val chatId: String = ""
 )

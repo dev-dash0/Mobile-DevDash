@@ -2,7 +2,10 @@ package com.elfeky.devdash.ui.screens.details_screens.company
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,21 +19,25 @@ import com.elfeky.devdash.ui.common.dialogs.company.CompanyDialog
 import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
 import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
 import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
+import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatScreen
+import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatViewModel
 import com.elfeky.devdash.ui.utils.rememberFlowWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompanyDetailsScreen(
     modifier: Modifier = Modifier,
-    viewModel: CompanyDetailsViewModel = hiltViewModel(),
+    companyViewModel: CompanyDetailsViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onNavigateToProject: (id: Int) -> Unit
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by companyViewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var currentDialogType by remember { mutableStateOf<CompanyDetailsReducer.DialogType?>(null) }
 
-    val uiEffectFlow = rememberFlowWithLifecycle(viewModel.uiEffect)
+    val uiEffectFlow = rememberFlowWithLifecycle(companyViewModel.uiEffect)
 
     LaunchedEffect(uiEffectFlow) {
         uiEffectFlow.collect { effect ->
@@ -58,7 +65,7 @@ fun CompanyDetailsScreen(
 
     CompanyDetailsContent(
         uiState = state,
-        onEvent = viewModel::onEvent,
+        onEvent = companyViewModel::onEvent,
         modifier = modifier.fillMaxSize(),
         snackbarHostState = snackbarHostState
     )
@@ -69,10 +76,10 @@ fun CompanyDetailsScreen(
                 CompanyDialog(
                     onDismiss = {
                         currentDialogType = null
-                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                        companyViewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
                     },
                     onSubmit = { updatedCompanyUiModel ->
-                        viewModel.onEvent(
+                        companyViewModel.onEvent(
                             CompanyDetailsReducer.Event.CompanyAction.ConfirmEditClicked(
                                 updatedCompanyUiModel
                             )
@@ -95,10 +102,10 @@ fun CompanyDetailsScreen(
                 ProjectDialog(
                     onDismiss = {
                         currentDialogType = null
-                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                        companyViewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
                     },
                     onSubmit = { projectRequest ->
-                        viewModel.onEvent(
+                        companyViewModel.onEvent(
                             CompanyDetailsReducer.Event.ProjectAction.ConfirmCreateClicked(
                                 projectRequest
                             )
@@ -114,10 +121,10 @@ fun CompanyDetailsScreen(
                     text = "Are you sure you want to delete this company? This action cannot be undone.",
                     onDismiss = {
                         currentDialogType = null
-                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                        companyViewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
                     },
                     onConfirm = {
-                        viewModel.onEvent(CompanyDetailsReducer.Event.CompanyAction.ConfirmDeleteClicked)
+                        companyViewModel.onEvent(CompanyDetailsReducer.Event.CompanyAction.ConfirmDeleteClicked)
                         currentDialogType = null
                     }
                 )
@@ -129,10 +136,10 @@ fun CompanyDetailsScreen(
                     text = "Are you sure you want to delete this project? This action cannot be undone.",
                     onDismiss = {
                         currentDialogType = null
-                        viewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
+                        companyViewModel.onEvent(CompanyDetailsReducer.Event.DismissDialogClicked)
                     },
                     onConfirm = {
-                        viewModel.onEvent(
+                        companyViewModel.onEvent(
                             CompanyDetailsReducer.Event.ProjectAction.ConfirmDeleteClicked(
                                 dialogType.projectId
                             )
@@ -141,6 +148,23 @@ fun CompanyDetailsScreen(
                     }
                 )
             }
+        }
+    }
+
+    if (state.isShowBottomSheet) {
+        ModalBottomSheet(
+            modifier = Modifier.fillMaxSize(),
+            onDismissRequest = {
+                companyViewModel.onEvent(
+                    CompanyDetailsReducer.Event.Update.IsShowingBottomSheet(
+                        false
+                    )
+                )
+            },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.background,
+        ) {
+            ChatScreen(viewModel = chatViewModel)
         }
     }
 }

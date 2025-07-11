@@ -5,12 +5,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderScreen
 import com.elfeky.devdash.ui.screens.main_screens.company.CompanyScreen
 import com.elfeky.devdash.ui.screens.main_screens.home.HomeScreen
-import com.elfeky.devdash.ui.screens.main_screens.more.MoreScreen
-import com.elfeky.devdash.ui.screens.main_screens.more.components.profile_screen.ProfileScreen
+import com.elfeky.devdash.ui.screens.main_screens.profile.ProfileScreen
 
 @Composable
 fun MainNavigation(
@@ -42,22 +40,22 @@ fun MainNavigation(
             CalenderScreen()
         }
 
-        navigation(
-            startDestination = MainScreen.SettingsScreen.route,
-            route = MainScreen.MoreScreen.route
-        ) {
-            composable(route = MainScreen.SettingsScreen.route) {
-                MoreScreen(onLogout = onLogout) {
-                    navController.navigate(MainScreen.ProfileScreen.route) {
-                        popUpTo(MainScreen.HomeScreen.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                }
-            }
+//        navigation(
+//            startDestination = MainScreen.SettingsScreen.route,
+//            route = MainScreen.MoreScreen.route
+//        ) {
+//            composable(route = MainScreen.SettingsScreen.route) {
+//                MoreScreen(onLogout = onLogout) {
+//                    navController.navigate(MainScreen.ProfileScreen.route) {
+//                        popUpTo(MainScreen.HomeScreen.route) { inclusive = false }
+//                        launchSingleTop = true
+//                    }
+//                }
+//            }
 
-            composable(route = MainScreen.ProfileScreen.route) {
-                ProfileScreen()
-            }
+        composable(route = MainScreen.ProfileScreen.route) {
+            ProfileScreen(onLogout = onLogout)
+//            }
         }
     }
 }

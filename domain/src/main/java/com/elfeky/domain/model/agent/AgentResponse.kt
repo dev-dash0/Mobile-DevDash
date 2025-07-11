@@ -1,10 +1,10 @@
 package com.elfeky.domain.model.agent
 
+import com.google.gson.annotations.SerializedName
+
 data class AgentResponse(
     val type: String,
-    val chat_id: String? = null,
     val content: String? = null,
-    val tool_name: String? = null,
-    //val input: Map<String, Any>? = null,
-    val output: String? = null
+    @SerializedName("chat_id") val chatId: String? = null,
+    @SerializedName("tool_name") val toolName: String? = null
 )

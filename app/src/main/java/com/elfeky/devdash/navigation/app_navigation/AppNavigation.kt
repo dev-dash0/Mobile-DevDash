@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsViewModel
+import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatViewModel
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen
@@ -59,11 +60,16 @@ fun AppNavigation(
                 onNavigateToProject = { projectId ->
                     navController.navigate(AppScreen.ProjectDetailsScreen.route + "/$projectId")
                 },
-                viewModel = hiltViewModel<CompanyDetailsViewModel, CompanyDetailsViewModel.Factory>(
+                companyViewModel = hiltViewModel<CompanyDetailsViewModel, CompanyDetailsViewModel.Factory>(
                     key = companyId.toString()
                 ) {
                     it.create(companyId)
-                }
+                },
+                chatViewModel = hiltViewModel<ChatViewModel, ChatViewModel.Factory>(
+                    key = "chat view model"
+                ) {
+                    it.create(companyId)
+                },
             )
         }
 
