@@ -31,50 +31,52 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun LabelInput(
+    labels: String?,
     modifier: Modifier = Modifier,
     placeholder: String = "Enter label",
-    onAddLabel: (String) -> Unit
+    onAddLabel: (String) -> Unit,
 ) {
-    var textState by remember { mutableStateOf("") }
-    var labels by remember { mutableStateOf("") }
+    var inputText by remember { mutableStateOf("") }
+    var currentLabels by remember {
+        mutableStateOf(
+            labels?.trim()?.split(" ")?.filter { it.isNotBlank() } ?: emptyList())
+    }
 
     Column(modifier = modifier.fillMaxWidth()) {
         InputField(
-            value = textState,
-            onValueChange = { newValue ->
-                textState = newValue
-            },
+            value = inputText,
+            onValueChange = { inputText = it },
             placeholderText = placeholder,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             imeAction = ImeAction.Done,
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if (textState.isNotBlank()) {
-                        labels = labels + " " + textState.trim()
-                        onAddLabel(labels)
-                        textState = ""
+                    if (inputText.isNotBlank()) {
+                        currentLabels = currentLabels + inputText.trim()
+                        onAddLabel(currentLabels.joinToString(" "))
+                        inputText = ""
                     }
                 }
             )
         )
 
-        if (labels.isNotEmpty()) {
+        if (currentLabels.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                labels.split(" ").forEach { option ->
+                currentLabels.forEach { label ->
                     AssistChip(
                         onClick = {
-//                            labels = labels.filterNot { it == option }
-//                            onAddLabel(labels)
+                            currentLabels = currentLabels.filterNot { it == label }
+                            onAddLabel(currentLabels.joinToString(" "))
                         },
                         label = {
                             Text(
-                                text = option,
+                                text = label,
                                 style = MaterialTheme.typography.labelMedium
                             )
                         },
@@ -102,6 +104,6 @@ fun LabelInput(
 @Composable
 private fun LabelInputPreview() {
     DevDashTheme {
-        LabelInput {}
+        LabelInput("hi developer") {}
     }
 }

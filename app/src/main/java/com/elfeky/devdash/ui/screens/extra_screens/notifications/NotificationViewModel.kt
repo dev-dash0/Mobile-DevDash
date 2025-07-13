@@ -43,8 +43,17 @@ class NotificationViewModel @Inject constructor(
     fun markAsRead(id: Int) {
         viewModelScope.launch {
             Log.d("NotificationViewModel", "markAsRead called with id: $id")
-            markNotificationReadUseCase(id).collect {}
-            getNotifications()
+            markNotificationReadUseCase(id).collect { result ->
+                state.value = when (result) {
+                    is Resource.Error -> state.value.copy(error = result.message)
+
+                    is Resource.Loading -> state.value
+
+                    is Resource.Success -> state.value.copy(
+                        notifications = state.value.notifications.filterNot { it.id == id }
+                    )
+                }
+            }
         }
     }
 }

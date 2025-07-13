@@ -65,7 +65,7 @@ fun IssueCard(
                 )
             }
 
-            issue.labels?.let { IssueCardLabels(labels = it.split(" ")) }
+            issue.labels?.let { IssueCardLabels(labels = it.trim().split(" ")) }
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 issue.assignedUsers.forEach { user ->

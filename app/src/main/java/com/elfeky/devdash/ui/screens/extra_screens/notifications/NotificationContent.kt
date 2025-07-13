@@ -49,7 +49,7 @@ fun NotificationContent(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(notifications) { item ->
+        items(notifications, key = { it.id }) { item ->
             val dismissState = rememberSwipeToDismissBoxState(
                 confirmValueChange = { dismissValue ->
                     when (dismissValue) {

@@ -104,8 +104,8 @@ fun SprintScreen(
                             description = it.description,
                             priority = it.priority.text,
                             labels = it.labels.toString(),
-                            type = it.type,
-                            status = it.status,
+                            type = it.type.text,
+                            status = it.status.text,
                             startDate = it.startDate?.toStringDate() ?: "",
                             deadline = it.deadline?.toStringDate() ?: ""
                         )
@@ -144,8 +144,8 @@ fun SprintScreen(
                             description = it.description,
                             priority = it.priority.text,
                             labels = it.labels.toString(),
-                            type = it.type,
-                            status = it.status,
+                            type = it.type.text,
+                            status = it.status.text,
                             startDate = it.startDate?.toStringDate() ?: "",
                             deadline = it.deadline?.toStringDate() ?: "",
                             isBacklog = false,

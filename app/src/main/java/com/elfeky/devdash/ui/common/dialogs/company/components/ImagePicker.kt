@@ -37,7 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.screens.details_screens.company.components.CompanyLogo
+import com.elfeky.devdash.ui.screens.details_screens.company.components.Logo
 import com.elfeky.devdash.ui.theme.DarkBlue
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.White
@@ -60,7 +60,7 @@ fun ImagePicker(onImageSelected: (Any?) -> Unit, image: Any? = null) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box {
-            CompanyLogo(
+            Logo(
                 selectedImageUri,
                 modifier = Modifier.size(64.dp),
                 onImageChanged = {

@@ -24,6 +24,6 @@ fun IssueCardFooter(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconText(priority)
-        AvatarStack(assignees, containerColor = containerColor) {}
+        AvatarStack(assignees, containerColor = containerColor)
     }
 }

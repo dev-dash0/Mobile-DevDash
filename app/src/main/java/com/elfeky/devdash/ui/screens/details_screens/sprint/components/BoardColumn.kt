@@ -84,11 +84,9 @@ fun BoardColumn(
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             items(board.issues, key = { it.id }) { issue ->
-                val isPinned by remember(pinnedIssues) { mutableStateOf(pinnedIssues.contains(issue)) }
-
                 DraggableIssueCard(
                     issue = issue,
-                    isPinned = isPinned,
+                    isPinned = pinnedIssues.contains(issue),
                     onPinClick = { onPinClick(issue.id) },
                     onDeleteClick = { onDeleteClick(issue.id) },
                     onEditClick = { onEditClick(issue) },

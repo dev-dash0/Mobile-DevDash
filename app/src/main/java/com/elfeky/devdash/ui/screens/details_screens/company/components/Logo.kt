@@ -9,12 +9,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.elfeky.devdash.R
@@ -34,7 +31,7 @@ import com.elfeky.devdash.ui.theme.DevDashTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CompanyLogo(
+fun Logo(
     imageUrl: Any?,
     modifier: Modifier = Modifier,
     @DrawableRes placeholderImage: Int = R.drawable.img_placeholder,
@@ -53,7 +50,6 @@ fun CompanyLogo(
         contentDescription = "Company Logo",
         contentScale = ContentScale.Crop,
         modifier = modifier
-            .border(1.dp, MaterialTheme.colorScheme.onSecondary.copy(alpha = .5f), CircleShape)
             .clip(CircleShape)
             .aspectRatio(1f)
             .clickable { isImageExpanded = true }
@@ -108,7 +104,7 @@ private fun ImageSelectionDialog(
 @Composable
 fun CompanyLogoPreview() {
     DevDashTheme {
-        CompanyLogo(
+        Logo(
             imageUrl = null,
             onImageChanged = { /* Preview action */ }
         )

@@ -2,6 +2,7 @@ package com.elfeky.devdash.ui.common.dialogs.issue.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.DropdownMenuItem
@@ -33,52 +34,48 @@ import com.elfeky.domain.model.account.UserProfile
 @Composable
 fun UserPicker(
     availableUsers: List<UserProfile>,
-    selectedUsers: MutableList<UserProfile>,
+    selectedUsers: List<UserProfile>,
     onUserSelected: (UserProfile) -> Unit,
     modifier: Modifier = Modifier,
     menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
-
     DropMenuContainer(
         modifier = modifier,
         menuTextColor = menuTextColor,
         content = {
             Row(
+                modifier = modifier,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AvatarStack(
                     selectedUsers,
                     modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                )
+
+                IconButton(
+                    onClick = {},
+                    modifier = Modifier
+                        .size(32.dp)
+                        .dashBorder(2.dp, 7.dp, 4.dp)
+                        .avatarModifier(MaterialTheme.colorScheme.background)
                 ) {
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .dashBorder(2.dp, 7.dp, 4.dp)
-                            .avatarModifier(MaterialTheme.colorScheme.background)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.user_add_ic),
-                            contentDescription = "Add Assignee",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(R.drawable.user_add_ic),
+                        contentDescription = "Add Assignee",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         }
     ) {
-        availableUsers.forEachIndexed { index, assignee ->
+        availableUsers.forEach { user ->
             DropdownMenuItem(
-                text = {
-                    Text(
-                        assignee.userName,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                onClick = { onUserSelected(assignee) },
-                leadingIcon = { Avatar(assignee) },
+                text = { Text(user.userName, color = MaterialTheme.colorScheme.onBackground) },
+                onClick = { onUserSelected(user) },
+                leadingIcon = { Avatar(user) },
                 trailingIcon = {
-                    if (selectedUsers.contains(assignee)) {
+                    if (selectedUsers.contains(user)) {
                         Icon(
                             imageVector = Icons.Default.Done,
                             contentDescription = "Selected Assignee",
@@ -99,7 +96,7 @@ private fun UserRowPreview() {
     DevDashTheme {
         UserPicker(
             availableUsers = userList,
-            selectedUsers = selectedUsers,
+            selectedUsers = emptyList(),
             onUserSelected = {
                 if (!selectedUsers.remove(it)) {
                     selectedUsers.add(it)

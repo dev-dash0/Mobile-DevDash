@@ -139,9 +139,9 @@ fun ProjectDetailsScreen(
                             ProjectDetailsReducer.Event.IssueAction.ConfirmCreateClicked(
                                 IssueFormFields(
                                     priority = issue.priority.text,
-                                    status = issue.status,
+                                    status = issue.status.name,
                                     title = issue.title,
-                                    type = issue.type,
+                                    type = issue.type.name,
                                     labels = issue.labels.toString(),
                                     description = issue.description,
                                     isBacklog = true,
