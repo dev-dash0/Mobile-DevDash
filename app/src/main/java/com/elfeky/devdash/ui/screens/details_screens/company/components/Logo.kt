@@ -35,7 +35,7 @@ fun Logo(
     imageUrl: Any?,
     modifier: Modifier = Modifier,
     @DrawableRes placeholderImage: Int = R.drawable.img_placeholder,
-    onImageChanged: (Any?) -> Unit,
+    onImageChanged: (Any?) -> Unit
 ) {
     var selectedImageUri by remember(imageUrl) { mutableStateOf<Any?>(imageUrl) }
     var isImageExpanded by remember { mutableStateOf(false) }

@@ -22,7 +22,7 @@ val navigationItems = listOf(
     ),
     BottomNavigationItem(
         title = "Profile",
-        icon = R.drawable.more_1,
+        icon = R.drawable.user_ic,
         route = MainScreen.ProfileScreen.route
     ),
 )
