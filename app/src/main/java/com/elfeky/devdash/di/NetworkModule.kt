@@ -38,7 +38,9 @@ object NetworkModule {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        return OkHttpClient().newBuilder().addInterceptor(logging)
+        return OkHttpClient()
+            .newBuilder()
+            .addInterceptor(logging)
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS).build()
     }
@@ -46,7 +48,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder().baseUrl(BASE_URL).client(okHttpClient)
+        return Retrofit
+            .Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

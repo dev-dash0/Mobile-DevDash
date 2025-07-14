@@ -26,15 +26,15 @@ fun Long.toStringDate(pattern: String): String =
 
 
 fun String.toEpochMillis(): Long? {
-    if (this.length == 10)
-        return runCatching {
+    return if (this.length == 10)
+        runCatching {
             LocalDate.parse(this, dateFormatter)
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant()
                 .toEpochMilli()
         }.getOrNull()
     else
-        return runCatching {
+        runCatching {
             LocalDateTime.parse(this, dateTimeFormatter)
                 .toInstant(ZoneOffset.UTC)
                 .toEpochMilli()

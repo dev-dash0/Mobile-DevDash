@@ -1,209 +1,53 @@
 package com.elfeky.devdash.ui.screens.main_screens.calender
 
-import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elfeky.domain.model.dashboard.CalenderIssue
 import com.elfeky.domain.usecase.dashboard.GetCalendarUseCase
 import com.elfeky.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 @HiltViewModel
 class CalenderViewModel @Inject constructor(
     private val getCalendarUseCase: GetCalendarUseCase
 ) : ViewModel() {
-
-    var state = mutableStateOf(CalendarScreenState())
+    var state by mutableStateOf(CalendarScreenState(isCalendarLoading = true))
         private set
-
-    var dates = mutableListOf<String>()
-    var issues = mutableListOf<List<CalenderIssue>>()
-//    var issues: List<List<CalenderIssue>> = listOf(
-//        listOf(
-//            CalenderIssue(
-//                title = "Task1",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task1",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task1",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task1",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task1",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task1",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//
-//            ),
-//        listOf(
-//            CalenderIssue(
-//                title = "Task2",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task2",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task2",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//
-//            ),
-//        listOf(
-//            CalenderIssue(
-//                title = "Task3",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task3",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//            CalenderIssue(
-//                title = "Task3",
-//                priority = "High",
-//                startDate = "2025-03-01T00:00:00",
-//                deadline = "2025-03-07T00:00:00",
-//                projectName = "web",
-//                tenantName = "Face",
-//                id = 0,
-//                type = "Epic"
-//            ),
-//
-//            )
-//    )
 
     init {
         getCalendar()
     }
 
-    fun getCalendar() {
+    private fun getCalendar() {
         getCalendarUseCase().onEach { result ->
             when (result) {
-
                 is Resource.Loading -> {
-                    state.value = CalendarScreenState(isCalendarLoading = true)
+                    state = state.copy(isCalendarLoading = true)
                 }
 
                 is Resource.Success -> {
-                    for (day in result.data?.result!!){
-                        dates.add(day.date)
-                        issues.add(day.issues)
+                    val calendarMap = result.data?.result?.associate { calendarDay ->
+                        calendarDay.date to calendarDay.issues
                     }
-                    state.value =
-                        CalendarScreenState(calenderList = result.data, isCalendarLoading = false)
-                    Log.i("calendarList", result.data.toString())
+                    state = state.copy(
+                        calender = calendarMap,
+                        isCalendarLoading = false,
+                        calendarError = ""
+                    )
                 }
 
                 is Resource.Error -> {
-                    state.value =
-                        CalendarScreenState(
-                            calendarError = result.message ?: "An unexpected error is occurred ",
-                            isCalendarLoading = false
-                        )
-                    Log.i("calendarList", result.message ?: "Error" )
+                    state = state.copy(
+                        calendarError = result.message ?: "An unexpected error occurred",
+                        isCalendarLoading = false
+                    )
                 }
             }
-
         }.launchIn(viewModelScope)
-
     }
-
-
-    fun getDayOfWeek(dateString: String): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = LocalDate.parse(dateString, formatter)
-        return date.dayOfWeek.toString().substring(0, 3)
-    }
-
-    fun formatDate(dateString: String): String {
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val date = LocalDate.parse(dateString, inputFormatter)
-        val outputFormatter = DateTimeFormatter.ofPattern("d MMM")
-        return date.format(outputFormatter)
-    }
-
 }

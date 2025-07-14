@@ -5,7 +5,5 @@ data class CalendarResponse(
     val statusCode: Int,
     val isSuccess: Boolean,
     val errorMessages: List<String>,
-    @SerializedName("result")
-    val result: List<CalendarDay>?,
-
+    @SerializedName("result") val result: List<CalendarDay>?,
 )

@@ -1,115 +1,108 @@
 package com.elfeky.devdash.ui.screens.main_screens.calender.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.elfeky.devdash.ui.utils.cardGradientBackground
+import com.elfeky.devdash.ui.common.card.component.CardContainer
+import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
+import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.formatDisplayDate
 import com.elfeky.domain.model.dashboard.CalenderIssue
-import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.screens.main_screens.calender.CalenderViewModel
-import com.elfeky.devdash.ui.theme.Orange
 
 @Composable
 fun CalenderIssueChip(
-    modifier: Modifier = Modifier,
     calenderIssue: CalenderIssue,
-    viewModel: CalenderViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier,
+    CardContainer(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(cardGradientBackground)
-                .padding(horizontal = 16.dp, vertical = 24.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            VerticalDivider(
+                modifier = Modifier.clip(CircleShape),
+                thickness = 4.dp,
+                color = calenderIssue.priority.toPriority().color
+            )
+
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.status),
-                        contentDescription = "status",
-                        tint = Color.Blue
+                    Text(
+                        text = calenderIssue.projectName,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 32.dp),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontStyle = FontStyle.Italic,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelMedium
                     )
-                    Spacer(Modifier.width(12.dp))
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "${calenderIssue.tenantName}: ${calenderIssue.projectName}",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontStyle = FontStyle.Italic,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = "${viewModel.formatDate(calenderIssue.startDate)} | ${
-                                    viewModel.formatDate(
-                                        calenderIssue.deadline
-                                    )
-                                }",
-                                color = Color.LightGray
-                            )
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = calenderIssue.title,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Row {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.flag_ic),
-                                    contentDescription = "Priority",
-                                    tint = Orange
-                                )
-                                Text(
-                                    text = calenderIssue.priority,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            }
-                        }
-                    }
+                    Text(
+                        text = formatDisplayDate(calenderIssue.startDate)
+                                + " | "
+                                + formatDisplayDate(calenderIssue.deadline),
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        style = MaterialTheme.typography.labelLarge
+
+                    )
                 }
+
+                Text(
+                    text = calenderIssue.title,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun CalenderIssueChipPreview() {
+    DevDashTheme {
+        CalenderIssueChip(
+            calenderIssue = CalenderIssue(
+                id = 1,
+                title = "Implement User Authentication",
+                projectName = "DevDash Mobile App",
+                tenantName = "ElFeky",
+                startDate = "2023-10-26T10:00:00",
+                deadline = "2023-11-05T18:00:00",
+                priority = "High",
+                type = "Feature",
+            )
+        )
     }
 }
