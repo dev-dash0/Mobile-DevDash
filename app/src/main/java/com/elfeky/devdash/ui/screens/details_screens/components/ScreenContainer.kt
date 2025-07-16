@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.GroupAdd
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -53,9 +55,10 @@ fun ScreenContainer(
     onPinClick: () -> Unit,
     onEditClick: () -> Unit,
     onBackClick: () -> Unit,
-//    onInviteClick: () -> Unit,
     onCreateClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onInviteClick: (() -> Unit)? = null,
+    onJoinClick: (() -> Unit)? = null,
     image: Any? = null,
     hasImageBackground: Boolean = false,
     onChatWithAIClick: (() -> Unit)? = null,
@@ -93,11 +96,11 @@ fun ScreenContainer(
             )
         },
         floatingActionButton = {
-            if (isOwner) {
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (isOwner) {
                     AnimatedVisibility(
                         visible = showMoreButtons,
                         enter = fadeIn() + slideInVertically { it },
@@ -107,6 +110,17 @@ fun ScreenContainer(
                             horizontalAlignment = Alignment.End,
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            if (onInviteClick != null) {
+                                SmallFloatingActionButton(
+                                    onClick = {
+                                        onInviteClick()
+                                        showMoreButtons = !showMoreButtons
+                                    }
+                                ) {
+                                    Icon(Icons.Default.PersonAdd, "Invite")
+                                }
+                            }
+
                             if (onChatWithAIClick != null) {
                                 SmallFloatingActionButton(
                                     onClick = {
@@ -126,9 +140,7 @@ fun ScreenContainer(
                             ) {
                                 Icon(Icons.Default.Add, "Add")
                             }
-//                            SmallFloatingActionButton(onClick = onInviteClick) {
-//                                Icon(Icons.Default.PersonAdd, "Invite")
-//                            }
+
                         }
                     }
 
@@ -138,6 +150,16 @@ fun ScreenContainer(
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ) {
                         Icon(Icons.Filled.Add, "Expand", Modifier.rotate(rotationAngle))
+                    }
+                } else {
+                    if (onJoinClick != null) {
+                        FloatingActionButton(
+                            onClick = { onJoinClick() },
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(Icons.Default.GroupAdd, "Join Company")
+                        }
                     }
                 }
             }
@@ -192,7 +214,6 @@ private fun ScreenContainerPreview() {
             onPinClick = {},
             onEditClick = {},
             onBackClick = {},
-//            onInviteClick = {},
             onChatWithAIClick = {},
             onCreateClick = {},
         ) { _ -> }

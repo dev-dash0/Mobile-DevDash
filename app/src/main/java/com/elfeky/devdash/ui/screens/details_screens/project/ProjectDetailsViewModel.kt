@@ -3,6 +3,7 @@ package com.elfeky.devdash.ui.screens.details_screens.project
 import androidx.lifecycle.viewModelScope
 import com.elfeky.devdash.ui.base.BaseViewModel
 import com.elfeky.domain.model.issue.IssueFormFields
+import com.elfeky.domain.model.join.InviteProjectRequest
 import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.project.UpdateProjectRequest
 import com.elfeky.domain.model.sprint.SprintRequest
@@ -11,6 +12,7 @@ import com.elfeky.domain.usecase.backlog.GetBacklogIssuesUseCase
 import com.elfeky.domain.usecase.issue.DeleteIssueUseCase
 import com.elfeky.domain.usecase.issue.GetIssueByIdUseCase
 import com.elfeky.domain.usecase.issue.UpdateIssueUseCase
+import com.elfeky.domain.usecase.join.InviteProjectUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedIssuesUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedProjectsUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedSprintsUseCase
@@ -57,7 +59,8 @@ class ProjectDetailsViewModel @AssistedInject constructor(
     private val unpinIssueUseCase: UnpinIssueUseCase,
     private val getBacklogIssuesUseCase: GetBacklogIssuesUseCase,
     private val getIssueByIdUseCase: GetIssueByIdUseCase,
-    private val updateIssueUseCase: UpdateIssueUseCase
+    private val updateIssueUseCase: UpdateIssueUseCase,
+    private val inviteProjectUseCase: InviteProjectUseCase
 ) : BaseViewModel<ProjectDetailsReducer.State, ProjectDetailsReducer.Event, ProjectDetailsReducer.Effect>(
     ProjectDetailsReducer.initialState,
     ProjectDetailsReducer()
@@ -100,10 +103,16 @@ class ProjectDetailsViewModel @AssistedInject constructor(
                         effect.sprintId
                     )
 
+                    is ProjectDetailsReducer.Effect.TriggerInviteMember -> inviteMember(
+                        effect.email,
+                        effect.role
+                    )
+
                     is ProjectDetailsReducer.Effect.ShowSnackbar,
                     ProjectDetailsReducer.Effect.NavigateBack,
                     ProjectDetailsReducer.Effect.TriggerLoadBacklogIssues,
                     ProjectDetailsReducer.Effect.TriggerLoadSprints,
+                    ProjectDetailsReducer.Effect.TriggerRefresh,
                     is ProjectDetailsReducer.Effect.NavigateToSprintDetails -> sendUiEffect(effect)
                 }
             }
@@ -369,12 +378,7 @@ class ProjectDetailsViewModel @AssistedInject constructor(
                             attachmentMediaType = "file",
                         ).collect { createResult ->
                             when (createResult) {
-                                is Resource.Success -> {
-                                    onEvent(ProjectDetailsReducer.Event.IssueAction.MovedToSprintCompleted)
-                                    loadBacklogIssues()
-                                    loadSprints()
-                                }
-
+                                is Resource.Success -> onEvent(ProjectDetailsReducer.Event.IssueAction.MovedToSprintCompleted)
                                 is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
                                 is Resource.Loading -> Unit
                             }
@@ -383,6 +387,19 @@ class ProjectDetailsViewModel @AssistedInject constructor(
 
                     is Resource.Error -> onEvent(ProjectDetailsReducer.Event.Error.IssueMoveToSprintError)
                     is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
+    private fun inviteMember(email: String, role: String) {
+        viewModelScope.launch {
+            inviteProjectUseCase(InviteProjectRequest(email, role, projectId)).collect { result ->
+                when (result) {
+                    is Resource.Loading -> Unit
+                    is Resource.Success -> sendUiEffect(ProjectDetailsReducer.Effect.ShowSnackbar("Member invited successfully"))
+
+                    is Resource.Error -> sendUiEffect(ProjectDetailsReducer.Effect.ShowSnackbar("${result.message}"))
                 }
             }
         }

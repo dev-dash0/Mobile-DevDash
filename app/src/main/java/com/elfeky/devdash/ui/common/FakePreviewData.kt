@@ -220,7 +220,8 @@ val commentList = List(30) { i ->
             1,
             6
         ), // Assign to a random sprint if issue is not in one
-        tenantId = issue.tenantId
+        tenantId = issue.tenantId,
+        id = 1000 + i
     )
 }
 

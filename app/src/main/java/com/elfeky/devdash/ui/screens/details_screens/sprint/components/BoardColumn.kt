@@ -38,6 +38,7 @@ fun BoardColumn(
     onPinClick: (id: Int) -> Unit,
     onDeleteClick: (id: Int) -> Unit,
     onEditClick: (issue: Issue) -> Unit,
+    onCommentClick: (issue: Issue) -> Unit,
     onDrag: (issue: Issue) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -90,7 +91,8 @@ fun BoardColumn(
                     onPinClick = { onPinClick(issue.id) },
                     onDeleteClick = { onDeleteClick(issue.id) },
                     onEditClick = { onEditClick(issue) },
-                    onDrag = { onDrag(issue) }
+                    onCommentsClick = { onCommentClick(issue) },
+                    onDrag = { onDrag(issue) },
                 )
             }
         }
@@ -114,6 +116,7 @@ private fun BoardColumnPreview() {
             onPinClick = {},
             onDeleteClick = {},
             onEditClick = {},
+            onCommentClick = {},
             onDrag = {}
         )
     }

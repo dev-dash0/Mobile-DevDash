@@ -43,7 +43,8 @@ fun String.toEpochMillis(): Long? {
 
 fun String.toEpochMillis(format: DateTimeFormatter): Long? {
     return runCatching {
-        LocalDateTime.parse(this, format)
+        LocalDateTime
+            .parse(this, format)
             .toInstant(ZoneOffset.UTC)
             .toEpochMilli()
     }.getOrNull()

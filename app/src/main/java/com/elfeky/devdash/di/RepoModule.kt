@@ -6,6 +6,8 @@ import com.elfeky.data.repo.BacklogRepoImpl
 import com.elfeky.data.repo.ChatRepositoryImpl
 import com.elfeky.data.repo.CommentRepoImpl
 import com.elfeky.data.repo.DashBoardRepoImpl
+import com.elfeky.data.repo.InviteProjectRepoImpl
+import com.elfeky.data.repo.InviteTenantRepoImpl
 import com.elfeky.data.repo.IssueRepoImpl
 import com.elfeky.data.repo.JoinRepoImpl
 import com.elfeky.data.repo.NotificationRepoImpl
@@ -21,6 +23,8 @@ import com.elfeky.domain.repo.BacklogRepo
 import com.elfeky.domain.repo.ChatRepository
 import com.elfeky.domain.repo.CommentRepo
 import com.elfeky.domain.repo.DashBoardRepo
+import com.elfeky.domain.repo.InviteProjectRepo
+import com.elfeky.domain.repo.InviteTenantRepo
 import com.elfeky.domain.repo.IssueRepo
 import com.elfeky.domain.repo.JoinRepo
 import com.elfeky.domain.repo.NotificationRepo
@@ -87,6 +91,7 @@ abstract class RepoModule {
     abstract fun bindSearchRepo(
         searchRepoImpl: SearchRepoImpl
     ): SearchRepo
+
     @Binds
     @Singleton
     abstract fun bindIssueRepo(
@@ -125,7 +130,19 @@ abstract class RepoModule {
 
     @Binds
     @Singleton
-    abstract fun bindChatRepository(
+    abstract fun bindChatRepo(
         chatRepositoryImpl: ChatRepositoryImpl
     ): ChatRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindInviteProjectRepo(
+        inviteProjectRepoImpl: InviteProjectRepoImpl
+    ): InviteProjectRepo
+
+    @Binds
+    @Singleton
+    abstract fun bindInviteTenantRepo(
+        inviteTenantRepoImpl: InviteTenantRepoImpl
+    ): InviteTenantRepo
 }

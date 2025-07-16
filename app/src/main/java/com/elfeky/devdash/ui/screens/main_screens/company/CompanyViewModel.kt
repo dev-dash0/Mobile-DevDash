@@ -3,6 +3,7 @@ package com.elfeky.devdash.ui.screens.main_screens.company
 import androidx.lifecycle.viewModelScope
 import com.elfeky.devdash.ui.base.BaseViewModel
 import com.elfeky.domain.model.tenant.TenantRequest
+import com.elfeky.domain.usecase.join.JoinTenantUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedTenantsUseCase
 import com.elfeky.domain.usecase.pin.pin.PinTenantUseCase
 import com.elfeky.domain.usecase.pin.unpin.UnpinTenantUseCase
@@ -21,7 +22,8 @@ class CompanyViewModel @Inject constructor(
     private val addTenantsUseCase: AddTenantUseCase,
     private val deleteTenantUseCase: DeleteTenantUseCase,
     private val pinTenantUseCase: PinTenantUseCase,
-    private val unpinTenantUseCase: UnpinTenantUseCase
+    private val unpinTenantUseCase: UnpinTenantUseCase,
+    private val joinTenantUseCase: JoinTenantUseCase
 ) : BaseViewModel<CompanyReducer.State, CompanyReducer.Event, CompanyReducer.Effect>(
     CompanyReducer.State(),
     CompanyReducer()
@@ -53,6 +55,7 @@ class CompanyViewModel @Inject constructor(
 
                     is CompanyReducer.Effect.DeleteCompany -> deleteTenant(effect.id)
                     CompanyReducer.Effect.RefreshCompanyList -> loadCompanies()
+                    is CompanyReducer.Effect.JoinCompany -> joinTenant(effect.code)
                 }
             }
         }
@@ -79,7 +82,13 @@ class CompanyViewModel @Inject constructor(
         viewModelScope.launch {
             addTenantsUseCase(request).collect { result ->
                 if (result is Resource.Success) {
-                    onEvent(CompanyReducer.Event.RefreshCompanies)
+                    sendUiEffect(CompanyReducer.Effect.RefreshCompanyList) // Use sendUiEffect for refresh
+                } else if (result is Resource.Error) {
+                    sendEvent(
+                        CompanyReducer.Event.Update.Error(
+                            result.message ?: "Failed to add company"
+                        )
+                    )
                 }
             }
         }
@@ -89,7 +98,29 @@ class CompanyViewModel @Inject constructor(
         viewModelScope.launch {
             deleteTenantUseCase(id).collect { result ->
                 if (result is Resource.Success) {
-                    onEvent(CompanyReducer.Event.RefreshCompanies)
+                    sendUiEffect(CompanyReducer.Effect.RefreshCompanyList)
+                } else if (result is Resource.Error) {
+                    sendEvent(
+                        CompanyReducer.Event.Update.Error(
+                            result.message ?: "Failed to delete company"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun joinTenant(code: String) {
+        viewModelScope.launch {
+            joinTenantUseCase(code).collect { result ->
+                if (result is Resource.Success) {
+                    sendUiEffect(CompanyReducer.Effect.RefreshCompanyList)
+                } else if (result is Resource.Error) {
+                    sendEvent(
+                        CompanyReducer.Event.Update.Error(
+                            result.message ?: "Failed to join company"
+                        )
+                    )
                 }
             }
         }

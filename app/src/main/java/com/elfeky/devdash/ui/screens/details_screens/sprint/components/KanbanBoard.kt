@@ -27,6 +27,7 @@ fun KanbanBoard(
     onDrop: (status: String) -> Unit,
     onPinClick: (id: Int) -> Unit,
     onDeleteClick: (id: Int) -> Unit,
+    onCommentClick: (issue: Issue) -> Unit,
     onEditClick: (issue: Issue) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -45,6 +46,7 @@ fun KanbanBoard(
                 onPinClick = onPinClick,
                 onDeleteClick = onDeleteClick,
                 onEditClick = onEditClick,
+                onCommentClick = onCommentClick,
                 onDrag = onDrag
             )
         }
@@ -64,6 +66,7 @@ fun KanbanBoardPreview() {
             onDrop = {},
             onPinClick = {},
             onDeleteClick = {},
+            onCommentClick = {},
             onEditClick = {}
         )
     }

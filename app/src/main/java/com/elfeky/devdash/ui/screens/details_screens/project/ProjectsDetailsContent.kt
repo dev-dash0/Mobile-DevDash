@@ -60,7 +60,8 @@ fun ProjectsDetailsContent(
         onBackClick = onNavigateBack,
         modifier = modifier,
         isLoading = uiState.isLoading,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        onInviteClick = { onEvent(ProjectDetailsReducer.Event.ProjectAction.InviteMemberClicked) }
     ) { paddingValues ->
         Column(
             modifier = Modifier

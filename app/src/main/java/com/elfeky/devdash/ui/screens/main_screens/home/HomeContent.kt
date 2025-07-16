@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -160,7 +161,8 @@ fun HomeContent(
                         0 -> items(pinnedItems.tenants) { item ->
                             CompanyCard(
                                 item,
-                                navigateToCompany
+                                navigateToCompany,
+                                modifier = Modifier.heightIn(max = 150.dp)
                             )
                         }
 

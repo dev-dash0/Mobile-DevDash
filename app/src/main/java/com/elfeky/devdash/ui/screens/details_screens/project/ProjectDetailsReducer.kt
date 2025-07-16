@@ -41,6 +41,9 @@ class ProjectDetailsReducer :
             data object DeletionCompleted : ProjectAction()
             data object UpdateCompleted : ProjectAction()
             data class PinCompleted(val isPinned: Boolean) : ProjectAction()
+            data object InviteMemberClicked : ProjectAction()
+            data class ConfirmInviteClicked(val email: String, val role: String) :
+                ProjectAction()
         }
 
         sealed class SprintAction : Event() {
@@ -86,6 +89,7 @@ class ProjectDetailsReducer :
             data object IssuePinError : Error("Failed to pin/unpin issue")
             data object BacklogIssuesLoadError : Error("Failed to load backlog issues")
             data object IssueMoveToSprintError : Error("Failed to move issue to sprint")
+            data object InviteMemberError : Error("Failed to invite member")
         }
     }
 
@@ -107,6 +111,8 @@ class ProjectDetailsReducer :
         data class TriggerToggleIssuePin(val issueId: Int) : Effect()
         data object TriggerLoadBacklogIssues : Effect()
         data class AddSprintIssue(val issueId: Int, val sprintId: Int) : Effect()
+        data object TriggerRefresh : Effect()
+        data class TriggerInviteMember(val email: String, val role: String) : Effect()
     }
 
     @Immutable
@@ -130,6 +136,7 @@ class ProjectDetailsReducer :
         data object DeleteProjectConfirmation : DialogType()
         data class DeleteSprintConfirmation(val sprintId: Int) : DialogType()
         data class DeleteIssueConfirmation(val issueId: Int) : DialogType()
+        data object InviteMember : DialogType()
     }
 
     override fun reduce(
@@ -160,6 +167,11 @@ class ProjectDetailsReducer :
             Event.ProjectAction.DeletionCompleted -> previousState to Effect.NavigateBack
             Event.ProjectAction.UpdateCompleted -> previousState to Effect.TriggerReloadAllData
             is Event.ProjectAction.PinCompleted -> previousState to Effect.ShowSnackbar(if (event.isPinned) "Project Pinned Successfully" else "Project Unpinned Successfully")
+            Event.ProjectAction.InviteMemberClicked -> previousState.copy(dialog = DialogType.InviteMember) to null
+            is Event.ProjectAction.ConfirmInviteClicked -> previousState.copy(dialog = null) to Effect.TriggerInviteMember(
+                event.email,
+                event.role
+            )
 
             Event.SprintAction.CreateClicked -> previousState.copy(dialog = DialogType.CreateSprint) to null
             is Event.SprintAction.ConfirmCreateClicked -> previousState.copy(dialog = null) to Effect.TriggerAddSprint(
@@ -216,7 +228,7 @@ class ProjectDetailsReducer :
                 event.issueId, event.sprintId
             )
 
-            Event.IssueAction.MovedToSprintCompleted -> previousState to Effect.ShowSnackbar("Issue moved to sprint successfully.")
+            Event.IssueAction.MovedToSprintCompleted -> previousState to Effect.TriggerRefresh
 
             is Event.Error -> previousState to Effect.ShowSnackbar(event.message)
         }

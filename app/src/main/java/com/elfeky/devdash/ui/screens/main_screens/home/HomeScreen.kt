@@ -25,10 +25,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
     navigateToCompany: (id: Int) -> Unit,
     navigateToProject: (id: Int) -> Unit,
-    navigateToSprint: (id: Int, role: String) -> Unit
+    navigateToSprint: (id: Int, role: String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -44,9 +45,10 @@ fun HomeScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = modifier.fillMaxSize()
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(modifier = Modifier.padding(top = paddingValues.calculateTopPadding())) {
             if (state.isLoading) {
                 Column(
                     modifier = Modifier.fillMaxSize(),

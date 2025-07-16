@@ -18,6 +18,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.elfeky.devdash.ui.common.dialogs.company.CompanyDialog
 import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
 import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
+import com.elfeky.devdash.ui.common.dialogs.join.InviteDialog
+import com.elfeky.devdash.ui.common.dialogs.join.JoinDialog
 import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
 import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatScreen
 import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatViewModel
@@ -143,6 +145,34 @@ fun CompanyDetailsScreen(
                             CompanyDetailsReducer.Event.ProjectAction.ConfirmDeleteClicked(
                                 dialogType.projectId
                             )
+                        )
+                        currentDialogType = null
+                    }
+                )
+            }
+
+            is CompanyDetailsReducer.DialogType.InviteMember -> {
+                InviteDialog(
+                    onDismiss = { currentDialogType = null },
+                    onConfirm = { email, role ->
+                        companyViewModel.onEvent(
+                            CompanyDetailsReducer.Event.ConfirmInviteMemberClicked(
+                                email,
+                                role
+                            )
+                        )
+                        currentDialogType = null
+                    }
+                )
+            }
+
+            is CompanyDetailsReducer.DialogType.JoinProject -> {
+                JoinDialog(
+                    title = "Join Project",
+                    onDismiss = { currentDialogType = null },
+                    onConfirm = { code ->
+                        companyViewModel.onEvent(
+                            CompanyDetailsReducer.Event.ConfirmJoinProjectClicked(code)
                         )
                         currentDialogType = null
                     }

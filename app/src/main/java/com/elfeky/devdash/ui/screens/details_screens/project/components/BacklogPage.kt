@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.flowOf
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BacklogPage(
-    sprints: LazyPagingItems<Sprint>, // Changed to LazyPagingItems
-    backlogIssues: LazyPagingItems<Issue>, // Changed to LazyPagingItems
+    sprints: LazyPagingItems<Sprint>,
+    backlogIssues: LazyPagingItems<Issue>,
     pinnedIssues: List<Issue>,
     pinnedSprints: List<Sprint>,
     onIssueDroppedOnSprint: (Int, Int) -> Unit,
@@ -56,7 +56,7 @@ fun BacklogPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SprintSection(
-                    sprints = sprints, // Pass LazyPagingItems
+                    sprints = sprints,
                     pinnedSprints = pinnedSprints,
                     onIssueDroppedOnSprint = onIssueDroppedOnSprint,
                     onSprintClicked = onSprintClicked,
@@ -86,7 +86,7 @@ fun BacklogPage(
 
         CardAnimatedSize(title = "Backlog") {
             BacklogSection(
-                backlogIssues = backlogIssues, // Pass LazyPagingItems
+                backlogIssues = backlogIssues,
                 pinnedIssues = pinnedIssues,
                 onSwipeToPin = onSwipeToPinIssue,
                 onSwipeToDelete = onSwipeToDeleteIssue,

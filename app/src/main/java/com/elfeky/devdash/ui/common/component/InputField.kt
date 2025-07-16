@@ -90,7 +90,7 @@ fun InputField(
 }
 
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun PasswordTextFieldPreview() {
     DevDashTheme {
@@ -104,7 +104,7 @@ fun PasswordTextFieldPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun EmailTextFieldPreview() {
     DevDashTheme {
@@ -125,7 +125,7 @@ fun EmailTextFieldPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun NormalTextFieldPreview() {
     DevDashTheme {

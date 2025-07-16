@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
 import com.elfeky.devdash.ui.common.dialogs.issue.IssueDialog
+import com.elfeky.devdash.ui.common.dialogs.join.InviteDialog
 import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
 import com.elfeky.devdash.ui.common.dialogs.sprint.SprintDialog
 import com.elfeky.devdash.ui.utils.rememberFlowWithLifecycle
@@ -59,6 +60,11 @@ fun ProjectDetailsScreen(
 
                 is ProjectDetailsReducer.Effect.TriggerLoadBacklogIssues -> backlogIssues.refresh()
 
+                is ProjectDetailsReducer.Effect.TriggerRefresh -> {
+                    sprints.refresh()
+                    backlogIssues.refresh()
+                }
+
                 else -> Unit
             }
         }
@@ -69,12 +75,12 @@ fun ProjectDetailsScreen(
         onEvent = viewModel::onEvent,
         snackbarHostState = snackbarHostState,
         onNavigateBack = onNavigateBack,
-        sprints = sprints, // Pass LazyPagingItems directly
-        backlogIssues = backlogIssues, // Pass LazyPagingItems directly
+        sprints = sprints,
+        backlogIssues = backlogIssues,
         modifier = modifier
     )
 
-    state.dialog?.let { dialogType -> // Observe the dialog state directly from reducer
+    state.dialog?.let { dialogType ->
         when (dialogType) {
             ProjectDetailsReducer.DialogType.EditProject -> {
                 ProjectDialog(
@@ -139,14 +145,14 @@ fun ProjectDetailsScreen(
                             ProjectDetailsReducer.Event.IssueAction.ConfirmCreateClicked(
                                 IssueFormFields(
                                     priority = issue.priority.text,
-                                    status = issue.status.name,
+                                    status = issue.status.text,
                                     title = issue.title,
                                     type = issue.type.name,
                                     labels = issue.labels.toString(),
                                     description = issue.description,
                                     isBacklog = true,
-                                    startDate = issue.startDate!!.toStringDate(),
-                                    deadline = issue.deadline!!.toStringDate(),
+                                    startDate = issue.startDate?.toStringDate(),
+                                    deadline = issue.deadline?.toStringDate(),
                                     deliveredDate = null,
                                     lastUpdate = LocalDateTime.now().toString()
                                 )
@@ -215,7 +221,27 @@ fun ProjectDetailsScreen(
             }
 
             is ProjectDetailsReducer.DialogType.EditIssue -> {
-                // Handle EditIssue dialog if needed
+                // TODO: Implement EditIssueDialog
+            }
+
+            ProjectDetailsReducer.DialogType.InviteMember -> {
+                InviteDialog(
+                    onDismiss = {
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.Update.ShowDialog(
+                                null
+                            )
+                        )
+                    },
+                    onConfirm = { email, role ->
+                        viewModel.onEvent(
+                            ProjectDetailsReducer.Event.ProjectAction.ConfirmInviteClicked(
+                                email,
+                                role
+                            )
+                        )
+                    }
+                )
             }
         }
     }

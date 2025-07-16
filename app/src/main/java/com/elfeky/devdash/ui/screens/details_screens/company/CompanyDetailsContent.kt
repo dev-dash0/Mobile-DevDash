@@ -51,7 +51,6 @@ fun CompanyDetailsContent(
     val companyTabsPagerState = rememberPagerState(pageCount = { tabs.size })
 
     ScreenContainer(
-        snackbarHostState = snackbarHostState,
         title = uiState.tenant?.name ?: "",
         isPinned = uiState.isPinned,
         isOwner = uiState.tenant?.role == "Admin",
@@ -64,11 +63,14 @@ fun CompanyDetailsContent(
         onBackClick = { onEvent(CompanyDetailsReducer.Event.BackClicked) },
         modifier = modifier,
         onChatWithAIClick = { onEvent(CompanyDetailsReducer.Event.OnChatWithAgentClick) },
+        onCreateClick = { onEvent(CompanyDetailsReducer.Event.ProjectAction.CreateClicked) },
+        onInviteClick = { onEvent(CompanyDetailsReducer.Event.InviteMemberClicked) },
+        onJoinClick = { onEvent(CompanyDetailsReducer.Event.JoinProjectClicked) },
         isLoading = uiState.isLoading && uiState.tenant == null,
         image = uiState.tenant?.image,
         hasImageBackground = true,
-        onCreateClick = { onEvent(CompanyDetailsReducer.Event.ProjectAction.CreateClicked) },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        snackbarHostState = snackbarHostState
     ) { paddingValues ->
         Column(
             modifier = Modifier

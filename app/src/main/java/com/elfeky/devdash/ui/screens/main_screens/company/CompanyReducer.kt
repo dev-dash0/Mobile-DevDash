@@ -57,6 +57,7 @@ class CompanyReducer :
             )
 
             is Event.DeleteCompany -> previousState to Effect.DeleteCompany(event.id)
+            is Event.JoinCompany -> previousState to Effect.JoinCompany(event.code) // New event handling
         }
     }
 
@@ -84,6 +85,7 @@ class CompanyReducer :
         object RefreshCompanies : Event()
         data class TogglePinStatus(val id: Int, val isPinned: Boolean) : Event()
         data class DeleteCompany(val id: Int) : Event()
+        data class JoinCompany(val code: String) : Event() // New event
     }
 
     @Immutable
@@ -93,5 +95,6 @@ class CompanyReducer :
         data class AddCompany(val request: TenantRequest) : Effect()
         data class TogglePinStatus(val id: Int, val isPinned: Boolean) : Effect()
         data class DeleteCompany(val id: Int) : Effect()
+        data class JoinCompany(val code: String) : Effect() // New effect
     }
 }

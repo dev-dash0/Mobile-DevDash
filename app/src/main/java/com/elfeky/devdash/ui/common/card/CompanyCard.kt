@@ -47,7 +47,7 @@ fun CompanyCard(
             AsyncImage(
                 model = company.image,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillHeight,
                 modifier = Modifier.matchParentSize()
             )
             Box(

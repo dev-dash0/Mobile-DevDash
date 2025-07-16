@@ -3,9 +3,12 @@ package com.elfeky.devdash.ui.screens.details_screens.company
 import androidx.lifecycle.viewModelScope
 import com.elfeky.devdash.ui.base.BaseViewModel
 import com.elfeky.devdash.ui.common.dialogs.company.model.CompanyUiModel
+import com.elfeky.domain.model.join.InviteTenantRequest
 import com.elfeky.domain.model.project.ProjectRequest
 import com.elfeky.domain.model.tenant.TenantRequest
 import com.elfeky.domain.usecase.account.GetUserProfileUseCase
+import com.elfeky.domain.usecase.join.InviteTenantUseCase
+import com.elfeky.domain.usecase.join.JoinProjectUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedProjectsUseCase
 import com.elfeky.domain.usecase.pin.get.GetPinnedTenantsUseCase
 import com.elfeky.domain.usecase.pin.pin.PinProjectUseCase
@@ -42,6 +45,8 @@ class CompanyDetailsViewModel @AssistedInject constructor(
     private val unpinTenantUseCase: UnpinTenantUseCase,
     private val pinProjectUseCase: PinProjectUseCase,
     private val unpinProjectUseCase: UnpinProjectUseCase,
+    private val inviteMemberUseCase: InviteTenantUseCase,
+    private val joinProjectUseCase: JoinProjectUseCase,
 ) : BaseViewModel<CompanyDetailsReducer.State, CompanyDetailsReducer.Event, CompanyDetailsReducer.Effect>(
     CompanyDetailsReducer.initialState,
     CompanyDetailsReducer()
@@ -80,10 +85,18 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                         effect.projectId
                     )
 
+                    is CompanyDetailsReducer.Effect.TriggerInviteMember -> inviteMember(
+                        effect.email,
+                        effect.role
+                    )
+
+                    is CompanyDetailsReducer.Effect.TriggerJoinProject -> joinCompany(effect.code)
+
                     is CompanyDetailsReducer.Effect.ShowSnackbar,
                     is CompanyDetailsReducer.Effect.ShowDialog,
                     CompanyDetailsReducer.Effect.NavigateBack,
-                    is CompanyDetailsReducer.Effect.NavigateToProjectDetails -> sendUiEffect(effect)
+                    is CompanyDetailsReducer.Effect.NavigateToProjectDetails,
+                    CompanyDetailsReducer.Effect.ShowInviteDialog -> sendUiEffect(effect)
                 }
             }
         }
@@ -264,6 +277,34 @@ class CompanyDetailsViewModel @AssistedInject constructor(
                     }
 
                     is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.ProjectPinError)
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
+    private fun inviteMember(email: String, role: String) {
+        viewModelScope.launch {
+            inviteMemberUseCase(InviteTenantRequest(email, role, companyId)).collect { result ->
+                when (result) {
+                    is Resource.Success -> sendUiEffect(CompanyDetailsReducer.Effect.ShowSnackbar("Invitation sent to $email"))
+                    is Resource.Error -> sendUiEffect(CompanyDetailsReducer.Effect.ShowSnackbar("${result.message}"))
+                    is Resource.Loading -> Unit
+                }
+            }
+        }
+    }
+
+    private fun joinCompany(code: String) {
+        viewModelScope.launch {
+            joinProjectUseCase(code).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        sendUiEffect(CompanyDetailsReducer.Effect.ShowSnackbar("Successfully joined company"))
+                        loadCompanyProjects()
+                    }
+
+                    is Resource.Error -> sendUiEffect(CompanyDetailsReducer.Effect.ShowSnackbar("Failed to join company: ${result.message}"))
                     is Resource.Loading -> Unit
                 }
             }

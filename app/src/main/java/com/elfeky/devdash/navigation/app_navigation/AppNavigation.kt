@@ -55,7 +55,6 @@ fun AppNavigation(
             val companyId = it.arguments?.getInt("id")!!
 
             CompanyDetailsScreen(
-                modifier = modifier,
                 onBackClick = { navController.popBackStack() },
                 onNavigateToProject = { projectId ->
                     navController.navigate(AppScreen.ProjectDetailsScreen.route + "/$projectId")

@@ -53,7 +53,7 @@ fun ProfileScreen(
                         Toast.makeText(context, "Uploading the image", Toast.LENGTH_LONG).show()
 
                         storageRef
-                            .child("ProfileImages/${state.userProfile?.userName ?: "test"}")
+                            .child("ProfileImages/${state.userProfile?.email ?: "test"}")
                             .putFile(uri as Uri)
                             .addOnSuccessListener {
                                 isUpdatingImage.value = false
@@ -64,7 +64,7 @@ fun ProfileScreen(
                                 ).show()
                                 Log.i("imageUrl", it.toString())
 
-                                storageRef.child("ProfileImages/${state.userProfile?.userName ?: "test"}")
+                                storageRef.child("ProfileImages/${state.userProfile?.email ?: "test"}")
                                     .downloadUrl
                                     .addOnSuccessListener { newUri ->
                                         Log.i("imageUrl", newUri.toString())
@@ -100,14 +100,15 @@ fun ProfileScreen(
                                 isUpdatingImage.value = false
                             }
                     } else {
-                        storageRef.child("ProfileImages/${state.userProfile?.userName ?: "test"}")
+
+                        storageRef.child("ProfileImages/${state.userProfile?.email ?: "test"}")
                             .delete()
                             .addOnSuccessListener {
                                 isUpdatingImage.value = false
                                 Toast.makeText(context, "Image removed", Toast.LENGTH_SHORT).show()
                                 viewModel.updateProfile(
                                     UserProfileRequest(
-                                        imageUrl = null, // Set imageUrl to null
+                                        imageUrl = "",
                                         firstName = state.userProfile?.firstName,
                                         lastName = state.userProfile?.lastName,
                                         phoneNumber = state.userProfile?.phoneNumber,

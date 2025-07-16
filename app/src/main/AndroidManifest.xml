@@ -30,7 +30,7 @@
                 android:value="" />
         </service>
         <activity
-            android:name=".ui.main_activity.MainActivity"
+            android:name=".main_activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">

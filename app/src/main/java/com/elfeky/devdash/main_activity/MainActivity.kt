@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.main_activity
+package com.elfeky.devdash.main_activity
 
 import android.graphics.Color
 import android.os.Bundle

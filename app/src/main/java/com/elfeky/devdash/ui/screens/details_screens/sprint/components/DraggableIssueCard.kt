@@ -19,6 +19,7 @@ fun DraggableIssueCard(
     onPinClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onEditClick: () -> Unit,
+    onCommentsClick: () -> Unit,
     onDrag: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,6 +39,13 @@ fun DraggableIssueCard(
                 }
             }
     ) {
-        IssueCard(issue, isPinned, onPinClick, onDeleteClick, onEditClick)
+        IssueCard(
+            issue = issue,
+            isPinned = isPinned,
+            onPinClick = onPinClick,
+            onDeleteClick = onDeleteClick,
+            onEditClick = onEditClick,
+            onCommentsClick = onCommentsClick
+        )
     }
 }
