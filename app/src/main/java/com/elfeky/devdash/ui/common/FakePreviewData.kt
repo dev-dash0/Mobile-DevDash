@@ -10,6 +10,9 @@ import com.elfeky.domain.model.notification.Notification
 import com.elfeky.domain.model.pin.PinnedItems
 import com.elfeky.domain.model.project.Project
 import com.elfeky.domain.model.project.UserProject
+import com.elfeky.domain.model.search.IssueSearch
+import com.elfeky.domain.model.search.ProjectSearch
+import com.elfeky.domain.model.search.TenantSearch
 import com.elfeky.domain.model.sprint.Sprint
 import com.elfeky.domain.model.tenant.Tenant
 import okhttp3.internal.format
@@ -253,3 +256,33 @@ val pinnedItems = PinnedItems(
     sprints = sprintList.shuffled().take(Random.nextInt(1, 4)),
     tenants = companyList.shuffled().take(Random.nextInt(1, 4))
 )
+
+val issueSearchList = issueList.take(Random.nextInt(5, 15)).map { issue ->
+    IssueSearch(
+        priority = issue.priority,
+        projectName = projectList.find { it.id == issue.projectId }?.name ?: "Unknown Project",
+        status = issue.status,
+        tenantName = companyList.find { it.id == issue.tenantId }?.name ?: "Unknown Tenant",
+        title = issue.title
+    )
+}
+
+val projectSearchList = projectList.take(Random.nextInt(3, 7)).map { project ->
+    ProjectSearch(
+        description = project.description,
+        id = project.id,
+        name = project.name,
+        priority = project.priority,
+        projectCode = project.projectCode,
+        tenantName = project.tenant.name
+    )
+}
+
+val companySearchList = companyList.take(Random.nextInt(2, 5)).map { company ->
+    TenantSearch(
+        description = company.description,
+        id = company.id,
+        name = company.name,
+        tenantCode = company.tenantCode
+    )
+}

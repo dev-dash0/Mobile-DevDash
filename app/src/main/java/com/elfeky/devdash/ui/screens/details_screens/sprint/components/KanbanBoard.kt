@@ -14,20 +14,23 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status.Companion.issueStatusList
 import com.elfeky.devdash.ui.common.issueList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.screens.details_screens.sprint.model.Board
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.issue.Issue
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun KanbanBoard(
+    user: UserProfile?,
     issues: LazyPagingItems<Issue>,
     pinnedIssues: List<Issue>,
     onDrag: (issue: Issue) -> Unit,
     onDrop: (status: String) -> Unit,
     onPinClick: (id: Int) -> Unit,
     onDeleteClick: (id: Int) -> Unit,
-    onCommentClick: (issue: Issue) -> Unit,
+    onCommentClick: (id: Int) -> Unit,
     onEditClick: (issue: Issue) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,6 +43,7 @@ fun KanbanBoard(
             val boardIssues = issues.itemSnapshotList.items.filter { it.status == status.text }
 
             BoardColumn(
+                user = user,
                 board = Board(status.text, boardIssues),
                 pinnedIssues = pinnedIssues,
                 onDrop = { onDrop(status.text) },
@@ -60,6 +64,7 @@ fun KanbanBoardPreview() {
         val issuesPagingItems = flowOf(PagingData.from(issueList)).collectAsLazyPagingItems()
 
         KanbanBoard(
+            user = userList[0],
             issues = issuesPagingItems,
             pinnedIssues = issueList.take(3),
             onDrag = {},

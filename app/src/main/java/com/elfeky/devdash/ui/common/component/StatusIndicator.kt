@@ -13,16 +13,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
 
 @Composable
 fun StatusIndicator(
     status: Status,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    size: Dp = 24.dp
 ) {
     Box(
-        modifier = modifier.size(24.dp),
+        modifier = modifier.size(size),
         contentAlignment = Alignment.Center
     ) {
         Icon(
@@ -31,7 +33,7 @@ fun StatusIndicator(
             tint = status.color
         )
         status.percentage?.let {
-            Canvas(modifier = Modifier.size(12.dp)) {
+            Canvas(modifier = Modifier.size(size / 2)) {
                 drawArc(
                     color = status.color,
                     startAngle = -90f,
@@ -46,7 +48,7 @@ fun StatusIndicator(
                 else -> Icons.Default.Close
             },
             contentDescription = "",
-            modifier = Modifier.size(12.dp),
+            modifier = Modifier.size(size / 2),
             tint = status.color
         )
     }

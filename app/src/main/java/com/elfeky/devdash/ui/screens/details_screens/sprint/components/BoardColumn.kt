@@ -24,21 +24,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.ui.common.issueList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.screens.details_screens.sprint.model.Board
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.boardColumnGradient
+import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.issue.Issue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BoardColumn(
+    user: UserProfile?,
     board: Board,
     pinnedIssues: List<Issue>,
     onDrop: (event: DragAndDropEvent) -> Unit,
     onPinClick: (id: Int) -> Unit,
     onDeleteClick: (id: Int) -> Unit,
     onEditClick: (issue: Issue) -> Unit,
-    onCommentClick: (issue: Issue) -> Unit,
+    onCommentClick: (id: Int) -> Unit,
     onDrag: (issue: Issue) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -86,12 +89,13 @@ fun BoardColumn(
         ) {
             items(board.issues, key = { it.id }) { issue ->
                 DraggableIssueCard(
+                    user = user,
                     issue = issue,
                     isPinned = pinnedIssues.contains(issue),
                     onPinClick = { onPinClick(issue.id) },
                     onDeleteClick = { onDeleteClick(issue.id) },
                     onEditClick = { onEditClick(issue) },
-                    onCommentsClick = { onCommentClick(issue) },
+                    onCommentsClick = { onCommentClick(issue.id) },
                     onDrag = { onDrag(issue) },
                 )
             }
@@ -107,6 +111,7 @@ fun BoardColumn(
 private fun BoardColumnPreview() {
     DevDashTheme {
         BoardColumn(
+            user = userList[0],
             board = Board(
                 title = "To Do",
                 issues = issueList.take(4)

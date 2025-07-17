@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.screens.main_screens.home
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
+import com.elfeky.devdash.ui.common.card.CompactIssueCard
 import com.elfeky.devdash.ui.common.card.CompanyCard
 import com.elfeky.devdash.ui.common.card.ProjectCard
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
@@ -38,15 +39,14 @@ import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
 import com.elfeky.devdash.ui.common.issueList
 import com.elfeky.devdash.ui.common.pinnedItems
 import com.elfeky.devdash.ui.common.projectList
+import com.elfeky.devdash.ui.common.userList
+import com.elfeky.devdash.ui.screens.main_screens.home.HomeReducer.HomeState
 import com.elfeky.devdash.ui.screens.main_screens.home.components.Header
 import com.elfeky.devdash.ui.screens.main_screens.home.components.PinnedIssueCard
 import com.elfeky.devdash.ui.screens.main_screens.home.components.PinnedSprintCard
 import com.elfeky.devdash.ui.screens.main_screens.home.components.SectionHeader
-import com.elfeky.devdash.ui.screens.main_screens.home.components.UrgentIssueCard
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.issue.Issue
-import com.elfeky.domain.model.pin.PinnedItems
-import com.elfeky.domain.model.project.Project
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -55,9 +55,7 @@ import java.time.temporal.ChronoUnit
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
-    urgentIssues: List<Issue>,
-    pinnedItems: PinnedItems,
-    projects: List<Project>,
+    state: HomeState,
     navigateToCompany: (id: Int) -> Unit,
     navigateToProject: (id: Int) -> Unit,
     navigateToSprint: (id: Int) -> Unit
@@ -71,7 +69,7 @@ fun HomeContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            Header("User", modifier = Modifier.padding(horizontal = 16.dp))
+            Header(state.user?.firstName ?: "", modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -83,14 +81,14 @@ fun HomeContent(
             )
         }
 
-        if (urgentIssues.isNotEmpty()) {
+        if (!state.urgentIssues.isNullOrEmpty()) {
             item {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    items(urgentIssues) { issue ->
-                        UrgentIssueCard(
+                    items(state.urgentIssues) { issue ->
+                        CompactIssueCard(
                             issue,
                             modifier = Modifier
                                 .width(200.dp)
@@ -158,34 +156,51 @@ fun HomeContent(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     when (page) {
-                        0 -> items(pinnedItems.tenants) { item ->
+                        0 -> items(
+                            state.pinnedItems?.tenants ?: emptyList(),
+                            key = { it.tenantCode }
+                        ) { tenant ->
                             CompanyCard(
-                                item,
+                                tenant,
                                 navigateToCompany,
                                 modifier = Modifier.heightIn(max = 150.dp)
                             )
                         }
 
-                        1 -> items(pinnedItems.projects) { item ->
+                        1 -> items(
+                            state.pinnedItems?.projects ?: emptyList(),
+                            key = { it.projectCode }
+                        ) { project ->
                             ProjectCard(
-                                item,
-                                { navigateToProject(item.id) }, {})
+                                project,
+                                {
+                                    Log.d("Home Content", "${project.name} : ${project.id}")
+                                    navigateToProject(project.id)
+                                }, {})
                         }
 
-                        2 -> items(pinnedItems.sprints) { item ->
+                        2 -> items(
+                            state.pinnedItems?.sprints ?: emptyList(),
+                            key = { it.id.toString() + it.title }
+                        ) { sprint ->
                             PinnedSprintCard(
-                                projects.find { it.id == item.projectId }?.name ?: "", item,
-                                modifier = Modifier.clickable { navigateToSprint(item.id) }
+                                state.projects?.find { it.id == sprint.projectId }?.name
+                                    ?: "", sprint,
+                                modifier = Modifier.clickable { navigateToSprint(sprint.id) }
                             )
                         }
 
-                        3 -> items(pinnedItems.issues) { item ->
+                        3 -> items(
+                            state.pinnedItems?.issues ?: emptyList(),
+                            key = { it.id.toString() + it.title }
+                        ) { issue ->
                             PinnedIssueCard(
-                                projects.find { it.id == item.projectId }?.name ?: "",
-                                item,
+                                state.projects?.find { it.id == issue.projectId }?.name
+                                    ?: "",
+                                issue,
                                 modifier = Modifier.clickable {
-                                    if (item.isBacklog) navigateToProject(item.projectId)
-                                    else navigateToSprint(item.sprintId!!)
+                                    if (issue.isBacklog) navigateToProject(issue.projectId)
+                                    else navigateToSprint(issue.sprintId!!)
                                 }
                             )
                         }
@@ -201,6 +216,7 @@ fun HomeContent(
 fun HomePreview() {
     val urgentIssues = issueList.filter {
         val isCompleted = it.status == Status.Completed.text
+        val isCancelled = it.status == Status.Canceled.text
         val deadlineDateTime = it.deadline?.let { deadline ->
             LocalDateTime.parse(deadline, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         }
@@ -209,16 +225,19 @@ fun HomePreview() {
             deadlineDateTime?.isBefore(LocalDateTime.now().plus(3, ChronoUnit.DAYS)) == true
         val isHighPriority =
             it.priority == Priority.Urgent.text || it.priority == Priority.Critical.text
-        !isCompleted && (isOverdue || (isDueSoon && isHighPriority))
+        !isCompleted && !isCancelled && (isOverdue || (isDueSoon && isHighPriority))
     }
         .sortedWith(compareByDescending<Issue> { it.priority.toPriority().ordinal }.thenBy { it.deadline })
         .take(5)
 
     DevDashTheme {
         HomeContent(
-            urgentIssues = urgentIssues,
-            pinnedItems = pinnedItems,
-            projects = projectList,
+            state = HomeState(
+                user = userList[0],
+                urgentIssues = urgentIssues,
+                pinnedItems = pinnedItems,
+                projects = projectList
+            ),
             navigateToCompany = {},
             navigateToProject = {},
             navigateToSprint = {}

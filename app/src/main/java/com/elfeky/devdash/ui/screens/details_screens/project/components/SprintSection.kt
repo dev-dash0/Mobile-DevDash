@@ -25,6 +25,7 @@ import androidx.compose.ui.draganddrop.toAndroidDragEvent
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import com.elfeky.devdash.ui.common.card.SprintCard
 import com.elfeky.devdash.ui.common.component.SwipeToDismissItem
 import com.elfeky.devdash.ui.utils.itemsPaging
 import com.elfeky.domain.model.sprint.Sprint
@@ -55,7 +56,7 @@ fun SprintSection(
         verticalArrangement = Arrangement.spacedBy(itemSpacing)
     ) {
         itemsPaging(sprints, key = { it.id.toString() + it.title }) { sprint ->
-            sprint?.let {
+            sprint.let {
                 val isHovered = hoveredSprintId == it.id
                 val animatedElevation by animateDpAsState(
                     targetValue = if (isHovered) 12.dp else 0.dp,

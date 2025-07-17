@@ -21,8 +21,8 @@ import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
 import com.elfeky.devdash.ui.common.dialogs.join.InviteDialog
 import com.elfeky.devdash.ui.common.dialogs.join.JoinDialog
 import com.elfeky.devdash.ui.common.dialogs.project.ProjectDialog
-import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatScreen
-import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatViewModel
+import com.elfeky.devdash.ui.screens.details_screens.company.chat_bot.ChatScreen
+import com.elfeky.devdash.ui.screens.details_screens.company.chat_bot.ChatViewModel
 import com.elfeky.devdash.ui.utils.rememberFlowWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)

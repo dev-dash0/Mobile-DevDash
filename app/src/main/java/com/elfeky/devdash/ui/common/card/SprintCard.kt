@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.details_screens.project.components
+package com.elfeky.devdash.ui.common.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

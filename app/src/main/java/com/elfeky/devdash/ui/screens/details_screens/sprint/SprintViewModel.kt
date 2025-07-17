@@ -9,6 +9,7 @@ import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.issue.IssueFormFields
 import com.elfeky.domain.model.sprint.Sprint
 import com.elfeky.domain.model.sprint.SprintRequest
+import com.elfeky.domain.usecase.account.GetUserProfileUseCase
 import com.elfeky.domain.usecase.assign.AssignUserIssueUseCase
 import com.elfeky.domain.usecase.assign.UnassignUserIssueUseCase
 import com.elfeky.domain.usecase.comment.GetCommentsUseCase
@@ -34,12 +35,12 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = SprintViewModel.Factory::class)
 class SprintViewModel @AssistedInject constructor(
     @Assisted private val sprintId: Int,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getSprintByIdUseCase: GetSprintByIdUseCase,
     private val getSprintIssuesUseCase: GetSprintIssuesUseCase,
     private val getProjectByIdUseCase: GetProjectByIdUseCase,
@@ -94,6 +95,7 @@ class SprintViewModel @AssistedInject constructor(
                 when (effect) {
                     is SprintReducer.Effect.NavigateBack,
                     is SprintReducer.Effect.NavigateToIssueDetails,
+                    is SprintReducer.Effect.ShowCommentBottomSheet,
                     is SprintReducer.Effect.ShowSnackbar -> sendUiEffect(effect)
 
                     is SprintReducer.Effect.Reload -> handleReloadEffect(effect)
@@ -106,9 +108,9 @@ class SprintViewModel @AssistedInject constructor(
     private fun handleReloadEffect(effect: SprintReducer.Effect.Reload) {
         when (effect) {
             SprintReducer.Effect.Reload.SprintInfo -> loadSprint()
-            SprintReducer.Effect.Reload.Issues -> sendUiEffect(effect)
             SprintReducer.Effect.Reload.PinnedIssues -> loadPinnedIssues()
-            SprintReducer.Effect.Reload.Comments -> loadComments()
+            SprintReducer.Effect.Reload.Issues,
+            SprintReducer.Effect.Reload.Comments -> sendUiEffect(effect)
         }
     }
 
@@ -124,6 +126,7 @@ class SprintViewModel @AssistedInject constructor(
                 effect.assignedUsers
             )
 
+            is SprintReducer.Effect.Trigger.IssueComment -> loadComments(effect.issueId)
             is SprintReducer.Effect.Trigger.ToggleIssuePin -> toggleIssuePin(effect.issueId)
             is SprintReducer.Effect.Trigger.MoveIssue -> moveIssue(effect.status)
             is SprintReducer.Effect.Trigger.SendComment -> sendComment(effect.text)
@@ -137,8 +140,8 @@ class SprintViewModel @AssistedInject constructor(
                 launch { loadSprint() }
                 launch { loadPinnedStatus() }
                 launch { loadIssues() }
+                launch { loadUserProfile() }
                 launch { loadPinnedIssues() }
-                launch { loadComments() }
             }
             onEvent(SprintReducer.Event.UpdateState(isLoading = false))
         }
@@ -161,6 +164,14 @@ class SprintViewModel @AssistedInject constructor(
                 is Resource.Loading -> Unit
             }
         }
+    }
+
+    private fun loadUserProfile() = viewModelScope.launch {
+        executeResourceFlow(
+            getUserProfileUseCase(),
+            onSuccess = { profile -> onEvent(SprintReducer.Event.UpdateState(userProfile = profile)) },
+            onError = { SprintReducer.Event.OperationError("Error loading user profile: $it") }
+        )
     }
 
     private fun loadSprint() = viewModelScope.launch {
@@ -206,12 +217,6 @@ class SprintViewModel @AssistedInject constructor(
             onSuccess = { onEvent(SprintReducer.Event.UpdateState(users = it!!.tenant.joinedUsers)) },
             onError = { SprintReducer.Event.OperationError("Failed to load users: $it") }
         )
-    }
-
-    private fun loadComments() = viewModelScope.launch {
-        getCommentsUseCase(sprintId).cachedIn(viewModelScope).collect {
-            onEvent(SprintReducer.Event.UpdateState(comments = flowOf(it)))
-        }
     }
 
     private fun deleteSprint() = viewModelScope.launch {
@@ -308,9 +313,19 @@ class SprintViewModel @AssistedInject constructor(
         onEvent(SprintReducer.Event.UpdateState(draggedIssue = null))
     }
 
+    private fun loadComments(issueId: Int) = viewModelScope.launch {
+        onEvent(
+            SprintReducer.Event.UpdateState(
+                comments = getCommentsUseCase(issueId).cachedIn(
+                    viewModelScope
+                )
+            )
+        )
+    }
+
     private fun sendComment(text: String) = viewModelScope.launch {
         executeResourceFlow(
-            sendCommentUseCase(sprintId, text),
+            sendCommentUseCase(state.value.issueCommentId!!, text),
             onSuccess = { onEvent(SprintReducer.Event.AsyncOperationCompleted.CommentSend) },
             onError = { SprintReducer.Event.OperationError("Failed to send comment: $it") }
         )

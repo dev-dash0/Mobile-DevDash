@@ -1,19 +1,25 @@
 package com.elfeky.devdash.ui.screens.details_screens.sprint
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.elfeky.devdash.ui.common.dialogs.delete.DeleteConfirmationDialog
 import com.elfeky.devdash.ui.common.dialogs.issue.IssueDialog
 import com.elfeky.devdash.ui.common.dialogs.sprint.SprintDialog
+import com.elfeky.devdash.ui.screens.details_screens.sprint.issue_comment.CommentsSheetContent
 import com.elfeky.devdash.ui.utils.rememberFlowWithLifecycle
 import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.issue.IssueFormFields
@@ -36,6 +42,9 @@ fun SprintScreen(
 
     val uiEffectFlow = rememberFlowWithLifecycle(viewModel.uiEffect)
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showCommentsSheet by remember { mutableStateOf(false) }
+
     LaunchedEffect(uiEffectFlow) {
         uiEffectFlow.collect { effect ->
             when (effect) {
@@ -50,7 +59,16 @@ fun SprintScreen(
 
                 SprintReducer.Effect.NavigateBack -> onBackClick()
                 is SprintReducer.Effect.NavigateToIssueDetails -> onIssueClick(effect.issueId)
+
                 is SprintReducer.Effect.Reload.Issues -> issues.refresh()
+                is SprintReducer.Effect.Reload.Comments -> comments.refresh()
+
+                is SprintReducer.Effect.ShowCommentBottomSheet -> {
+                    viewModel.onEvent(SprintReducer.Event.UpdateState(issueCommentId = effect.issueId))
+                    viewModel.onEvent(SprintReducer.Event.IssueCommentLoad(effect.issueId))
+                    showCommentsSheet = true
+                }
+
                 else -> Unit
             }
         }
@@ -60,7 +78,6 @@ fun SprintScreen(
         role = role,
         uiState = state,
         issues = issues,
-        comments = comments,
         onEvent = viewModel::onEvent,
         snackbarHostState = snackbarHostState,
         onNavigateBack = { viewModel.onEvent(SprintReducer.Event.BackClicked) }
@@ -157,6 +174,25 @@ fun SprintScreen(
                     isBacklog = false
                 )
             }
+        }
+    }
+
+    if (showCommentsSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                viewModel.onEvent(SprintReducer.Event.UpdateState(issueCommentId = null))
+                showCommentsSheet = false
+            },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.background
+        ) {
+            CommentsSheetContent(
+                comments = comments,
+                user = state.userProfile,
+                onSendClick = { viewModel.onEvent(SprintReducer.Event.SendCommentClicked(it)) },
+                onEditClick = {},
+                onDeleteClick = {}
+            )
         }
     }
 }

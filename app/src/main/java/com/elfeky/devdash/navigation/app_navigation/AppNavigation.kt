@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.company.CompanyDetailsViewModel
-import com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot.ChatViewModel
+import com.elfeky.devdash.ui.screens.details_screens.company.chat_bot.ChatViewModel
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsScreen
 import com.elfeky.devdash.ui.screens.details_screens.project.ProjectDetailsViewModel
 import com.elfeky.devdash.ui.screens.details_screens.sprint.SprintScreen

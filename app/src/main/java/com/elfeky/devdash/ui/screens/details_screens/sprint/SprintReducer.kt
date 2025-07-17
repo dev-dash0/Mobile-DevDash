@@ -23,6 +23,8 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
         val users: List<UserProfile> = emptyList(),
         val comments: Flow<PagingData<Comment>> = flowOf(PagingData.empty()),
         val draggedIssue: Issue? = null,
+        val issueCommentId: Int? = null,
+        val userProfile: UserProfile? = null,
         val dialog: Dialog? = null
     ) : Reducer.ViewState {
         sealed class Dialog {
@@ -43,8 +45,10 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
             val issues: Flow<PagingData<Issue>>? = null,
             val pinnedIssues: List<Issue>? = null,
             val users: List<UserProfile>? = null,
+            val userProfile: UserProfile? = null,
             val comments: Flow<PagingData<Comment>>? = null,
-            val draggedIssue: Issue? = null
+            val draggedIssue: Issue? = null,
+            val issueCommentId: Int? = null,
         ) : Event()
 
         data class OperationError(val message: String) : Event()
@@ -62,6 +66,8 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
         data class ConfirmDeleteIssueClicked(val issueId: Int) : Event()
         data class PinIssueClicked(val issueId: Int) : Event()
         data class EditIssueClicked(val issue: Issue) : Event()
+        data class IssueCommentClicked(val issueId: Int) : Event()
+        data class IssueCommentLoad(val issueId: Int) : Event()
         data class ConfirmEditIssueClicked(val issue: Issue, val assignedUsers: List<UserProfile>) :
             Event()
 
@@ -101,10 +107,13 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
             data class UpdateIssue(val issue: Issue, val assignedUsers: List<UserProfile>) :
                 Trigger()
 
+            data class IssueComment(val issueId: Int) : Trigger()
             data class ToggleIssuePin(val issueId: Int) : Trigger()
             data class MoveIssue(val status: String) : Trigger()
             data class SendComment(val text: String) : Trigger()
         }
+
+        data class ShowCommentBottomSheet(val issueId: Int) : Effect()
     }
 
     override fun reduce(previousState: State, event: Event): Pair<State, Effect?> {
@@ -116,8 +125,10 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
                 issues = event.issues ?: previousState.issues,
                 pinnedIssues = event.pinnedIssues ?: previousState.pinnedIssues,
                 users = event.users ?: previousState.users,
+                userProfile = event.userProfile ?: previousState.userProfile,
                 comments = event.comments ?: previousState.comments,
-                draggedIssue = event.draggedIssue ?: previousState.draggedIssue
+                draggedIssue = event.draggedIssue ?: previousState.draggedIssue,
+                issueCommentId = event.issueCommentId ?: previousState.issueCommentId
             ) to null
 
             is Event.OperationError -> previousState.copy(isLoading = false) to Effect.ShowSnackbar(
@@ -166,6 +177,8 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
 
             is Event.PinIssueClicked -> previousState to Effect.Trigger.ToggleIssuePin(event.issueId)
             is Event.IssueDropped -> previousState to Effect.Trigger.MoveIssue(event.status)
+            is Event.IssueCommentClicked -> previousState to Effect.ShowCommentBottomSheet(event.issueId)
+            is Event.IssueCommentLoad -> previousState to Effect.Trigger.IssueComment(event.issueId)
             is Event.SendCommentClicked -> previousState to Effect.Trigger.SendComment(event.text)
 
             Event.AsyncOperationCompleted.SprintDelete -> previousState.copy(isLoading = false) to Effect.NavigateBack

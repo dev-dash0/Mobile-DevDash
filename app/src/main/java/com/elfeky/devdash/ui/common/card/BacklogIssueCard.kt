@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.details_screens.project.components
+package com.elfeky.devdash.ui.common.card
 
 import android.content.ClipData
 import android.util.Log
@@ -36,7 +36,7 @@ import com.elfeky.domain.model.issue.Issue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BacklogCard(
+fun BacklogIssueCard(
     issue: Issue,
     modifier: Modifier = Modifier,
     onIssueClicked: (issue: Issue) -> Unit
@@ -100,6 +100,6 @@ fun BacklogCard(
 
 @Preview
 @Composable
-private fun BacklogCardPreview() {
-    DevDashTheme { BacklogCard(issueList[0]) {} }
+private fun BacklogIssueCardPreview() {
+    DevDashTheme { BacklogIssueCard(issueList[0]) {} }
 }

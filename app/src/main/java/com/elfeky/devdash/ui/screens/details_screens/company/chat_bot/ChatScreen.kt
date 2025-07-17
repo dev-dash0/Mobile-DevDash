@@ -1,4 +1,4 @@
-package com.elfeky.devdash.ui.screens.details_screens.company.components.chat_bot
+package com.elfeky.devdash.ui.screens.details_screens.company.chat_bot
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable

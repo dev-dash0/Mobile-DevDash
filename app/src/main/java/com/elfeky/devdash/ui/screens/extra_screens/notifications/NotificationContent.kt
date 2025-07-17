@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +27,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.elfeky.devdash.ui.common.card.NotificationCard
 import com.elfeky.devdash.ui.common.notificationList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.domain.model.notification.Notification
@@ -38,10 +38,7 @@ fun NotificationContent(
     notifications: List<Notification>,
     markRead: (Int) -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
-
     LazyColumn(
-        state = lazyListState,
         modifier = Modifier
             .animateContentSize()
             .fillMaxWidth()

@@ -73,20 +73,12 @@ fun HomeScreen(
                     }
                 }
             } else {
-                state.pinnedItems?.let { pinnedItems ->
-                    state.urgentIssues?.let { urgentIssues ->
-                        state.projects?.let { projects ->
-                            HomeContent(
-                                urgentIssues = urgentIssues,
-                                pinnedItems = pinnedItems,
-                                projects = projects,
-                                navigateToCompany = navigateToCompany,
-                                navigateToProject = navigateToProject,
-                                navigateToSprint = { navigateToSprint(it, viewModel.getRole(it)) }
-                            )
-                        }
-                    }
-                }
+                HomeContent(
+                    state = state,
+                    navigateToCompany = navigateToCompany,
+                    navigateToProject = navigateToProject,
+                    navigateToSprint = { navigateToSprint(it, viewModel.getRole(it)) }
+                )
             }
         }
     }

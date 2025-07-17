@@ -31,7 +31,7 @@ class CalenderViewModel @Inject constructor(
                 }
 
                 is Resource.Success -> {
-                    val calendarMap = result.data?.result?.associate { calendarDay ->
+                    val calendarMap = result.data?.associate { calendarDay ->
                         calendarDay.date to calendarDay.issues
                     }
                     state = state.copy(

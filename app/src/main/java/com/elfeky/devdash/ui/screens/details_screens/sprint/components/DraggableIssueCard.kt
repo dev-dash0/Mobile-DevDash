@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import com.elfeky.devdash.ui.common.card.IssueCard
+import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.issue.Issue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DraggableIssueCard(
+    user: UserProfile?,
     issue: Issue,
     isPinned: Boolean,
     onPinClick: () -> Unit,
@@ -41,6 +43,7 @@ fun DraggableIssueCard(
     ) {
         IssueCard(
             issue = issue,
+            user = user,
             isPinned = isPinned,
             onPinClick = onPinClick,
             onDeleteClick = onDeleteClick,

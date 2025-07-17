@@ -1,7 +1,6 @@
-package com.elfeky.devdash.ui.screens.extra_screens.notifications
+package com.elfeky.devdash.ui.common.card
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,21 +19,23 @@ import com.elfeky.domain.model.notification.Notification
 fun NotificationCard(item: Notification, modifier: Modifier = Modifier) {
     CardContainer(
         modifier = modifier,
-        shape = RoundedCornerShape(24.dp),
-        contentPadding = PaddingValues(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Text(
             text = formatDisplayDate(item.createdAt),
             modifier = Modifier.align(Alignment.End),
             color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.labelSmall
         )
-        Text(
-            text = item.message,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyLarge
-        )
+
+        Row {
+            Text(
+                text = item.message,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
     }
 }
 

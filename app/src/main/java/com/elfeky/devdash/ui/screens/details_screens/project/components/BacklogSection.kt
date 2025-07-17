@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import com.elfeky.devdash.ui.common.card.BacklogIssueCard
 import com.elfeky.devdash.ui.common.component.SwipeToDismissItem
 import com.elfeky.devdash.ui.utils.itemsPaging
 import com.elfeky.domain.model.issue.Issue
@@ -21,7 +22,7 @@ import com.elfeky.domain.model.issue.Issue
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BacklogSection(
-    backlogIssues: LazyPagingItems<Issue>, // Changed to LazyPagingItems
+    backlogIssues: LazyPagingItems<Issue>,
     pinnedIssues: List<Issue>,
     onSwipeToDelete: (id: Int) -> Unit,
     onSwipeToPin: (id: Int) -> Unit,
@@ -34,13 +35,13 @@ fun BacklogSection(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsPaging(backlogIssues, key = { it.id }) { issue ->
-            issue?.let {
+            issue.let {
                 SwipeToDismissItem(
                     isPinned = pinnedIssues.contains(it),
                     onSwipeToPin = { onSwipeToPin(it.id) },
                     onSwipeToDelete = { onSwipeToDelete(it.id) },
                 ) {
-                    BacklogCard(
+                    BacklogIssueCard(
                         issue = it,
                         onIssueClicked = onIssueClicked
                     )

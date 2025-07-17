@@ -43,14 +43,17 @@ import com.elfeky.devdash.ui.common.card.component.IssueCardLabels
 import com.elfeky.devdash.ui.common.component.avatar.Avatar
 import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
 import com.elfeky.devdash.ui.common.issueList
+import com.elfeky.devdash.ui.common.userList
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.utils.formatDisplayDate
+import com.elfeky.domain.model.account.UserProfile
 import com.elfeky.domain.model.issue.Issue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IssueCard(
     issue: Issue,
+    user: UserProfile?,
     isPinned: Boolean,
     onPinClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -177,15 +180,17 @@ fun IssueCard(
             }
         }
 
-        IconButton(
-            onClick = onCommentsClick,
-            modifier = Modifier.align(Alignment.Start),
-        ) {
-            Icon(
-                Icons.TwoTone.ChatBubble,
-                contentDescription = "Comments Chat",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
+        if (issue.assignedUsers.any { it.id == user?.id }) {
+            IconButton(
+                onClick = onCommentsClick,
+                modifier = Modifier.align(Alignment.Start),
+            ) {
+                Icon(
+                    Icons.TwoTone.ChatBubble,
+                    contentDescription = "Comments Chat",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     }
 }
@@ -196,6 +201,7 @@ private fun IssueCardPreview() {
     DevDashTheme {
         IssueCard(
             issue = issueList[0],
+            user = userList[0],
             isPinned = false,
             onPinClick = {},
             onDeleteClick = {},
