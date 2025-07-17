@@ -1,8 +1,10 @@
 package com.elfeky.domain.model.search
 
+import com.google.gson.annotations.SerializedName
+
 data class Search(
-    val issues: List<IssueSearch>,
-    val projects: List<ProjectSearch>,
-    val sprints: List<Any>,
-    val tenants: List<TenantSearch>
+    @SerializedName("Issues", alternate = ["issues"]) val issues: List<IssueSearch>,
+    @SerializedName("Projects", alternate = ["projects"]) val projects: List<ProjectSearch>,
+    @SerializedName("Sprints", alternate = ["sprints"]) val sprints: List<Any>,
+    @SerializedName("Tenants", alternate = ["tenants"]) val tenants: List<TenantSearch>
 )

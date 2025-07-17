@@ -1,5 +1,6 @@
 package com.elfeky.domain.usecase.pin.get
 
+import android.util.Log
 import com.elfeky.domain.model.pin.PinnedItems
 import com.elfeky.domain.repo.PinRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
@@ -18,6 +19,7 @@ class GetAllPinnedItemsUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             val response = repo.getAllPinnedItems(accessTokenUseCase.get())
+            Log.d("GetAllPinnedItemsUseCase", "invoke: $response")
             emit(Resource.Success(data = response))
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection\n${e.message}"))

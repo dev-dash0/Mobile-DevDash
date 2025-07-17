@@ -1,8 +1,10 @@
 package com.elfeky.domain.model.search
 
+import com.google.gson.annotations.SerializedName
+
 data class TenantSearch(
-    val description: String,
-    val id: Int,
-    val name: String,
-    val tenantCode: String
+    @SerializedName("Description", alternate = ["description"]) val description: String,
+    @SerializedName("Id", alternate = ["id"]) val id: Int,
+    @SerializedName("Name", alternate = ["name"]) val name: String,
+    @SerializedName("TenantCode", alternate = ["tenantCode"]) val tenantCode: String
 )

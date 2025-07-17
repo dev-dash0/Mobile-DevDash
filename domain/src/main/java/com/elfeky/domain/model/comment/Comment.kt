@@ -1,15 +1,16 @@
 package com.elfeky.domain.model.comment
 
 import com.elfeky.domain.model.account.UserProfile
+import com.google.gson.annotations.SerializedName
 
 data class Comment(
-    val id: Int,
-    val content: String,
-    val createdBy: UserProfile,
-    val createdById: Int,
-    val creationDate: String,
-    val issueId: Int,
-    val projectId: Int,
-    val sprintId: Int,
-    val tenantId: Int
+    @SerializedName("Id", alternate = ["id"]) val id: Int,
+    @SerializedName("Content", alternate = ["content"]) val content: String,
+    @SerializedName("CreatedBy", alternate = ["createdBy"]) val createdBy: UserProfile,
+    @SerializedName("CreatedById", alternate = ["createdById"]) val createdById: Int,
+    @SerializedName("CreationDate", alternate = ["creationDate"]) val creationDate: String,
+    @SerializedName("IssueId", alternate = ["issueId"]) val issueId: Int,
+    @SerializedName("ProjectId", alternate = ["projectId"]) val projectId: Int,
+    @SerializedName("SprintId", alternate = ["sprintId"]) val sprintId: Int,
+    @SerializedName("TenantId", alternate = ["tenantId"]) val tenantId: Int
 )

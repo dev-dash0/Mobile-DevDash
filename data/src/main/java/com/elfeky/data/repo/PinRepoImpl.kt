@@ -1,5 +1,6 @@
 package com.elfeky.data.repo
 
+import android.util.Log
 import com.elfeky.data.remote.PinApiService
 import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.pin.PinnedItems
@@ -24,8 +25,13 @@ class PinRepoImpl @Inject constructor(
     override suspend fun pinIssue(accessToken: String, id: Int) =
         pinApiService.pinIssue("Bearer $accessToken", id)
 
-    override suspend fun getAllPinnedItems(accessToken: String): PinnedItems =
-        pinApiService.getAllPinnedItems("Bearer $accessToken").result
+    override suspend fun getAllPinnedItems(accessToken: String): PinnedItems {
+        Log.d(
+            "PinRepoImpl",
+            "getAllPinnedItems: ${pinApiService.getAllPinnedItems("Bearer $accessToken").result}"
+        )
+        return pinApiService.getAllPinnedItems("Bearer $accessToken").result
+    }
 
     override suspend fun getPinnedTenants(accessToken: String): List<Tenant> =
         pinApiService.getPinnedTenants("Bearer $accessToken").result

@@ -1,6 +1,6 @@
 package com.elfeky.domain.usecase.dashboard
 
-import com.elfeky.domain.model.dashboard.CalendarResponse
+import com.elfeky.domain.model.dashboard.CalendarDay
 import com.elfeky.domain.repo.DashBoardRepo
 import com.elfeky.domain.usecase.local_storage.AccessTokenUseCase
 import com.elfeky.domain.util.Resource
@@ -14,7 +14,7 @@ class GetCalendarUseCase @Inject constructor(
     private val repo: DashBoardRepo,
     private val accessTokenUseCase: AccessTokenUseCase,
 ) {
-    operator fun invoke(): Flow<Resource<CalendarResponse>> = flow {
+    operator fun invoke(): Flow<Resource<List<CalendarDay>?>> = flow {
         try {
             emit(Resource.Loading())
             val response = repo.getCalendar(accessTokenUseCase.get())

@@ -1,5 +1,6 @@
 package com.elfeky.data.remote
 
+import com.elfeky.data.remote.dto.CommentRequest
 import com.elfeky.data.remote.dto.PostCommentResult
 import com.elfeky.data.remote.dto.ServiceResponse
 import com.elfeky.domain.model.comment.Comment
@@ -15,13 +16,14 @@ interface CommentApiService {
         @Header("Authorization") accessToken: String,
         @Query("IssueId") issueId: Int,
         @Query("pageSize") pageSize: Int,
-        @Query("pageNumber") pageNumber: Int
+        @Query("pageNumber") pageNumber: Int,
+        @Query("search") search: String = ""
     ): ServiceResponse<List<Comment>>
 
     @POST("/api/Comment")
     suspend fun sendComment(
         @Header("Authorization") accessToken: String,
-        @Query("IssueId") issueId: Int,
-        @Body content: String
+        @Query("issueid") issueId: Int,
+        @Body body: CommentRequest
     ): ServiceResponse<PostCommentResult>
 }
