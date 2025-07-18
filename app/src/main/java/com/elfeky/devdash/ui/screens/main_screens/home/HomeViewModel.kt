@@ -74,22 +74,16 @@ class HomeViewModel @Inject constructor(
             sendEvent(HomeReducer.Event.LoadPinnedItems)
             getAllPinnedItemsUseCase().collect { resource ->
                 when (resource) {
-                    is Resource.Success -> {
-                        Log.d(
-                            "HomeViewModel",
-                            "Pinned Projects: " + resource.data?.projects.toString()
-                        )
-                        sendEvent(
-                            HomeReducer.Event.PinnedItemsLoaded(
-                                resource.data ?: PinnedItems(
-                                    emptyList(),
-                                    emptyList(),
-                                    emptyList(),
-                                    emptyList()
-                                )
+                    is Resource.Success -> sendEvent(
+                        HomeReducer.Event.PinnedItemsLoaded(
+                            resource.data ?: PinnedItems(
+                                emptyList(),
+                                emptyList(),
+                                emptyList(),
+                                emptyList()
                             )
                         )
-                    }
+                    )
 
                     is Resource.Error -> sendEvent(
                         HomeReducer.Event.PinnedItemsLoadingError(
@@ -127,7 +121,6 @@ class HomeViewModel @Inject constructor(
                                     it.priority == Priority.High.text || it.priority == Priority.Critical.text
                                 isOverdue || (isDueSoon && isHighPriority)
                             }
-//                            ?.sortedWith(compareByDescending<Issue> { it.priority.toPriority().ordinal }.thenBy { it.deadline })
                             ?: emptyList()
 
                         sendEvent(HomeReducer.Event.UrgentIssuesLoaded(urgentIssues))

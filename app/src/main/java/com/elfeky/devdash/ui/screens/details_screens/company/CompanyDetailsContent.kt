@@ -33,6 +33,7 @@ import com.elfeky.devdash.ui.screens.details_screens.company.components.CompanyI
 import com.elfeky.devdash.ui.screens.details_screens.company.components.ProjectList
 import com.elfeky.devdash.ui.screens.details_screens.components.ScreenContainer
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.ImageUtils.base64ToBitmap
 import com.elfeky.domain.model.tenant.Tenant
 import kotlinx.coroutines.launch
 
@@ -49,6 +50,8 @@ fun CompanyDetailsContent(
     val scope = rememberCoroutineScope()
 
     val companyTabsPagerState = rememberPagerState(pageCount = { tabs.size })
+
+    val bitmapImage = base64ToBitmap(uiState.tenant?.image)
 
     ScreenContainer(
         title = uiState.tenant?.name ?: "",
@@ -67,7 +70,7 @@ fun CompanyDetailsContent(
         onInviteClick = { onEvent(CompanyDetailsReducer.Event.InviteMemberClicked) },
         onJoinClick = { onEvent(CompanyDetailsReducer.Event.JoinProjectClicked) },
         isLoading = uiState.isLoading && uiState.tenant == null,
-        image = uiState.tenant?.image,
+        image = bitmapImage,
         hasImageBackground = true,
         scrollBehavior = scrollBehavior,
         snackbarHostState = snackbarHostState

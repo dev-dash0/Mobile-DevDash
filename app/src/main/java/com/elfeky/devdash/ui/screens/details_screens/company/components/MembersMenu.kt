@@ -40,7 +40,7 @@ fun MembersMenu(
 
     DropMenuContainer(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
+        onExpandedChange = { expanded = it },
         onDismissRequest = { expanded = false },
         modifier = modifier,
         menuTextColor = menuTextColor,
@@ -60,10 +60,8 @@ fun MembersMenu(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
-                onClick = { },
-                leadingIcon = {
-                    Avatar(member)
-                },
+                onClick = { expanded = false },
+                leadingIcon = { Avatar(member) },
                 trailingIcon = {
                     if (isOwner) {
                         IconButton({ onRemoveMemberClick(member.id) }) {

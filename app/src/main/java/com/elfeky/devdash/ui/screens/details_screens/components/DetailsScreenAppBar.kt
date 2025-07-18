@@ -18,7 +18,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import coil.size.Scale
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.theme.DevDashTheme
 
@@ -55,25 +54,27 @@ fun DetailsScreenAppBar(
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .data(image)
-            .scale(Scale.FIT)
             .crossfade(true)
             .error(placeholderImage)
-            .placeholder(placeholderImage)
             .build()
     )
 
     val appBarModifier = if (hasImageBackground) {
-        modifier.drawBehind {
-            with(painter) {
-                draw(size = size, alpha = 0.8f)
-            }
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)),
-                    startY = size.height * 0.5f,
-                    endY = size.height
-                )
+        modifier.drawWithCache {
+            val scrimBrush = Brush.verticalGradient(
+                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)),
+                startY = size.height * 0.5f,
+                endY = size.height
             )
+            onDrawBehind {
+                with(painter) {
+                    draw(size = size, alpha = 0.8f)
+                }
+
+                drawRect(brush = scrimBrush)
+            }
+
+
         }
     } else {
         modifier

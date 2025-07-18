@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.common.card
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,16 +16,22 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.elfeky.devdash.ui.common.companyList
 import com.elfeky.devdash.ui.theme.DevDashTheme
+import com.elfeky.devdash.ui.utils.ImageUtils.base64ToBitmap
 import com.elfeky.devdash.ui.utils.glassGradient
 import com.elfeky.domain.model.tenant.Tenant
 
@@ -34,6 +41,8 @@ fun CompanyCard(
     onClick: (id: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val bitmapImage by remember(company.image) { mutableStateOf(base64ToBitmap(company.image)) }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -45,9 +54,18 @@ fun CompanyCard(
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
             AsyncImage(
-                model = company.image,
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(bitmapImage ?: company.image)
+                    .crossfade(true)
+                    .listener(
+                        onError = { _, result ->
+                            Log.e("CoilError", "Failed to load image", result.throwable)
+                        }
+                    )
+                    .build(),
                 contentDescription = null,
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize()
             )
             Box(

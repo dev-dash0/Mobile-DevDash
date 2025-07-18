@@ -1,5 +1,6 @@
 package com.elfeky.devdash.ui.common.dialogs.company.components
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -33,43 +34,57 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
-import com.elfeky.devdash.ui.screens.details_screens.company.components.Logo
 import com.elfeky.devdash.ui.theme.DarkBlue
 import com.elfeky.devdash.ui.theme.DevDashTheme
 import com.elfeky.devdash.ui.theme.White
+import com.elfeky.devdash.ui.utils.ImageUtils.base64ToBitmap
+import com.elfeky.devdash.ui.utils.ImageUtils.bitmapToBase64
+import com.elfeky.devdash.ui.utils.ImageUtils.getBitmapFromUri
 
 @Composable
-fun ImagePicker(onImageSelected: (Any?) -> Unit, image: Any? = null) {
-    var selectedImageUri by remember { mutableStateOf<Any?>(image) }
+fun ImagePicker(
+    image: String? = null,
+    onImageSelected: (String?) -> Unit
+) {
+    var bitmapImage by remember(image) { mutableStateOf(base64ToBitmap(image)) }
+    val context = LocalContext.current
 
     val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
-            selectedImageUri = uri
-            onImageSelected(uri)
-        } else Log.d("PhotoPicker", "No media selected")
+            val newBitmap = getBitmapFromUri(uri, context)
+            bitmapImage = newBitmap
+            newBitmap?.let {
+                onImageSelected(bitmapToBase64(it, Bitmap.CompressFormat.JPEG, 100))
+            } ?: onImageSelected(null)
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+            onImageSelected(null)
+        }
     }
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box {
-            Logo(
-                selectedImageUri,
+            CompanyLogo(
+                bitmapImage,
                 modifier = Modifier.size(64.dp),
-                onImageChanged = {
-                    onImageSelected(it)
-                    selectedImageUri = it
-                }
+                onImageChanged = { newImageBitmap ->
+                    bitmapImage = newImageBitmap
+                    newImageBitmap?.let {
+                        onImageSelected(bitmapToBase64(it, Bitmap.CompressFormat.JPEG, 100))
+                    } ?: onImageSelected(null)
+                },
             )
 
-            if (selectedImageUri != null) {
+            if (bitmapImage != null) {
                 Icon(
                     Icons.Default.Close,
                     "delete image",
@@ -85,14 +100,13 @@ fun ImagePicker(onImageSelected: (Any?) -> Unit, image: Any? = null) {
                         .background(MaterialTheme.colorScheme.onSecondary.copy(alpha = .7f))
                         .aspectRatio(1f)
                         .clickable {
+                            bitmapImage = null
                             onImageSelected(null)
-                            selectedImageUri = null
                         }
                         .padding(4.dp),
                     MaterialTheme.colorScheme.onBackground
                 )
             }
-
         }
 
         Button(
@@ -115,6 +129,6 @@ fun ImagePicker(onImageSelected: (Any?) -> Unit, image: Any? = null) {
 @Composable
 private fun ImagePickerPreview() {
     DevDashTheme {
-        ImagePicker({})
+        ImagePicker {}
     }
 }

@@ -5,5 +5,5 @@ data class CompanyUiModel(
     val websiteUrl: String,
     val keywords: String,
     val description: String,
-    val logoUri: Any? = null
+    val logoUri: String? = null
 )

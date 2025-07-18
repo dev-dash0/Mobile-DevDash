@@ -20,7 +20,7 @@ import com.elfeky.domain.model.account.UserProfile
 fun AvatarStack(
     users: List<UserProfile>,
     modifier: Modifier = Modifier,
-    avatarSize: Dp = 32.dp,
+    avatarSize: Dp = 42.dp,
     overlapFactor: Float = 0.4f,
     maxVisibleAvatars: Int = Int.MAX_VALUE,
     containerColor: Color = MaterialTheme.colorScheme.onSecondary

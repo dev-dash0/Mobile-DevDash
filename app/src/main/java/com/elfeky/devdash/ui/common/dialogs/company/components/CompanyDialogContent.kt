@@ -22,13 +22,13 @@ fun CompanyDialogContent(
     title: String,
     websiteUrl: String,
     keywords: String,
-    logo: Any?,
+    logo: String?,
     description: String,
     onTitleChange: (String) -> Unit,
     onWebsiteUrlChange: (String) -> Unit,
     onKeywordsChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
-    onImageSelected: (Any?) -> Unit,
+    onImageSelected: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -54,7 +54,7 @@ fun CompanyDialogContent(
             )
         }
 
-        ImagePicker(onImageSelected, logo)
+        ImagePicker(logo, onImageSelected)
 
         LabelledContentVertical("Keywords*") {
             InputField(
@@ -86,7 +86,7 @@ private fun CompanyDialogContentPreview() {
     var title by remember { mutableStateOf("") }
     var websiteUrl by remember { mutableStateOf("") }
     var keywords by remember { mutableStateOf("") }
-    var logo by remember { mutableStateOf<Any?>(null) }
+    var logo by remember { mutableStateOf<String?>(null) }
     var description by remember { mutableStateOf("") }
     DevDashTheme {
         CompanyDialogContent(
