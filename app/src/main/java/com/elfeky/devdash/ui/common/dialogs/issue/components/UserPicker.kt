@@ -14,6 +14,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +43,12 @@ fun UserPicker(
     modifier: Modifier = Modifier,
     menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     DropMenuContainer(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        onDismissRequest = { expanded = false },
         modifier = modifier,
         menuTextColor = menuTextColor,
         content = {

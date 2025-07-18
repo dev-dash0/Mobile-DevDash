@@ -9,10 +9,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuBoxScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -20,23 +16,24 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropMenuContainer(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     content: @Composable (ExposedDropdownMenuBoxScope.() -> Unit),
     dropBoxContent: @Composable (ColumnScope.() -> Unit)
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it },
+        onExpandedChange = onExpandedChange,
         modifier = modifier
     ) {
         content()
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
+            onDismissRequest = onDismissRequest,
             modifier = Modifier
                 .heightIn(max = 250.dp)
                 .width(IntrinsicSize.Min),

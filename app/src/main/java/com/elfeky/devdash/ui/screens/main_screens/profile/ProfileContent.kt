@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -56,7 +57,9 @@ fun ProfileContent(
     var showChangePasswordDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -74,7 +77,7 @@ fun ProfileContent(
         }
 
         item {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column {
                 ProfileOption(
                     icon = Icons.Default.Edit,
                     text = "Edit Account",
@@ -91,9 +94,7 @@ fun ProfileContent(
 
         item {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedButton(
@@ -103,7 +104,11 @@ fun ProfileContent(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.ExitToApp, "")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "",
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
                     Text("Log out")
                 }
 
@@ -114,7 +119,11 @@ fun ProfileContent(
                         containerColor = MaterialTheme.colorScheme.error.copy(.8f)
                     )
                 ) {
-                    Icon(Icons.Default.Delete, "")
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "",
+                        modifier = Modifier.size(ButtonDefaults.IconSize)
+                    )
                     Text("Delete Account")
                 }
             }

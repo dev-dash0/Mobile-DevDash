@@ -15,24 +15,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.elfeky.devdash.ui.utils.toEpochMillis
+import com.elfeky.devdash.ui.utils.toStringDate
 import com.elfeky.domain.model.account.UserProfile
 
 @Composable
 fun ProfileInfoCard(user: UserProfile) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             InfoRow(icon = Icons.Default.Badge, label = "Username", value = user.userName)
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
             InfoRow(icon = Icons.Default.Phone, label = "Phone Number", value = user.phoneNumber)
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            InfoRow(icon = Icons.Default.Cake, label = "Birthday", value = user.birthday)
+
+            InfoRow(
+                icon = Icons.Default.Cake,
+                label = "Birthday",
+                value = user.birthday.toEpochMillis()?.toStringDate("dd MMM yyyy")
+                    ?: user.birthday
+            )
         }
     }
 }
+

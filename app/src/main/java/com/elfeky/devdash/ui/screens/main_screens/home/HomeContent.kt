@@ -1,6 +1,8 @@
 package com.elfeky.devdash.ui.screens.main_screens.home
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,10 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -52,7 +53,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
     state: HomeState,
@@ -60,39 +62,55 @@ fun HomeContent(
     navigateToProject: (id: Int) -> Unit,
     navigateToSprint: (id: Int) -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 4 })
-    val scope = rememberCoroutineScope()
     val tabTitles = listOf("Company", "Project", "Sprint", "Issue")
+    val pagerState = rememberPagerState { tabTitles.size }
+    val scope = rememberCoroutineScope()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            Header(state.user?.firstName ?: "", modifier = Modifier.padding(horizontal = 16.dp))
-            Spacer(modifier = Modifier.height(24.dp))
+            Header(
+                state.user?.firstName ?: "",
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        item {
+        stickyHeader {
             SectionHeader(
                 title = "Urgent Issues",
                 icon = R.drawable.alert_ic,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
             )
         }
 
         if (!state.urgentIssues.isNullOrEmpty()) {
-            items(state.urgentIssues) { issue ->
-                CompactIssueCard(
-                    issue,
+            item {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth()
-                        .clickable {
-                            if (issue.isBacklog) navigateToProject(issue.projectId)
-                            else navigateToSprint(issue.sprintId!!)
-                        }
-                )
+                        .heightIn(max = 250.dp)
+                ) {
+                    items(state.urgentIssues) { issue ->
+                        CompactIssueCard(
+                            issue,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+//                            if (issue.isBacklog)
+                                    navigateToProject(issue.projectId)
+//                            else issue.sprintId?.let { navigateToSprint(it) }
+                                }
+                        )
+                    }
+
+                }
             }
         } else {
             item {
@@ -106,16 +124,18 @@ fun HomeContent(
             }
         }
 
-        item {
+        stickyHeader {
             SectionHeader(
                 title = "Pins",
                 icon = R.drawable.ic_pin,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
             )
         }
 
         item {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 modifier = Modifier.padding(horizontal = 12.dp),
                 containerColor = Color.Transparent,
@@ -218,7 +238,7 @@ fun HomePreview() {
         val isDueSoon =
             deadlineDateTime?.isBefore(LocalDateTime.now().plus(3, ChronoUnit.DAYS)) == true
         val isHighPriority =
-            it.priority == Priority.Urgent.text || it.priority == Priority.Critical.text
+            it.priority == Priority.High.text || it.priority == Priority.Critical.text
         !isCompleted && !isCancelled && (isOverdue || (isDueSoon && isHighPriority))
     }
         .sortedWith(compareByDescending<Issue> { it.priority.toPriority().ordinal }.thenBy { it.deadline })

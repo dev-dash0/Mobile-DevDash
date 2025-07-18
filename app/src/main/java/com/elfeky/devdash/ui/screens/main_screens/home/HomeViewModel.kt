@@ -4,9 +4,6 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.elfeky.devdash.ui.base.BaseViewModel
 import com.elfeky.devdash.ui.common.dropdown_menu.model.Priority
-import com.elfeky.devdash.ui.common.dropdown_menu.model.Status
-import com.elfeky.devdash.ui.common.dropdown_menu.model.toPriority
-import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.pin.PinnedItems
 import com.elfeky.domain.usecase.account.GetUserProfileUseCase
 import com.elfeky.domain.usecase.dashboard.GetUserIssuesUseCase
@@ -114,8 +111,6 @@ class HomeViewModel @Inject constructor(
                     is Resource.Success -> {
                         val urgentIssues = resource.data
                             ?.filter {
-                                val isCompleted = it.status == Status.Completed.text
-                                val isCancelled = it.status == Status.Canceled.text
                                 val deadlineDateTime = it.deadline?.let { deadline ->
                                     LocalDateTime.parse(
                                         deadline,
@@ -129,11 +124,11 @@ class HomeViewModel @Inject constructor(
                                         LocalDateTime.now().plus(3, ChronoUnit.DAYS)
                                     ) == true
                                 val isHighPriority =
-                                    it.priority == Priority.Urgent.text || it.priority == Priority.Critical.text
-                                !isCompleted && !isCancelled && (isOverdue || (isDueSoon && isHighPriority))
+                                    it.priority == Priority.High.text || it.priority == Priority.Critical.text
+                                isOverdue || (isDueSoon && isHighPriority)
                             }
-                            ?.sortedWith(compareByDescending<Issue> { it.priority.toPriority().ordinal }.thenBy { it.deadline })
-                            ?.take(5) ?: emptyList()
+//                            ?.sortedWith(compareByDescending<Issue> { it.priority.toPriority().ordinal }.thenBy { it.deadline })
+                            ?: emptyList()
 
                         sendEvent(HomeReducer.Event.UrgentIssuesLoaded(urgentIssues))
                     }

@@ -34,7 +34,12 @@ fun MenuSelector(
     modifier: Modifier = Modifier,
     menuTextColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     DropMenuContainer(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        onDismissRequest = { expanded = false },
         modifier = modifier,
         menuTextColor = menuTextColor,
         content = {
@@ -71,7 +76,10 @@ fun MenuSelector(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 },
-                onClick = { onItemSelected(item) },
+                onClick = {
+                    onItemSelected(item)
+                    expanded = false
+                },
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
             )
         }

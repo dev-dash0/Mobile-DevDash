@@ -65,7 +65,6 @@ fun SearchScreenContent(
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-//            if (uiState.searchActive) {
             if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -134,7 +133,6 @@ fun SearchScreenContent(
             }
         }
     }
-//    }
 }
 
 @Preview

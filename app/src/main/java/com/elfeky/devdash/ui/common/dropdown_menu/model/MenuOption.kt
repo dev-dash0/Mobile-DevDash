@@ -26,10 +26,9 @@ enum class Priority(
     override val color: Color,
     override val text: String
 ) : MenuOption {
-    Low(Icons.Outlined.Flag, Color(0xFF7A869A), "Low"),
-    Medium(Icons.Outlined.Flag, Color(0xFFFF8B00), "Medium"),
-    High(Icons.Outlined.Flag, Color(0xFFE9494A), "High"),
-    Urgent(Icons.Outlined.Flag, Color(0xFFCB240B), "Urgent"),
+    Low(Icons.Outlined.Flag, Color(0xFF85919B), "Low"),
+    Medium(Icons.Outlined.Flag, Color(0xFFFFDD00), "Medium"),
+    High(Icons.Outlined.Flag, Color(0xFFFF8500), "High"),
     Critical(Icons.Outlined.Flag, Color(0xFFC90202), "Critical");
 
     companion object {
