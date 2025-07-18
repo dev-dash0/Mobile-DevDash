@@ -207,7 +207,7 @@ class CompanyDetailsViewModel @AssistedInject constructor(
             updateTenantUseCase(request, companyId).collect { result ->
                 when (result) {
                     is Resource.Loading -> Unit
-                    is Resource.Success -> sendEvent(CompanyDetailsReducer.Event.CompanyAction.UpdateCompleted)
+                    is Resource.Success -> loadCompany()
                     is Resource.Error -> sendEvent(CompanyDetailsReducer.Event.Error.CompanyUpdateError)
                 }
             }

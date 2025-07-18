@@ -2,7 +2,7 @@ package com.elfeky.devdash.ui.common.dialogs.issue.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.DropdownMenuItem
@@ -63,10 +63,10 @@ fun UserPicker(
                 )
 
                 IconButton(
-                    onClick = {},
+                    onClick = { expanded = true },
                     modifier = Modifier
-                        .size(32.dp)
                         .dashBorder(2.dp, 7.dp, 4.dp)
+                        .padding(4.dp)
                         .avatarModifier(MaterialTheme.colorScheme.background)
                 ) {
                     Icon(
@@ -81,7 +81,7 @@ fun UserPicker(
         availableUsers.forEach { user ->
             DropdownMenuItem(
                 text = { Text(user.userName, color = MaterialTheme.colorScheme.onBackground) },
-                onClick = { onUserSelected(user) },
+                onClick = { onUserSelected(user);expanded = false },
                 leadingIcon = { Avatar(user) },
                 trailingIcon = {
                     if (selectedUsers.contains(user)) {

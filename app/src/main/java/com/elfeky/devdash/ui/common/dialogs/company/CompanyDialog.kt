@@ -40,9 +40,6 @@ fun CompanyDialog(
         },
         title = if (company != null) "Add your company" else "Edit Company",
         confirmEnable = title.isNotEmpty()
-                && websiteUrl.isNotEmpty()
-                && keywords.isNotEmpty()
-                && description.isNotEmpty()
     ) {
         CompanyDialogContent(
             title = title,
