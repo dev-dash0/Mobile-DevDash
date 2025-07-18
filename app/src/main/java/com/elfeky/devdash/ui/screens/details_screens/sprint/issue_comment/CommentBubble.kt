@@ -50,9 +50,7 @@ fun CommentBubble(
 
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .widthIn(max = 300.dp),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.Top
     ) {
@@ -73,7 +71,7 @@ fun CommentBubble(
                 Column(
                     modifier = Modifier
                         .background(backgroundColor)
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                        .padding(8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     if (!isCurrentUser) {

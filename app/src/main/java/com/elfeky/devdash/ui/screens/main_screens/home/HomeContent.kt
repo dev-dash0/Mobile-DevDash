@@ -60,9 +60,9 @@ fun HomeContent(
     navigateToProject: (id: Int) -> Unit,
     navigateToSprint: (id: Int) -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 4 })
-    val scope = rememberCoroutineScope()
     val tabTitles = listOf("Company", "Project", "Sprint", "Issue")
+    val pagerState = rememberPagerState { tabTitles.size }
+    val scope = rememberCoroutineScope()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -89,8 +89,9 @@ fun HomeContent(
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                         .clickable {
-                            if (issue.isBacklog) navigateToProject(issue.projectId)
-                            else navigateToSprint(issue.sprintId!!)
+//                            if (issue.isBacklog)
+                            navigateToProject(issue.projectId)
+//                            else issue.sprintId?.let { navigateToSprint(it) }
                         }
                 )
             }
