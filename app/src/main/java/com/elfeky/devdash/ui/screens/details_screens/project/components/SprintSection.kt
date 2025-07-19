@@ -6,8 +6,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,7 +33,7 @@ import com.elfeky.domain.model.sprint.Sprint
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SprintSection(
-    sprints: LazyPagingItems<Sprint>, // Changed to LazyPagingItems
+    sprints: LazyPagingItems<Sprint>,
     pinnedSprints: List<Sprint>,
     onIssueDroppedOnSprint: (Int, Int) -> Unit,
     onSwipeToDelete: (id: Int) -> Unit,
@@ -43,17 +43,9 @@ fun SprintSection(
 ) {
     var hoveredSprintId by remember { mutableStateOf<Int?>(null) }
 
-    val itemSpacing = 12.dp
-    val averageSprintCardHeight = 50.dp
-
-    val desiredHeight =
-        if (sprints.itemCount > 4) (averageSprintCardHeight * 4) + (itemSpacing * 3) else (averageSprintCardHeight * (sprints.itemCount + 1)) + (itemSpacing * (sprints.itemCount - 1))
-
     LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(desiredHeight),
-        verticalArrangement = Arrangement.spacedBy(itemSpacing)
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsPaging(sprints, key = { it.id.toString() + it.title }) { sprint ->
             sprint.let {

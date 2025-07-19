@@ -39,8 +39,8 @@ fun ProjectDialog(
     LaunchedEffect(project) {
         project?.let {
             dateRangeState.setSelection(
-                it.startDate.toEpochMillis(dateFormatter),
-                it.endDate.toEpochMillis(dateFormatter)
+                it.startDate?.toEpochMillis(dateFormatter),
+                it.endDate?.toEpochMillis(dateFormatter)
             )
         }
     }

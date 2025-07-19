@@ -53,10 +53,11 @@ fun ProjectCard(
                 fontWeight = FontWeight.Medium
             )
 
+
             Text(
-                text = (formatDisplayDate(project.startDate)
+                text = (project.startDate?.let { formatDisplayDate(it) } ?: "_")
                         + " | "
-                        + formatDisplayDate(project.endDate)),
+                        + (project.endDate?.let { formatDisplayDate(it) } ?: "_"),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelSmall
             )

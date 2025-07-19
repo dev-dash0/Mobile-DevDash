@@ -2,6 +2,7 @@ package com.elfeky.devdash.ui.screens.main_screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -117,7 +118,8 @@ fun ProfileContent(
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error.copy(.8f)
-                    )
+                    ),
+                    contentPadding = PaddingValues(0.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,

@@ -53,7 +53,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
@@ -84,7 +83,7 @@ fun HomeContent(
                 icon = R.drawable.alert_ic,
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp)
+                    .padding(16.dp, 8.dp)
             )
         }
 
@@ -130,7 +129,7 @@ fun HomeContent(
                 icon = R.drawable.ic_pin,
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(16.dp)
+                    .padding(16.dp, 8.dp)
             )
         }
 
