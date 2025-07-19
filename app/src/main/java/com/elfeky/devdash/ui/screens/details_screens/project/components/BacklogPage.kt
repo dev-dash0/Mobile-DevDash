@@ -62,6 +62,7 @@ fun BacklogPage(
                 SprintSection(
                     sprints = sprints,
                     pinnedSprints = pinnedSprints,
+                    modifier = Modifier.weight(1f),
                     onIssueDroppedOnSprint = onIssueDroppedOnSprint,
                     onSprintClicked = onSprintClicked,
                     onSwipeToPin = onSwipeToPinSprint,

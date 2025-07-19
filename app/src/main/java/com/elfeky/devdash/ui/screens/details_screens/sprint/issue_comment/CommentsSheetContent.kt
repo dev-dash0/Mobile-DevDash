@@ -125,7 +125,7 @@ fun CommentsSheetContent(
             onSendClick = {
                 onSendClick(it)
                 coroutineScope.launch {
-                    listState.animateScrollToItem(comments.itemCount - 1)
+                    listState.animateScrollToItem(if (comments.itemCount == 0) 0 else comments.itemCount - 1)
                 }
 //                comments.refresh()
             },
