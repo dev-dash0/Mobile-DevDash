@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommentsSheetContent(
     comments: LazyPagingItems<Comment>,
+    tempComment: Comment?,
     user: UserProfile?,
     onSendClick: (message: String) -> Unit,
     onEditClick: (Comment) -> Unit,
@@ -76,30 +77,41 @@ fun CommentsSheetContent(
 //                )
 //            }
 //        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .constrainAs(commentList) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(commentInput.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        height = Dimension.fillToConstraints
-                    },
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                state = listState
-            ) {
-                itemsPaging(comments, key = { it.id }) { comment ->
-                    val isCurrentUser = user?.id == comment.createdById
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .constrainAs(commentList) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(commentInput.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.fillToConstraints
+                },
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            state = listState
+        ) {
+            itemsPaging(comments, key = { it.id }) { comment ->
+                val isCurrentUser = user?.id == comment.createdById
+                CommentBubble(
+                    comment = comment,
+                    isCurrentUser = isCurrentUser,
+                    onEditClick = { onEditClick(it) },
+                    onDeleteClick = { onDeleteClick(it) }
+                )
+            }
+
+            item {
+                if (tempComment != null) {
                     CommentBubble(
-                        comment = comment,
-                        isCurrentUser = isCurrentUser,
+                        comment = tempComment,
+                        isCurrentUser = true,
                         onEditClick = { onEditClick(it) },
                         onDeleteClick = { onDeleteClick(it) }
                     )
                 }
             }
+        }
         LaunchedEffect(comments.itemCount) {
             coroutineScope.launch {
                 if (comments.itemCount > 0) listState.animateScrollToItem(comments.itemCount - 1)
@@ -112,7 +124,10 @@ fun CommentsSheetContent(
             onMessageChange = { messageInput = it },
             onSendClick = {
                 onSendClick(it)
-                comments.refresh()
+                coroutineScope.launch {
+                    listState.animateScrollToItem(comments.itemCount - 1)
+                }
+//                comments.refresh()
             },
             isEditing = false,
             modifier = Modifier
@@ -131,11 +146,12 @@ fun CommentsSheetContent(
 @Preview
 @Composable
 private fun CommentsSheetContentPreview() {
-    val comments = flowOf(PagingData.from(commentList))
+    val comments = flowOf(PagingData.from(commentList.take(3)))
     DevDashTheme {
         CommentsSheetContent(
             comments = comments.collectAsLazyPagingItems(),
             user = userList[0],
+            tempComment = commentList[0].copy(id = -1),
             onSendClick = {},
             onEditClick = { },
             onDeleteClick = { }

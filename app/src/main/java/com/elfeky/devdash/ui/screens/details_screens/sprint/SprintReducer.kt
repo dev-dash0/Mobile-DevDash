@@ -22,6 +22,7 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
         val pinnedIssues: List<Issue> = emptyList(),
         val users: List<UserProfile> = emptyList(),
         val comments: Flow<PagingData<Comment>> = flowOf(PagingData.empty()),
+        val tempComment: Comment? = null,
         val draggedIssue: Issue? = null,
         val issueCommentId: Int? = null,
         val userProfile: UserProfile? = null,
@@ -47,6 +48,7 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
             val users: List<UserProfile>? = null,
             val userProfile: UserProfile? = null,
             val comments: Flow<PagingData<Comment>>? = null,
+            val tempComment: Comment? = null,
             val draggedIssue: Issue? = null,
             val issueCommentId: Int? = null,
         ) : Event()
@@ -127,6 +129,7 @@ class SprintReducer : Reducer<SprintReducer.State, SprintReducer.Event, SprintRe
                 users = event.users ?: previousState.users,
                 userProfile = event.userProfile ?: previousState.userProfile,
                 comments = event.comments ?: previousState.comments,
+                tempComment = event.tempComment ?: previousState.tempComment,
                 draggedIssue = event.draggedIssue ?: previousState.draggedIssue,
                 issueCommentId = event.issueCommentId ?: previousState.issueCommentId
             ) to null

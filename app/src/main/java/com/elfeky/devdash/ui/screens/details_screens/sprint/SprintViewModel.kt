@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.elfeky.devdash.ui.base.BaseViewModel
 import com.elfeky.domain.model.account.UserProfile
+import com.elfeky.domain.model.comment.Comment
 import com.elfeky.domain.model.issue.Issue
 import com.elfeky.domain.model.issue.IssueFormFields
 import com.elfeky.domain.model.sprint.Sprint
@@ -36,6 +37,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @HiltViewModel(assistedFactory = SprintViewModel.Factory::class)
 class SprintViewModel @AssistedInject constructor(
@@ -324,9 +326,28 @@ class SprintViewModel @AssistedInject constructor(
     }
 
     private fun sendComment(text: String) = viewModelScope.launch {
+        onEvent(
+            SprintReducer.Event.UpdateState(
+                tempComment = Comment(
+                    id = -1,
+                    content = text,
+                    createdBy = state.value.userProfile!!,
+                    createdById = state.value.userProfile!!.id,
+                    creationDate = LocalDateTime.now().toString(),
+                    issueId = 0,
+                    projectId = 0,
+                    sprintId = 0,
+                    tenantId = 0
+                )
+            )
+        )
+
         executeResourceFlow(
             sendCommentUseCase(state.value.issueCommentId!!, text),
-            onSuccess = { onEvent(SprintReducer.Event.AsyncOperationCompleted.CommentSend) },
+            onSuccess = {
+                onEvent(SprintReducer.Event.AsyncOperationCompleted.CommentSend)
+                onEvent(SprintReducer.Event.UpdateState(tempComment = it))
+            },
             onError = { SprintReducer.Event.OperationError("Failed to send comment: $it") }
         )
     }

@@ -61,7 +61,11 @@ fun SprintScreen(
                 is SprintReducer.Effect.NavigateToIssueDetails -> onIssueClick(effect.issueId)
 
                 is SprintReducer.Effect.Reload.Issues -> issues.refresh()
-                is SprintReducer.Effect.Reload.Comments -> comments.refresh()
+                is SprintReducer.Effect.Reload.Comments -> {
+                    comments.refresh()
+
+                    viewModel.onEvent(SprintReducer.Event.UpdateState(tempComment = null))
+                }
 
                 is SprintReducer.Effect.ShowCommentBottomSheet -> {
                     viewModel.onEvent(SprintReducer.Event.UpdateState(issueCommentId = effect.issueId))
@@ -188,6 +192,7 @@ fun SprintScreen(
         ) {
             CommentsSheetContent(
                 comments = comments,
+                tempComment = state.tempComment,
                 user = state.userProfile,
                 onSendClick = { viewModel.onEvent(SprintReducer.Event.SendCommentClicked(it)) },
                 onEditClick = {},
