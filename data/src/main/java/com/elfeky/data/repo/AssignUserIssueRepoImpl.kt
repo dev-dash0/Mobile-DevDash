@@ -12,12 +12,12 @@ class AssignUserIssueRepoImpl @Inject constructor(
     override suspend fun assignUserIssue(
         accessToken: String,
         assignUserIssue: AssignUserIssue
-    ): AssignResponse = apiService.assignUserIssue(accessToken, assignUserIssue).result
+    ): AssignResponse = apiService.assignUserIssue("Bearer $accessToken", assignUserIssue).result
 
     override suspend fun unassignUserIssue(
         accessToken: String,
         assignUserIssue: AssignUserIssue
     ) {
-        apiService.unassignUserIssue(accessToken, assignUserIssue)
+        apiService.unassignUserIssue("Bearer $accessToken", assignUserIssue)
     }
 }

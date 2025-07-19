@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ import com.elfeky.domain.model.account.UserProfile
 @Composable
 fun IssueDialogContent(
     issue: IssueUiModel,
+    dateRangeState: DateRangePickerState,
     assigneeList: List<UserProfile>,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
@@ -140,11 +142,6 @@ fun IssueDialogContent(
             HorizontalDivider(thickness = 2.dp)
 
             LabelledContentHorizontal(label = "Set Date") {
-                val dateRangeState =
-                    rememberDateRangePickerState(
-                        initialSelectedStartDateMillis = issue.startDate,
-                        initialSelectedEndDateMillis = issue.deadline
-                    )
                 DateRangeInput(state = dateRangeState, modifier = Modifier.weight(.75f))
             }
         }
@@ -174,6 +171,7 @@ private fun IssueDialogContentPreview() {
     DevDashTheme {
         IssueDialogContent(
             issue = issue,
+            dateRangeState = rememberDateRangePickerState(),
             assigneeList = userList,
             onTitleChange = { issue = issue.copy(title = it) },
             onDescriptionChange = { issue = issue.copy(description = it) },

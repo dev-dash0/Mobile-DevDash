@@ -2,6 +2,7 @@ package com.elfeky.devdash.ui.common.dialogs.issue
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,14 +32,22 @@ fun IssueDialog(
     issue: Issue? = null,
     isBacklog: Boolean = true
 ) {
-    var issueState by remember {
+    val dateRangeState = rememberDateRangePickerState(
+        initialSelectedStartDateMillis = issue?.startDate?.toEpochMillis(),
+        initialSelectedEndDateMillis = issue?.deadline?.toEpochMillis()
+    )
+
+    var issueState by remember(
+        dateRangeState.selectedStartDateMillis,
+        dateRangeState.selectedEndDateMillis
+    ) {
         mutableStateOf(
             IssueUiModel(
                 title = issue?.title ?: "",
                 description = issue?.description ?: "",
                 labels = issue?.labels ?: "",
-                startDate = issue?.startDate?.toEpochMillis(),
-                deadline = issue?.deadline?.toEpochMillis(),
+                startDate = dateRangeState.selectedStartDateMillis,
+                deadline = dateRangeState.selectedEndDateMillis,
                 type = issue?.type.toType(),
                 priority = issue?.priority.toPriority(),
                 status = issue?.status.toIssueStatus(),
@@ -56,6 +65,7 @@ fun IssueDialog(
     ) {
         IssueDialogContent(
             issue = issueState,
+            dateRangeState = dateRangeState,
             assigneeList = assigneeList,
             onTitleChange = { issueState = issueState.copy(title = it) },
             onDescriptionChange = { issueState = issueState.copy(description = it) },

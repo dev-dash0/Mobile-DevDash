@@ -67,7 +67,7 @@ fun UserPicker(
                     modifier = Modifier
                         .dashBorder(2.dp, 7.dp, 4.dp)
                         .padding(4.dp)
-                        .avatarModifier(MaterialTheme.colorScheme.background)
+                        .avatarModifier(MaterialTheme.colorScheme.background, 32.dp)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.user_add_ic),
