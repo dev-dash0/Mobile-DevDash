@@ -12,18 +12,18 @@ class JoinRepoImpl @Inject constructor(
     override suspend fun joinTenant(
         accessToken: String,
         tenantCode: String
-    ): JoinTenant = apiService.joinTenant(accessToken, tenantCode).result
+    ): JoinTenant = apiService.joinTenant("Bearer $accessToken", tenantCode).result
 
     override suspend fun leaveTenant(accessToken: String, tenantId: Int) {
-        apiService.leaveTenant(accessToken, tenantId)
+        apiService.leaveTenant("Bearer $accessToken", tenantId)
     }
 
     override suspend fun joinProject(
         accessToken: String,
         projectCode: String
-    ): JoinProject = apiService.joinProject(accessToken, projectCode).result
+    ): JoinProject = apiService.joinProject("Bearer $accessToken", projectCode).result
 
     override suspend fun leaveProject(accessToken: String, projectId: Int) {
-        apiService.leaveProject(accessToken, projectId)
+        apiService.leaveProject("Bearer $accessToken", projectId)
     }
 }
