@@ -66,9 +66,7 @@ fun ProfileContent(
     ) {
         item {
             ProfileHeader(
-                imageUrl = user.imageUrl,
-                userName = "${user.firstName} ${user.lastName}",
-                userEmail = user.email,
+                user = user,
                 onImageChanged = onImageChanged
             )
         }

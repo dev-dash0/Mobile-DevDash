@@ -23,12 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.elfeky.devdash.R
 import com.elfeky.devdash.ui.screens.details_screens.company.components.Logo
+import com.elfeky.domain.model.account.UserProfile
 
 @Composable
 fun ProfileHeader(
-    imageUrl: String?,
-    userName: String,
-    userEmail: String,
+    user: UserProfile,
     onImageChanged: (Any?) -> Unit
 ) {
     Column(
@@ -44,8 +43,8 @@ fun ProfileHeader(
             contentAlignment = Alignment.Center
         ) {
             Logo(
-                imageUrl = imageUrl,
-                modifier = if (imageUrl == null) Modifier.size(84.dp) else Modifier,
+                imageUrl = user.imageUrl,
+                modifier = if (user.imageUrl == null) Modifier.size(84.dp) else Modifier,
                 placeholderImage = R.drawable.person_ic,
                 onImageChanged = onImageChanged
             )
@@ -65,13 +64,15 @@ fun ProfileHeader(
                 )
             }
         }
+
         Text(
-            text = userName,
+            text = user.userName,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
+
         Text(
-            text = userEmail,
+            text = user.email,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
